@@ -1,0 +1,21 @@
+<!-- aprendices/templates/aprendices/upload_file.html -->
+{% extends "aprendices/base.html" %}
+{% block content %}
+<h1>Subir archivo Excel</h1>
+
+{% if messages %}
+<ul>
+    {% for m in messages %}
+        <li{% if m.tags %} class="{{ m.tags }}"{% endif %}>{{ m }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Subir y procesar</button>
+</form>
+
+<p>También puedes subir varios archivos uno por uno. El sistema ejecutará el import automáticamente.</p>
+{% endblock %}

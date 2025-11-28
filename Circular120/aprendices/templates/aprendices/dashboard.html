@@ -1,0 +1,47 @@
+<!-- aprendices/templates/aprendices/dashboard.html -->
+{% extends "aprendices/base.html" %}
+{% block content %}
+<h1>Dashboard — Depuración</h1>
+
+<h3>Aprendices por estado</h3>
+<ul>
+    {% for p in por_estado %}
+    <li>{{ p.estado_formacion }}: {{ p.total }}</li>
+    {% empty %}
+    <li>No hay datos</li>
+    {% endfor %}
+</ul>
+
+<p>Aprendices con ficha vencida: <strong>{{ vencidos_count }}</strong></p>
+<p>Formación complementaria (>3 meses): {{ vencidos_complementaria_count }}</p>
+<p>Formación titulada (regla ejemplo): {{ vencidos_titulada_count }}</p>
+
+<h3>Listado (primeros 200)</h3>
+<table>
+<thead><tr><th>Documento</th><th>Nombre</th><th>Ficha</th><th>Fecha fin ficha</th></tr></thead>
+<tbody>
+    {% for a in vencidos_list %}
+<tr>
+    <td>{{ a.documento }}</td>
+    <td>{{ a.nombre }} {{ a.apellido }}</td>
+    <td>
+    {% if a.ficha %}
+        {{ a.ficha.numero }}
+    {% else %}
+        Sin ficha
+    {% endif %}
+</td>
+
+    <td>
+    {% if a.ficha %}
+        {{ a.ficha.fecha_fin }}
+    {% else %}
+        —
+    {% endif %}
+</td>
+
+</tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

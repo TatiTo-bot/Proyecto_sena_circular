@@ -1,0 +1,19 @@
+<!-- aprendices/templates/aprendices/inasistencia_list.html -->
+{% extends "aprendices/base.html" %}
+{% block content %}
+<h1>Inasistencias</h1>
+<a href="{% url 'inasistencia_create' %}">Nueva inasistencia</a>
+<table>
+<thead><tr><th>Fecha</th><th>Documento</th><th>Ficha</th><th>Motivo</th></tr></thead>
+<tbody>
+    {% for i in object_list %}
+    <tr>
+        <td>{{ i.fecha }}</td>
+        <td>{{ i.aprendiz.documento }}</td>
+        <td>{{ i.ficha.numero }}</td>
+        <td>{{ i.motivo }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,9 @@
+<!-- aprendices/templates/aprendices/inasistencia_form.html -->
+{% extends "aprendices/base.html" %}
+{% block content %}
+<h1>Registrar Inasistencia</h1>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+</form>
+{% endblock %}

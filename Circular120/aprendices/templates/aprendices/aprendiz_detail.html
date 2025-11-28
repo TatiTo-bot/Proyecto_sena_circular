@@ -1,0 +1,26 @@
+<!-- aprendices/templates/aprendices/aprendiz_detail.html -->
+{% extends "aprendices/base.html" %}
+{% block content %}
+<h1>Aprendiz {{ object.documento }}</h1>
+<p><strong>Nombre:</strong> {{ object.nombre }} {{ object.apellido }}</p>
+<p><strong>Ficha:</strong> {{ object.ficha }}</p>
+<p><strong>Estado:</strong> {{ object.estado_formacion }}</p>
+
+<h2>Inasistencias</h2>
+<ul>
+    {% for ins in object.inasistencias.all %}
+        <li>{{ ins.fecha }} - {{ ins.motivo }} {% if ins.justificada %}(Justificada){% endif %}</li>
+    {% empty %}
+        <li>No hay inasistencias registradas.</li>
+    {% endfor %}
+</ul>
+
+<h2>Resultados</h2>
+<ul>
+    {% for r in object.resultados_aprendiz.all %}
+        <li>{{ r.resultado.codigo }} - {{ r.resultado.nombre }} : {{ r.estado }}</li>
+    {% empty %}
+        <li>No hay resultados registrados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

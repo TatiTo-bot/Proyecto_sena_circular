@@ -1,0 +1,8 @@
+Hola {{ instructor_name }},
+
+Por favor registre las inasistencias y evidencias de la ficha {{ ficha_num }} antes del {{ fecha_limite }}.
+
+Acceso: {{ portal_link }}
+
+Gracias,
+Coordinación
