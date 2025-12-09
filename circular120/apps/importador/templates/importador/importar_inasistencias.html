@@ -27,75 +27,87 @@
     margin-top: 20px;
     display: none;
 }
-.step-indicator {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
+.step-indicator { display: flex; justify-content: space-between; margin-bottom: 2rem; }
 .step { flex: 1; text-align: center; }
 .step-number {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #e9ecef;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+    width: 45px; height: 45px; border-radius: 50%; background: #e9ecef;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: bold;
 }
-.step.active .step-number,
-.step.completed .step-number {
-    background: #39A900;
-    color: white;
-}
-.progress-wrapper { display: none; }
+.step.active .step-number, .step.completed .step-number { background: #39A900; color: white; }
+.progress-wrapper { display: none; margin-top: 12px; }
+.progress { height: 20px; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container py-4">
+    <h2 class="mb-4">Importar Inasistencias</h2>
 
-<h2 class="text-center mb-4">Importar Inasistencias</h2>
-
-<div class="step-indicator mb-4">
-    <div class="step active" id="step1"><div class="step-number">1</div><small>Cargar</small></div>
-    <div class="step" id="step2"><div class="step-number">2</div><small>Validar</small></div>
-    <div class="step" id="step3"><div class="step-number">3</div><small>Procesar</small></div>
-    <div class="step" id="step4"><div class="step-number">4</div><small>Completado</small></div>
-</div>
-
-<form method="post" enctype="multipart/form-data" id="uploadForm">
-    {% csrf_token %}
-
-    <div class="upload-zone mb-3" id="uploadZone">
-        <input type="file" name="archivo" id="fileInput" accept=".xlsx,.xls" class="d-none" required>
-        <i class="bi bi-cloud-arrow-up upload-icon"></i>
-        <h5>Arrastra el archivo o haz clic</h5>
-        <p class="text-muted">Formato .xlsx o .xls</p>
-
-        ✅ BOTÓN FUNCIONAL
-        <button type="button" class="btn btn-success btn-lg" id="selectFileBtn">
-            Seleccionar archivo
-        </button>
-    </div>
-
-    <div class="file-preview" id="filePreview">
-        <p><strong id="fileName"></strong></p>
-
-        <div class="progress-wrapper" id="progressWrapper">
-            <div class="progress mt-3">
-                <div class="progress-bar" id="uploadProgress" style="width:0%">0%</div>
-            </div>
-            <p id="progressText" class="text-muted mt-2"></p>
+    <div class="step-indicator mb-4">
+        <div class="step active" id="step1">
+            <div class="step-number">1</div>
+            <small>Cargar</small>
+        </div>
+        <div class="step" id="step2">
+            <div class="step-number">2</div>
+            <small>Validar</small>
+        </div>
+        <div class="step" id="step3">
+            <div class="step-number">3</div>
+            <small>Procesar</small>
+        </div>
+        <div class="step" id="step4">
+            <div class="step-number">4</div>
+            <small>Completado</small>
         </div>
     </div>
 
-    <div class="mt-4" id="actionButtons" style="display:none;">
-        <button type="submit" class="btn btn-success w-100">
-            Iniciar Importación
-        </button>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+
+                <!-- Upload zone -->
+                <div class="upload-zone mb-3" id="uploadZone">
+                    <!-- input oculto pero con id consistente -->
+                    <input type="file" name="archivo" id="fileInput" accept=".xlsx,.xls" class="d-none" required>
+                    <i class="bi bi-cloud-arrow-up upload-icon" aria-hidden="true"></i>
+                    <h5>Arrastra el archivo o haz clic</h5>
+                    <p class="text-muted">Formato: .xlsx o .xls | Tamaño máximo: 10 MB</p>
+
+                    <!-- Botón visible para abrir file selector - tiene id usado por JS -->
+                    <button type="button" id="selectFileBtn" class="btn btn-success btn-lg">
+                        Seleccionar archivo
+                    </button>
+
+                    <!-- Nombre del archivo cuando se selecciona -->
+                    <div id="chosenFileName" class="mt-2" style="font-size:0.95rem;color:#333;"></div>
+                </div>
+
+                <!-- Preview / progreso -->
+                <div class="file-preview" id="filePreview" role="region" aria-live="polite">
+                    <p><strong id="fileName"></strong></p>
+
+                    <div class="progress-wrapper" id="progressWrapper">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadProgress" style="width:0%">0%</div>
+                        </div>
+                        <p id="progressText" class="text-muted mt-2"></p>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-outline-danger" id="removeFileBtn">Eliminar archivo</button>
+                    </div>
+                </div>
+
+                <!-- Botón de envío (oculto hasta seleccionar archivo) -->
+                <div class="mt-4" id="actionButtons" style="display:none;">
+                    <button type="submit" class="btn btn-success w-100">Iniciar Importación</button>
+                    <button type="button" class="btn btn-secondary w-100 mt-2" id="cancelBtn">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
-</form>
 </div>
 {% endblock %}
 
@@ -103,80 +115,152 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
+    // Elementos
     const uploadZone = document.getElementById('uploadZone');
     const fileInput = document.getElementById('fileInput');
     const selectFileBtn = document.getElementById('selectFileBtn');
     const filePreview = document.getElementById('filePreview');
+    const chosenFileName = document.getElementById('chosenFileName');
+    const fileNameEl = document.getElementById('fileName');
+    const progressWrapper = document.getElementById('progressWrapper');
+    const progressBar = document.getElementById('uploadProgress');
+    const progressText = document.getElementById('progressText');
     const actionButtons = document.getElementById('actionButtons');
+    const removeFileBtn = document.getElementById('removeFileBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
 
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
     const step3 = document.getElementById('step3');
     const step4 = document.getElementById('step4');
 
-    // ✅ BOTÓN SELECCIONAR ARCHIVO
+    // Click en el botón visible abre el file input
     selectFileBtn.addEventListener('click', function () {
         fileInput.click();
     });
 
-    // ✅ CUANDO SELECCIONAS ARCHIVO
-    fileInput.addEventListener('change', function () {
+    // Soporte drag & drop en la zona
+    uploadZone.addEventListener('dragover', function (e) {
+        e.preventDefault(); uploadZone.classList.add('dragover');
+    });
+    uploadZone.addEventListener('dragleave', function () {
+        uploadZone.classList.remove('dragover');
+    });
+    uploadZone.addEventListener('drop', function (e) {
+        e.preventDefault(); uploadZone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileChosen();
+        }
+    });
 
+    // Cuando el usuario selecciona archivo por el input
+    fileInput.addEventListener('change', handleFileChosen);
+
+    function handleFileChosen() {
         if (!fileInput.files || !fileInput.files.length) return;
 
-        document.getElementById('fileName').textContent = fileInput.files[0].name;
+        const file = fileInput.files[0];
 
+        // Validaciones básicas
+        if (!file.name.match(/\.(xlsx|xls)$/i)) {
+            alert('Por favor selecciona un archivo Excel (.xlsx o .xls).');
+            fileInput.value = '';
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            alert('El archivo excede el tamaño máximo de 10 MB.');
+            fileInput.value = '';
+            return;
+        }
+
+        // Mostrar UI
+        fileNameEl.textContent = file.name;
+        chosenFileName.textContent = '';
         uploadZone.style.display = 'none';
         filePreview.style.display = 'block';
         actionButtons.style.display = 'block';
 
-        // ✅ PASO 1 → COMPLETADO | PASO 2 → ACTIVO
-        step1.classList.remove('active');
-        step1.classList.add('completed');
+        // Actualizar pasos UI
+        step1.classList.remove('active'); step1.classList.add('completed');
         step2.classList.add('active');
+    }
+
+    // Eliminar archivo seleccionado (reset)
+    removeFileBtn.addEventListener('click', function () {
+        resetFormUI();
+    });
+    cancelBtn.addEventListener('click', function () {
+        if (confirm('¿Cancelar importación y eliminar archivo seleccionado?')) {
+            resetFormUI();
+        }
     });
 
-    // ✅ ENVÍO DEL FORMULARIO CON PROGRESO
-    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+    function resetFormUI() {
+        fileInput.value = '';
+        uploadZone.style.display = 'block';
+        filePreview.style.display = 'none';
+        actionButtons.style.display = 'none';
+        fileNameEl.textContent = '';
+        chosenFileName.textContent = '';
+        progressWrapper.style.display = 'none';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '0%';
+        progressText.textContent = '';
+
+        // Reset pasos a estado inicial
+        step1.classList.add('active');
+        step1.classList.remove('completed');
+        step2.classList.remove('active', 'completed');
+        step3.classList.remove('active', 'completed');
+        step4.classList.remove('active', 'completed');
+    }
+
+    // Envío del formulario: muestra la animación y luego envía
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const progressWrapper = document.getElementById('progressWrapper');
-        const progressBar = document.getElementById('uploadProgress');
-        const progressText = document.getElementById('progressText');
+        if (!fileInput.files || !fileInput.files.length) {
+            alert('Selecciona primero un archivo.');
+            return;
+        }
 
+        // Mostrar progreso
         progressWrapper.style.display = 'block';
         actionButtons.style.display = 'none';
 
-        step2.classList.remove('active');
-        step2.classList.add('completed');
+        // Pasos
+        step2.classList.remove('active'); step2.classList.add('completed');
         step3.classList.add('active');
 
         let progreso = 0;
-
-        const interval = setInterval(() => {
-            progreso += 10;
+        const timer = setInterval(function () {
+            progreso += 8 + Math.floor(Math.random() * 10); // avance variable para parecer real
+            if (progreso > 100) progreso = 100;
             progressBar.style.width = progreso + '%';
-            progressBar.textContent = progreso + '%';
+            progressBar.textContent = Math.round(progreso) + '%';
 
-            if (progreso < 40) progressText.textContent = 'Validando archivo...';
+            if (progreso < 30) progressText.textContent = 'Validando archivo...';
             else if (progreso < 80) progressText.textContent = 'Procesando registros...';
             else progressText.textContent = 'Finalizando...';
 
             if (progreso >= 100) {
-                clearInterval(interval);
-
-                step3.classList.remove('active');
-                step3.classList.add('completed');
+                clearInterval(timer);
+                step3.classList.remove('active'); step3.classList.add('completed');
                 step4.classList.add('active');
 
-                setTimeout(() => {
-                    e.target.submit();
+                // Ahora enviar realmente el formulario al servidor (post normal)
+                setTimeout(function () {
+                    // Para evitar doble envío, deshabilitamos el botón
+                    const submitBtn = uploadForm.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.disabled = true;
+                    uploadForm.submit();
                 }, 600);
             }
-
         }, 180);
     });
 
-});
+}); // DOMContentLoaded
 </script>
 {% endblock %}

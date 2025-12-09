@@ -1027,3 +1027,34 @@ WARNING 2025-12-09 07:29:50,960 log Not Found: /favicon.ico
 WARNING 2025-12-09 07:29:50,962 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
 INFO 2025-12-09 07:29:55,011 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3265
 INFO 2025-12-09 07:36:46,494 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 07:36:57,708 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-09 07:37:05,494 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3158
+INFO 2025-12-09 07:40:07,629 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3158
+WARNING 2025-12-09 07:40:09,825 log Not Found: /favicon.ico
+WARNING 2025-12-09 07:40:09,829 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 07:40:24,852 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3158
+WARNING 2025-12-09 07:41:14,129 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 07:41:14,198 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 07:41:45,325 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3158
+WARNING 2025-12-09 07:41:45,754 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 07:41:45,757 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:17:36,252 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 4550
+WARNING 2025-12-09 09:18:28,617 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:18:28,638 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-09 09:19:41,529 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:19:41,665 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:19:43,759 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 4550
+WARNING 2025-12-09 09:19:43,873 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:19:43,894 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:22:00,344 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 204
+WARNING 2025-12-09 09:22:00,775 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:22:00,777 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:22:10,996 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 204
+WARNING 2025-12-09 09:22:11,081 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:22:11,083 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-09 09:22:13,199 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:22:13,203 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:22:14,378 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 204
+WARNING 2025-12-09 09:22:14,485 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 09:22:14,488 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 09:26:02,544 autoreload Watching for file changes with StatReloader

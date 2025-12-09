@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Sistema Circular 120{% endblock %}</title>
+
     {% load static %}
+
+    <!-- ✅ BLOQUE DE CSS -->
     {% block extra_css %}{% endblock %}
+
 </head>
 <body>
 
@@ -17,6 +21,9 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    <!-- ✅✅✅ ESTE ERA EL BLOQUE QUE FALTABA ✅✅✅ -->
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>
