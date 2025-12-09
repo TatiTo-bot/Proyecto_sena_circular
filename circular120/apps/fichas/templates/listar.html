@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fichas - Sistema Circular 120{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ficha-card {
+        border-left: 5px solid #39A900;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .ficha-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border-left-color: #004884;
+    }
+    
+    .ficha-card.alerta {
+        border-left-color: #FF5800;
+    }
+    
+    .ficha-card.vencida {
+        border-left-color: #dc3545;
+    }
+    
+    .progress-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: conic-gradient(
+            #39A900 0deg,
+            #39A900 var(--progress),
+            #e9ecef var(--progress),
+            #e9ecef 360deg
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .progress-circle::after {
+        content: '';
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: white;
+        position: absolute;
+    }
+    
+    .progress-text {
+        position: relative;
+        z-index: 1;
+        font-weight: bold;
+        color: #39A900;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-folder-fill text-success me-2"></i>
+                Gestión de Fichas
+            </h1>
+            <p class="text-muted mb-0">{{ fichas.count }} fichas registradas</p>
+        </div>
+        <div>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nuevaFichaModal">
+                <i class="bi bi-plus-circle"></i> Nueva Ficha
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Buscar Ficha</label>
+                    <input type="text" class="form-control" id="searchInput" 
+                           placeholder="Número de ficha...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Programa</label>
+                    <select class="form-select" id="filterPrograma">
+                        <option value="">Todos los programas</option>
+                        {% for programa in programas %}
+                        <option value="{{ programa.id }}">{{ programa.nombre|truncatechars:40 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="filterEstado">
+                        <option value="">Todos</option>
+                        <option value="activa">Activas</option>
+                        <option value="proxima_cierre">Próximas a Cierre</option>
+                        <option value="vencida">Vencidas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Jornada</label>
+                    <select class="form-select" id="filterJornada">
+                        <option value="">Todas</option>
+                        <option value="DIURNA">Diurna</option>
+                        <option value="NOCTURNA">Nocturna</option>
+                        <option value="MIXTA">Mixta</option>
+                        <option value="VIRTUAL">Virtual</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-outline-secondary w-100" onclick="limpiarFiltros()">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Fichas -->
+    <div class="row g-4" id="fichasList">
+        {% for ficha in fichas %}
+        <div class="col-md-6 col-lg-4 ficha-item" 
+             data-programa="{{ ficha.programa.id }}"
+             data-jornada="{{ ficha.jornada }}"
+             data-numero="{{ ficha.numero_ficha }}"
+             onclick="window.location.href='{% url 'fichas:detalle' ficha.id %}'">
+            <div class="card ficha-card shadow-sm {% if ficha.dias_para_cierre < 30 %}alerta{% elif ficha.fecha_fin_estimada|date:'U' < now|date:'U' %}vencida{% endif %}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="mb-1">Ficha {{ ficha.numero_ficha }}</h5>
+                            <small class="text-muted">
+                                <i class="bi bi-book"></i> 
+                                {{ ficha.programa.nombre|truncatechars:50 }}
+                            </small>
+                        </div>
+                        <div class="progress-circle" style="--progress: {{ ficha.porcentaje_completado|default:0 }}deg;">
+                            <span class="progress-text">{{ ficha.porcentaje_completado|default:0 }}%</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Aprendices</small>
+                            <strong class="fs-5">{{ ficha.aprendices.count }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Jornada</small>
+                            <span class="badge bg-info">{{ ficha.jornada }}</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Fecha Inicio</small>
+                            <strong>{{ ficha.fecha_inicio|date:"d/m/Y" }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Fecha Fin</small>
+                            <strong>{{ ficha.fecha_fin_estimada|date:"d/m/Y" }}</strong>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    {% if ficha.dias_para_cierre < 0 %}
+                        <div class="alert alert-danger mb-0 py-2">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Ficha Vencida</strong>
+                        </div>
+                    {% elif ficha.dias_para_cierre < 30 %}
+                        <div class="alert alert-warning mb-0 py-2">
+                            <i class="bi bi-clock"></i>
+                            <strong>Cierra en {{ ficha.dias_para_cierre }} días</strong>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success mb-0 py-2">
+                            <i class="bi bi-check-circle"></i>
+                            <strong>Activa</strong> - {{ ficha.dias_para_cierre }} días restantes
+                        </div>
+                    {% endif %}
+
+                    <!-- Alertas de Aprendices -->
+                    {% if ficha.aprendices_con_alertas > 0 %}
+                    <div class="mt-2">
+                        <span class="badge bg-danger">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            {{ ficha.aprendices_con_alertas }} aprendiz{{ ficha.aprendices_con_alertas|pluralize:"es" }} con alertas
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'fichas:detalle' ficha.id %}" 
+                           class="btn btn-sm btn-outline-primary flex-fill" 
+                           onclick="event.stopPropagation()">
+                            <i class="bi bi-eye"></i> Ver
+                        </a>
+                        <a href="{% url 'fichas:editar' ficha.id %}" 
+                           class="btn btn-sm btn-outline-success flex-fill" 
+                           onclick="event.stopPropagation()">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <p class="text-muted mt-3">No hay fichas registradas</p>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nuevaFichaModal">
+                <i class="bi bi-plus-circle"></i> Crear Primera Ficha
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if fichas.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if fichas.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ fichas.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">{{ fichas.number }} de {{ fichas.paginator.num_pages }}</span>
+            </li>
+            
+            {% if fichas.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ fichas.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Modal Nueva Ficha -->
+<div class="modal fade" id="nuevaFichaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Nueva Ficha
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'fichas:crear' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Número de Ficha *</label>
+                        <input type="text" name="numero_ficha" class="form-control" 
+                               placeholder="Ej: 2856341" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Programa de Formación *</label>
+                        <select name="programa" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            {% for programa in programas %}
+                            <option value="{{ programa.id }}">{{ programa.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha Inicio *</label>
+                            <input type="date" name="fecha_inicio" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha Fin Estimada *</label>
+                            <input type="date" name="fecha_fin_estimada" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jornada *</label>
+                        <select name="jornada" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="DIURNA">Diurna</option>
+                            <option value="NOCTURNA">Nocturna</option>
+                            <option value="MIXTA">Mixta</option>
+                            <option value="VIRTUAL">Virtual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Crear Ficha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Búsqueda en tiempo real
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterFichas();
+    });
+
+    // Filtros
+    document.querySelectorAll('#filterPrograma, #filterEstado, #filterJornada').forEach(select => {
+        select.addEventListener('change', filterFichas);
+    });
+
+    function filterFichas() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const programa = document.getElementById('filterPrograma').value;
+        const estado = document.getElementById('filterEstado').value;
+        const jornada = document.getElementById('filterJornada').value;
+
+        document.querySelectorAll('.ficha-item').forEach(item => {
+            let mostrar = true;
+
+            // Filtro de búsqueda
+            if (searchTerm && !item.dataset.numero.toLowerCase().includes(searchTerm)) {
+                mostrar = false;
+            }
+
+            // Filtro de programa
+            if (programa && item.dataset.programa !== programa) {
+                mostrar = false;
+            }
+
+            // Filtro de jornada
+            if (jornada && item.dataset.jornada !== jornada) {
+                mostrar = false;
+            }
+
+            // Filtro de estado (basado en clases CSS)
+            if (estado === 'activa' && (item.querySelector('.ficha-card.alerta') || item.querySelector('.ficha-card.vencida'))) {
+                mostrar = false;
+            } else if (estado === 'proxima_cierre' && !item.querySelector('.ficha-card.alerta')) {
+                mostrar = false;
+            } else if (estado === 'vencida' && !item.querySelector('.ficha-card.vencida')) {
+                mostrar = false;
+            }
+
+            item.style.display = mostrar ? '' : 'none';
+        });
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterPrograma').value = '';
+        document.getElementById('filterEstado').value = '';
+        document.getElementById('filterJornada').value = '';
+        filterFichas();
+    }
+</script>
+{% endblock %}

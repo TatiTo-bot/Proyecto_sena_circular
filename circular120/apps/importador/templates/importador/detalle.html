@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle Importación #{{ archivo.id }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .import-header {
+        background: linear-gradient(135deg, #004884 0%, #002f5a 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    .log-entry {
+        padding: 10px;
+        border-left: 3px solid #e9ecef;
+        margin-bottom: 10px;
+        border-radius: 3px;
+    }
+    
+    .log-entry.error {
+        border-left-color: #dc3545;
+        background: rgba(220, 53, 69, 0.05);
+    }
+    
+    .log-entry.warning {
+        border-left-color: #ffc107;
+        background: rgba(255, 193, 7, 0.05);
+    }
+    
+    .log-entry.success {
+        border-left-color: #39A900;
+        background: rgba(57, 169, 0, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard_principal' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'importador:historial' %}">Historial</a></li>
+            <li class="breadcrumb-item active">Importación #{{ archivo.id }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="import-header shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="bi bi-file-earmark-check me-2"></i>
+                    Importación #{{ archivo.id }}
+                </h1>
+                <p class="mb-0 opacity-75">
+                    <i class="bi bi-file-earmark-excel me-2"></i>
+                    {{ archivo.nombre_archivo }}
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if archivo.estado == 'exitoso' %}
+                    <span class="badge bg-success fs-5 px-4 py-2">
+                        <i class="bi bi-check-circle-fill"></i> Exitoso
+                    </span>
+                {% elif archivo.estado == 'con_errores' %}
+                    <span class="badge bg-warning fs-5 px-4 py-2">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Con Errores
+                    </span>
+                {% else %}
+                    <span class="badge bg-danger fs-5 px-4 py-2">
+                        <i class="bi bi-x-circle-fill"></i> Fallido
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Izquierda -->
+        <div class="col-lg-8">
+            <!-- Resumen de Procesamiento -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up text-primary me-2"></i>
+                        Resumen del Procesamiento
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-file-earmark-text text-primary fs-1"></i>
+                                <h3 class="mt-2">{{ archivo.total_registros }}</h3>
+                                <p class="text-muted mb-0">Total Registros</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-success bg-opacity-10 rounded">
+                                <i class="bi bi-check-circle text-success fs-1"></i>
+                                <h3 class="mt-2 text-success">{{ archivo.registros_exitosos }}</h3>
+                                <p class="text-muted mb-0">Exitosos</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded">
+                                <i class="bi bi-x-circle text-danger fs-1"></i>
+                                <h3 class="mt-2 text-danger">{{ archivo.registros_con_error }}</h3>
+                                <p class="text-muted mb-0">Con Errores</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Progreso -->
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tasa de Éxito</span>
+                            <strong>{{ archivo.porcentaje_exito|floatformat:1 }}%</strong>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ archivo.porcentaje_exito }}%">
+                                {{ archivo.porcentaje_exito|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log de Errores -->
+            {% if archivo.log_errores %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-bug me-2"></i>
+                            Log de Errores ({{ archivo.registros_con_error }})
+                        </h5>
+                        <button class="btn btn-sm btn-light" onclick="descargarLog()">
+                            <i class="bi bi-download"></i> Descargar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    {% for error in archivo.log_errores_list %}
+                    <div class="log-entry error">
+                        <div class="d-flex justify-content-between">
+                            <strong class="text-danger">
+                                <i class="bi bi-x-circle"></i>
+                                Fila {{ error.fila }}
+                            </strong>
+                            <small class="text-muted">{{ error.tipo_error }}</small>
+                        </div>
+                        <p class="mb-0 mt-1">{{ error.descripcion }}</p>
+                        {% if error.datos %}
+                        <small class="text-muted">Datos: {{ error.datos }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Registros Procesados Exitosamente -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-check2-all text-success me-2"></i>
+                        Registros Procesados Exitosamente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Documento</th>
+                                    <th>Nombre</th>
+                                    <th>Ficha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in registros_exitosos|slice:":20" %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><strong>{{ registro.documento }}</strong></td>
+                                    <td>{{ registro.nombre }}</td>
+                                    <td>{{ registro.ficha }}</td>
+                                    <td>
+                                        <i class="bi bi-check-circle text-success"></i> Procesado
+                                    </td>
+                                    <td>
+                                        {% if registro.aprendiz_id %}
+                                        <a href="{% url 'aprendices:detalle' registro.aprendiz_id %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        No hay registros exitosos
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if registros_exitosos|length > 20 %}
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Mostrando 20 de {{ registros_exitosos|length }} registros
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="col-lg-4">
+            <!-- Información General -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle text-info me-2"></i>
+                        Información General
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Tipo de Importación</small>
+                        {% if archivo.tipo == 'inasistencias' %}
+                            <span class="badge bg-warning">
+                                <i class="bi bi-calendar-x"></i> Inasistencias
+                            </span>
+                        {% else %}
+                            <span class="badge bg-info">
+                                <i class="bi bi-file-bar-graph"></i> Evaluaciones
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Fecha de Importación</small>
+                        <strong>{{ archivo.fecha_importacion|date:"d/m/Y H:i:s" }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Usuario</small>
+                        <strong>{{ archivo.usuario.get_full_name|default:archivo.usuario.username }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Tamaño del Archivo</small>
+                        <strong>{{ archivo.tamano_archivo|filesizeformat }}</strong>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Duración del Proceso</small>
+                        <strong>{{ archivo.duracion_procesamiento|default:"N/A" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>
+                        Acciones
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if archivo.log_errores %}
+                        <button class="btn btn-outline-danger" onclick="descargarLog()">
+                            <i class="bi bi-download"></i> Descargar Log de Errores
+                        </button>
+                        {% endif %}
+                        <a href="{% url 'importador:exportar_resultados' archivo.id %}" 
+                           class="btn btn-outline-success">
+                            <i class="bi bi-file-earmark-excel"></i> Exportar Resultados
+                        </a>
+                        <button class="btn btn-outline-info" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir Reporte
+                        </button>
+                        <hr>
+                        <button class="btn btn-outline-secondary" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#confirmDelete">
+                            <i class="bi bi-trash"></i> Eliminar Registro
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración Usada -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-sliders text-secondary me-2"></i>
+                        Configuración Aplicada
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            {% if archivo.validar_duplicados %}
+                                <i class="bi bi-check-circle text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-muted"></i>
+                            {% endif %}
+                            Validación de duplicados
+                        </li>
+                        <li class="mb-2">
+                            {% if archivo.notificar_alertas %}
+                                <i class="bi bi-check-circle text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-muted"></i>
+                            {% endif %}
+                            Generación de alertas
+                        </li>
+                        <li>
+                            {% if archivo.actualizar_existentes %}
+                                <i class="bi bi-check-circle text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-muted"></i>
+                            {% endif %}
+                            Actualizar existentes
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="confirmDelete" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este registro de importación?</p>
+                <p class="text-danger mb-0">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Esta acción no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <form method="post" action="{% url 'importador:eliminar' archivo.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function descargarLog() {
+        window.location.href = '{% url "importador:descargar_log" archivo.id %}';
+    }
+</script>
+{% endblock %}

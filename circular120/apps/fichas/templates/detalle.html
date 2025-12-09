@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ficha {{ ficha.numero_ficha }} - Detalle{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ficha-header {
+        background: linear-gradient(135deg, #004884 0%, #002f5a 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        border-left: 4px solid #39A900;
+        transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateX(5px);
+    }
+    
+    .aprendiz-row {
+        transition: background-color 0.2s;
+    }
+    
+    .aprendiz-row:hover {
+        background-color: rgba(57, 169, 0, 0.05);
+    }
+    
+    .progress-ring {
+        transform: rotate(-90deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard_principal' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fichas:listar' %}">Fichas</a></li>
+            <li class="breadcrumb-item active">{{ ficha.numero_ficha }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header de la Ficha -->
+    <div class="ficha-header shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="bi bi-folder-fill me-2"></i>
+                    Ficha {{ ficha.numero_ficha }}
+                </h1>
+                <p class="mb-2 opacity-75">
+                    <i class="bi bi-book me-2"></i>
+                    {{ ficha.programa.nombre }}
+                </p>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-white text-primary">
+                        <i class="bi bi-calendar"></i> 
+                        {{ ficha.fecha_inicio|date:"d/m/Y" }} - {{ ficha.fecha_fin_estimada|date:"d/m/Y" }}
+                    </span>
+                    <span class="badge bg-white text-info">
+                        <i class="bi bi-clock"></i> {{ ficha.jornada }}
+                    </span>
+                    {% if ficha.dias_para_cierre < 30 %}
+                    <span class="badge bg-warning text-dark">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        Cierra en {{ ficha.dias_para_cierre }} días
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="bg-white bg-opacity-25 p-3 rounded d-inline-block">
+                    <h2 class="mb-0">{{ ficha.aprendices.count }}</h2>
+                    <small>Aprendices</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Izquierda -->
+        <div class="col-lg-8">
+            <!-- Tarjetas de Estadísticas -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people-fill text-success fs-1"></i>
+                            <h3 class="mt-2 mb-0">{{ ficha.aprendices_activos }}</h3>
+                            <small class="text-muted">Activos</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-award-fill text-primary fs-1"></i>
+                            <h3 class="mt-2 mb-0">{{ ficha.aprendices_certificados }}</h3>
+                            <small class="text-muted">Certificados</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+                            <h3 class="mt-2 mb-0">{{ ficha.aprendices_con_alertas }}</h3>
+                            <small class="text-muted">Con Alertas</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-x-circle-fill text-danger fs-1"></i>
+                            <h3 class="mt-2 mb-0">{{ ficha.aprendices_retirados }}</h3>
+                            <small class="text-muted">Retirados</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Aprendices -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-people text-success me-2"></i>
+                            Aprendices de la Ficha
+                        </h5>
+                        <div class="input-group" style="max-width: 300px;">
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchAprendiz" 
+                                   placeholder="Buscar...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Estado</th>
+                                    <th>Asistencia</th>
+                                    <th>Promedio</th>
+                                    <th>Alertas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="aprendicesTable">
+                                {% for aprendiz in ficha.aprendices.all %}
+                                <tr class="aprendiz-row" 
+                                    data-nombre="{{ aprendiz.nombre_completo|lower }}"
+                                    data-documento="{{ aprendiz.documento }}">
+                                    <td><strong>{{ aprendiz.documento }}</strong></td>
+                                    <td>
+                                        <a href="{% url 'aprendices:detalle' aprendiz.id %}" 
+                                           class="text-decoration-none">
+                                            {{ aprendiz.nombre_completo }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if aprendiz.estado_formacion == 'FORMACION' %}
+                                            <span class="badge bg-success">En Formación</span>
+                                        {% elif aprendiz.estado_formacion == 'ETAPA_PRACTICA' %}
+                                            <span class="badge bg-info">Etapa Práctica</span>
+                                        {% elif aprendiz.estado_formacion == 'CERTIFICADO' %}
+                                            <span class="badge bg-primary">Certificado</span>
+                                        {% elif aprendiz.estado_formacion == 'RETIRADO' %}
+                                            <span class="badge bg-danger">Retirado</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Aplazado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                                                <div class="progress-bar 
+                                                    {% if aprendiz.porcentaje_asistencia >= 80 %}bg-success
+                                                    {% elif aprendiz.porcentaje_asistencia >= 70 %}bg-warning
+                                                    {% else %}bg-danger{% endif %}"
+                                                     style="width: {{ aprendiz.porcentaje_asistencia|default:0 }}%">
+                                                </div>
+                                            </div>
+                                            <small>{{ aprendiz.porcentaje_asistencia|floatformat:0|default:"N/A" }}%</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong class="
+                                            {% if aprendiz.promedio_general >= 3.5 %}text-success
+                                            {% elif aprendiz.promedio_general >= 3.0 %}text-warning
+                                            {% else %}text-danger{% endif %}">
+                                            {{ aprendiz.promedio_general|floatformat:1|default:"N/A" }}
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        {% if aprendiz.tiene_alertas %}
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-exclamation-triangle"></i> 
+                                                {{ aprendiz.cantidad_alertas }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted small">Sin alertas</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'aprendices:detalle' aprendiz.id %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3"></i>
+                                        <p class="mb-0 mt-2">No hay aprendices registrados en esta ficha</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="col-lg-4">
+            <!-- Información de la Ficha -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Información de la Ficha
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Programa de Formación</small>
+                        <strong>{{ ficha.programa.nombre }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Código del Programa</small>
+                        <strong>{{ ficha.programa.codigo }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Nivel de Formación</small>
+                        <strong>{{ ficha.programa.nivel_formacion }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Jornada</small>
+                        <strong>{{ ficha.jornada }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Duración</small>
+                        <strong>{{ ficha.programa.duracion_meses }} meses</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Fecha de Inicio</small>
+                        <strong>{{ ficha.fecha_inicio|date:"d/m/Y" }}</strong>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Fecha de Fin Estimada</small>
+                        <strong>{{ ficha.fecha_fin_estimada|date:"d/m/Y" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progreso General -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up text-success me-2"></i>
+                        Progreso General
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Círculo de Progreso SVG -->
+                    <svg width="150" height="150">
+                        <circle cx="75" cy="75" r="65" fill="none" 
+                                stroke="#e9ecef" stroke-width="10"/>
+                        <circle class="progress-ring" cx="75" cy="75" r="65" fill="none" 
+                                stroke="#39A900" stroke-width="10"
+                                stroke-dasharray="{{ ficha.porcentaje_completado|default:0 }} 408.4"
+                                stroke-linecap="round"/>
+                        <text x="75" y="75" text-anchor="middle" 
+                              dy=".3em" font-size="24" font-weight="bold" fill="#39A900">
+                            {{ ficha.porcentaje_completado|default:0 }}%
+                        </text>
+                    </svg>
+                    <p class="text-muted mt-3 mb-0">Avance del Programa</p>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>
+                        Acciones
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'fichas:editar' ficha.id %}" 
+                           class="btn btn-outline-success">
+                            <i class="bi bi-pencil"></i> Editar Ficha
+                        </a>
+                        <a href="{% url 'aprendices:crear' %}?ficha={{ ficha.id }}" 
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus"></i> Agregar Aprendiz
+                        </a>
+                        <a href="{% url 'fichas:exportar' ficha.id %}" 
+                           class="btn btn-outline-info">
+                            <i class="bi bi-file-earmark-excel"></i> Exportar Lista
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructor Asignado -->
+            {% if ficha.instructor %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-person-badge text-secondary me-2"></i>
+                        Instructor Asignado
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="bg-secondary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill text-secondary fs-1"></i>
+                    </div>
+                    <h6 class="mb-1">{{ ficha.instructor.nombre_completo }}</h6>
+                    <p class="text-muted small mb-2">{{ ficha.instructor.correo }}</p>
+                    <p class="text-muted small mb-0">{{ ficha.instructor.telefono }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Búsqueda de aprendices
+    document.getElementById('searchAprendiz').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.aprendiz-row');
+        
+        rows.forEach(row => {
+            const nombre = row.dataset.nombre;
+            const documento = row.dataset.documento;
+            
+            if (nombre.includes(searchTerm) || documento.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

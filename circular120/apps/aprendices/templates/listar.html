@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Aprendices - Sistema Circular 120{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<style>
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    
+    .status-activo { background-color: #39A900; }
+    .status-retirado { background-color: #dc3545; }
+    .status-aplazado { background-color: #ffc107; }
+    
+    .card-aprendiz {
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    
+    .card-aprendiz:hover {
+        border-left-color: #39A900;
+        transform: translateX(5px);
+    }
+    
+    .alert-flag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-people-fill text-success me-2"></i>
+                Gestión de Aprendices
+            </h1>
+            <p class="text-muted mb-0">{{ aprendices.count }} aprendices registrados</p>
+        </div>
+        <div>
+            <a href="{% url 'aprendices:crear' %}" class="btn btn-success">
+                <i class="bi bi-person-plus"></i> Nuevo Aprendiz
+            </a>
+            <button class="btn btn-outline-success" onclick="exportarExcel()">
+                <i class="bi bi-file-earmark-excel"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" 
+                               placeholder="Nombre o documento...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="filterEstado">
+                        <option value="">Todos</option>
+                        <option value="FORMACION">En Formación</option>
+                        <option value="ETAPA_PRACTICA">Etapa Práctica</option>
+                        <option value="CERTIFICADO">Certificado</option>
+                        <option value="RETIRADO">Retirado</option>
+                        <option value="APLAZADO">Aplazado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Ficha</label>
+                    <select class="form-select" id="filterFicha">
+                        <option value="">Todas</option>
+                        {% for ficha in fichas %}
+                        <option value="{{ ficha.numero_ficha }}">{{ ficha.numero_ficha }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Programa</label>
+                    <select class="form-select" id="filterPrograma">
+                        <option value="">Todos</option>
+                        {% for programa in programas %}
+                        <option value="{{ programa.id }}">{{ programa.nombre|truncatechars:30 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Alertas</label>
+                    <select class="form-select" id="filterAlertas">
+                        <option value="">Todas</option>
+                        <option value="con_alertas">Con Alertas</option>
+                        <option value="sin_alertas">Sin Alertas</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button class="btn btn-secondary w-100" onclick="limpiarFiltros()">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs de Visualización -->
+    <ul class="nav nav-tabs mb-4" id="viewTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="table-tab" data-bs-toggle="tab" 
+                    data-bs-target="#tableView" type="button">
+                <i class="bi bi-table"></i> Vista Tabla
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cards-tab" data-bs-toggle="tab" 
+                    data-bs-target="#cardsView" type="button">
+                <i class="bi bi-grid-3x3"></i> Vista Tarjetas
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="viewTabsContent">
+        <!-- Vista Tabla -->
+        <div class="tab-pane fade show active" id="tableView">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="aprendicesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Ficha</th>
+                                    <th>Programa</th>
+                                    <th>Estado</th>
+                                    <th>Contacto</th>
+                                    <th>Alertas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aprendiz in aprendices %}
+                                <tr>
+                                    <td><strong>{{ aprendiz.documento }}</strong></td>
+                                    <td>
+                                        <a href="{% url 'aprendices:detalle' aprendiz.id %}" 
+                                           class="text-decoration-none">
+                                            {{ aprendiz.nombre_completo }}
+                                        </a>
+                                    </td>
+                                    <td>{{ aprendiz.ficha.numero_ficha }}</td>
+                                    <td>
+                                        <small>{{ aprendiz.ficha.programa.nombre|truncatechars:40 }}</small>
+                                    </td>
+                                    <td>
+                                        {% if aprendiz.estado_formacion == 'FORMACION' %}
+                                            <span class="badge bg-success">
+                                                <span class="status-indicator status-activo"></span>
+                                                En Formación
+                                            </span>
+                                        {% elif aprendiz.estado_formacion == 'ETAPA_PRACTICA' %}
+                                            <span class="badge bg-info">
+                                                <span class="status-indicator status-activo"></span>
+                                                Etapa Práctica
+                                            </span>
+                                        {% elif aprendiz.estado_formacion == 'CERTIFICADO' %}
+                                            <span class="badge bg-primary">Certificado</span>
+                                        {% elif aprendiz.estado_formacion == 'RETIRADO' %}
+                                            <span class="badge bg-danger">
+                                                <span class="status-indicator status-retirado"></span>
+                                                Retirado
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <span class="status-indicator status-aplazado"></span>
+                                                Aplazado
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i class="bi bi-envelope"></i> {{ aprendiz.correo }}<br>
+                                            <i class="bi bi-phone"></i> {{ aprendiz.telefono }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if aprendiz.tiene_alertas %}
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-exclamation-triangle"></i> 
+                                                {{ aprendiz.cantidad_alertas }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted small">Sin alertas</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'aprendices:detalle' aprendiz.id %}" 
+                                               class="btn btn-outline-primary" title="Ver detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{% url 'aprendices:editar' aprendiz.id %}" 
+                                               class="btn btn-outline-success" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                                        <p class="text-muted mt-3">No hay aprendices registrados</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista Tarjetas -->
+        <div class="tab-pane fade" id="cardsView">
+            <div class="row g-4">
+                {% for aprendiz in aprendices %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-aprendiz shadow-sm position-relative">
+                        {% if aprendiz.tiene_alertas %}
+                        <span class="alert-flag badge bg-danger">
+                            <i class="bi bi-exclamation-triangle"></i> {{ aprendiz.cantidad_alertas }}
+                        </span>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-person-fill text-success fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">{{ aprendiz.nombre_completo }}</h5>
+                                    <small class="text-muted">{{ aprendiz.documento }}</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mb-2">
+                                <i class="bi bi-folder text-muted"></i>
+                                <strong>Ficha:</strong> {{ aprendiz.ficha.numero_ficha }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-book text-muted"></i>
+                                <small>{{ aprendiz.ficha.programa.nombre|truncatechars:50 }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-person-badge text-muted"></i>
+                                {% if aprendiz.estado_formacion == 'FORMACION' %}
+                                    <span class="badge bg-success">En Formación</span>
+                                {% elif aprendiz.estado_formacion == 'ETAPA_PRACTICA' %}
+                                    <span class="badge bg-info">Etapa Práctica</span>
+                                {% elif aprendiz.estado_formacion == 'CERTIFICADO' %}
+                                    <span class="badge bg-primary">Certificado</span>
+                                {% elif aprendiz.estado_formacion == 'RETIRADO' %}
+                                    <span class="badge bg-danger">Retirado</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Aplazado</span>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'aprendices:detalle' aprendiz.id %}" 
+                                   class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a>
+                                <a href="{% url 'aprendices:editar' aprendiz.id %}" 
+                                   class="btn btn-sm btn-outline-success flex-fill">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-3">No hay aprendices registrados</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const table = $('#aprendicesTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            pageLength: 25,
+            order: [[1, 'asc']],
+            responsive: true
+        });
+
+        // Búsqueda personalizada
+        $('#searchInput').on('keyup', function() {
+            table.search(this.value).draw();
+        });
+
+        // Filtros
+        $('#filterEstado, #filterFicha, #filterPrograma, #filterAlertas').on('change', function() {
+            table.draw();
+        });
+
+        // Filtro personalizado
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            const estado = $('#filterEstado').val();
+            const ficha = $('#filterFicha').val();
+            const alertas = $('#filterAlertas').val();
+
+            if (estado && !data[4].includes(estado)) return false;
+            if (ficha && !data[2].includes(ficha)) return false;
+            if (alertas === 'con_alertas' && data[6].includes('Sin alertas')) return false;
+            if (alertas === 'sin_alertas' && !data[6].includes('Sin alertas')) return false;
+            
+            return true;
+        });
+    });
+
+    function limpiarFiltros() {
+        $('#searchInput').val('');
+        $('#filterEstado, #filterFicha, #filterPrograma, #filterAlertas').val('');
+        $('#aprendicesTable').DataTable().search('').draw();
+    }
+
+    function exportarExcel() {
+        window.location.href = '{% url "aprendices:exportar" %}?formato=excel';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if aprendiz %}Editar{% else %}Nuevo{% endif %} Aprendiz{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .form-section-header {
+        border-left: 4px solid #39A900;
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #39A900;
+        box-shadow: 0 0 0 0.25rem rgba(57, 169, 0, 0.25);
+    }
+    
+    .required-field::after {
+        content: ' *';
+        color: #dc3545;
+    }
+    
+    .character-count {
+        font-size: 0.875rem;
+        color: #6c757d;
+        float: right;
+    }
+    
+    .form-help {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .sticky-actions {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        z-index: 100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard_principal' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'aprendices:listar' %}">Aprendices</a></li>
+            <li class="breadcrumb-item active">
+                {% if aprendiz %}Editar{% else %}Nuevo{% endif %} Aprendiz
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1">
+            <i class="bi bi-person-{% if aprendiz %}pencil{% else %}plus{% endif %}-fill text-success me-2"></i>
+            {% if aprendiz %}
+                Editar Aprendiz
+            {% else %}
+                Registrar Nuevo Aprendiz
+            {% endif %}
+        </h1>
+        <p class="text-muted mb-0">
+            Completa todos los campos marcados con (*) para registrar el aprendiz
+        </p>
+    </div>
+
+    <form method="post" id="aprendizForm" novalidate>
+        {% csrf_token %}
+        
+        <div class="row">
+            <!-- Columna Principal -->
+            <div class="col-lg-8">
+                <!-- Información Personal -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-badge me-2"></i>
+                            Información Personal
+                        </h5>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label required-field">Tipo de Documento</label>
+                            <select name="tipo_documento" class="form-select" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="CC" {% if aprendiz and aprendiz.tipo_documento == 'CC' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                                <option value="TI" {% if aprendiz and aprendiz.tipo_documento == 'TI' %}selected{% endif %}>Tarjeta de Identidad</option>
+                                <option value="CE" {% if aprendiz and aprendiz.tipo_documento == 'CE' %}selected{% endif %}>Cédula de Extranjería</option>
+                                <option value="PA" {% if aprendiz and aprendiz.tipo_documento == 'PA' %}selected{% endif %}>Pasaporte</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label required-field">Número de Documento</label>
+                            <input type="text" name="documento" class="form-control" 
+                                   placeholder="Ej: 1234567890" 
+                                   value="{{ aprendiz.documento|default:'' }}"
+                                   pattern="[0-9]+" 
+                                   maxlength="15"
+                                   required>
+                            <div class="form-help">Solo números, máximo 15 dígitos</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Primer Nombre</label>
+                            <input type="text" name="primer_nombre" class="form-control" 
+                                   placeholder="Primer nombre"
+                                   value="{{ aprendiz.primer_nombre|default:'' }}"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Segundo Nombre</label>
+                            <input type="text" name="segundo_nombre" class="form-control" 
+                                   placeholder="Segundo nombre (opcional)"
+                                   value="{{ aprendiz.segundo_nombre|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Primer Apellido</label>
+                            <input type="text" name="primer_apellido" class="form-control" 
+                                   placeholder="Primer apellido"
+                                   value="{{ aprendiz.primer_apellido|default:'' }}"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Segundo Apellido</label>
+                            <input type="text" name="segundo_apellido" class="form-control" 
+                                   placeholder="Segundo apellido (opcional)"
+                                   value="{{ aprendiz.segundo_apellido|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" class="form-control"
+                                   value="{{ aprendiz.fecha_nacimiento|date:'Y-m-d'|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Género</label>
+                            <select name="genero" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="M" {% if aprendiz and aprendiz.genero == 'M' %}selected{% endif %}>Masculino</option>
+                                <option value="F" {% if aprendiz and aprendiz.genero == 'F' %}selected{% endif %}>Femenino</option>
+                                <option value="O" {% if aprendiz and aprendiz.genero == 'O' %}selected{% endif %}>Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-telephone me-2"></i>
+                            Información de Contacto
+                        </h5>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Correo Electrónico</label>
+                            <input type="email" name="correo" class="form-control" 
+                                   placeholder="ejemplo@correo.com"
+                                   value="{{ aprendiz.correo|default:'' }}"
+                                   required>
+                            <div class="form-help">Será usado para notificaciones importantes</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Teléfono</label>
+                            <input type="tel" name="telefono" class="form-control" 
+                                   placeholder="3001234567"
+                                   value="{{ aprendiz.telefono|default:'' }}"
+                                   pattern="[0-9]{7,10}"
+                                   required>
+                            <div class="form-help">Número celular o fijo</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Dirección de Residencia</label>
+                            <input type="text" name="direccion" class="form-control" 
+                                   placeholder="Calle 123 #45-67"
+                                   value="{{ aprendiz.direccion|default:'' }}"
+                                   maxlength="200">
+                            <span class="character-count">
+                                <span id="direccionCount">0</span>/200
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ciudad</label>
+                            <input type="text" name="ciudad" class="form-control" 
+                                   placeholder="Bogotá"
+                                   value="{{ aprendiz.ciudad|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Departamento</label>
+                            <input type="text" name="departamento" class="form-control" 
+                                   placeholder="Cundinamarca"
+                                   value="{{ aprendiz.departamento|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Académica -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-book me-2"></i>
+                            Información Académica
+                        </h5>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Ficha</label>
+                            <select name="ficha" class="form-select" id="fichaSelect" required>
+                                <option value="">Seleccionar ficha...</option>
+                                {% for ficha in fichas %}
+                                <option value="{{ ficha.id }}" 
+                                        data-programa="{{ ficha.programa.nombre }}"
+                                        {% if aprendiz and aprendiz.ficha.id == ficha.id %}selected{% endif %}>
+                                    {{ ficha.numero_ficha }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-help" id="fichaInfo"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Estado de Formación</label>
+                            <select name="estado_formacion" class="form-select" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="FORMACION" {% if aprendiz and aprendiz.estado_formacion == 'FORMACION' %}selected{% endif %}>En Formación</option>
+                                <option value="ETAPA_PRACTICA" {% if aprendiz and aprendiz.estado_formacion == 'ETAPA_PRACTICA' %}selected{% endif %}>Etapa Práctica</option>
+                                <option value="CERTIFICADO" {% if aprendiz and aprendiz.estado_formacion == 'CERTIFICADO' %}selected{% endif %}>Certificado</option>
+                                <option value="RETIRADO" {% if aprendiz and aprendiz.estado_formacion == 'RETIRADO' %}selected{% endif %}>Retirado</option>
+                                <option value="APLAZADO" {% if aprendiz and aprendiz.estado_formacion == 'APLAZADO' %}selected{% endif %}>Aplazado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required-field">Fecha de Ingreso</label>
+                            <input type="date" name="fecha_ingreso" class="form-control"
+                                   value="{{ aprendiz.fecha_ingreso|date:'Y-m-d'|default:'' }}"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Retiro</label>
+                            <input type="date" name="fecha_retiro" class="form-control"
+                                   value="{{ aprendiz.fecha_retiro|date:'Y-m-d'|default:'' }}">
+                            <div class="form-help">Solo si el aprendiz está retirado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observaciones -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-chat-left-text me-2"></i>
+                            Observaciones Adicionales
+                        </h5>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea name="observaciones" class="form-control" rows="4"
+                                  placeholder="Información adicional relevante sobre el aprendiz..."
+                                  maxlength="500">{{ aprendiz.observaciones|default:'' }}</textarea>
+                        <span class="character-count">
+                            <span id="obsCount">0</span>/500
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Lateral -->
+            <div class="col-lg-4">
+                <!-- Ayuda -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Ayuda
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Todos los campos con (*) son obligatorios
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Verifica que el documento sea único
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                El correo debe ser válido y activo
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Selecciona la ficha correcta
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle text-success"></i>
+                                Guarda los cambios al finalizar
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Previsualización del Nombre -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-person-badge me-2"></i>
+                            Previsualización
+                        </h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-4 mx-auto mb-3" 
+                             style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-fill text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="mb-1" id="nombrePreview">
+                            {% if aprendiz %}
+                                {{ aprendiz.nombre_completo }}
+                            {% else %}
+                                Nombre Completo
+                            {% endif %}
+                        </h5>
+                        <p class="text-muted small mb-0" id="documentoPreview">
+                            {% if aprendiz %}
+                                {{ aprendiz.documento }}
+                            {% else %}
+                                Documento
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción (Sticky) -->
+        <div class="sticky-actions">
+            <div class="d-flex gap-2 justify-content-end">
+                <a href="{% url 'aprendices:listar' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+                <button type="reset" class="btn btn-outline-warning">
+                    <i class="bi bi-arrow-counterclockwise"></i> Restablecer
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> 
+                    {% if aprendiz %}Guardar Cambios{% else %}Registrar Aprendiz{% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Contador de caracteres
+    function setupCharCounter(inputId, counterId, maxLength) {
+        const input = document.querySelector(`[name="${inputId}"]`);
+        const counter = document.getElementById(counterId);
+        
+        if (input && counter) {
+            counter.textContent = input.value.length;
+            input.addEventListener('input', function() {
+                counter.textContent = this.value.length;
+            });
+        }
+    }
+
+    setupCharCounter('direccion', 'direccionCount', 200);
+    setupCharCounter('observaciones', 'obsCount', 500);
+
+    // Previsualización del nombre
+    function updateNamePreview() {
+        const primerNombre = document.querySelector('[name="primer_nombre"]').value;
+        const segundoNombre = document.querySelector('[name="segundo_nombre"]').value;
+        const primerApellido = document.querySelector('[name="primer_apellido"]').value;
+        const segundoApellido = document.querySelector('[name="segundo_apellido"]').value;
+        
+        const nombreCompleto = [primerNombre, segundoNombre, primerApellido, segundoApellido]
+            .filter(n => n.trim())
+            .join(' ') || 'Nombre Completo';
+        
+        document.getElementById('nombrePreview').textContent = nombreCompleto;
+    }
+
+    function updateDocumentoPreview() {
+        const documento = document.querySelector('[name="documento"]').value || 'Documento';
+        document.getElementById('documentoPreview').textContent = documento;
+    }
+
+    // Event listeners para actualizar previsualización
+    ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'].forEach(field => {
+        const input = document.querySelector(`[name="${field}"]`);
+        if (input) {
+            input.addEventListener('input', updateNamePreview);
+        }
+    });
+
+    const documentoInput = document.querySelector('[name="documento"]');
+    if (documentoInput) {
+        documentoInput.addEventListener('input', updateDocumentoPreview);
+    }
+
+    // Mostrar info de la ficha seleccionada
+    document.getElementById('fichaSelect').addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        const programa = selected.dataset.programa;
+        const infoDiv = document.getElementById('fichaInfo');
+        
+        if (programa) {
+            infoDiv.innerHTML = `<i class="bi bi-book"></i> ${programa}`;
+        } else {
+            infoDiv.innerHTML = '';
+        }
+    });
+
+    // Validación del formulario
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('#aprendizForm');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Mostrar alerta
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        alert('Por favor completa todos los campos obligatorios');
+                    }
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

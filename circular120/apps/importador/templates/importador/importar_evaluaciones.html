@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importar Evaluaciones - Sistema Circular 120{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-zone {
+        border: 3px dashed #004884;
+        border-radius: 15px;
+        padding: 60px;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(0, 72, 132, 0.05) 0%, rgba(0, 72, 132, 0.1) 100%);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .upload-zone:hover {
+        background: linear-gradient(135deg, rgba(0, 72, 132, 0.1) 0%, rgba(0, 72, 132, 0.15) 100%);
+        transform: scale(1.02);
+    }
+    
+    .upload-zone.dragover {
+        border-color: #FF5800;
+        background: rgba(255, 88, 0, 0.1);
+    }
+    
+    .upload-icon {
+        font-size: 5rem;
+        color: #004884;
+        margin-bottom: 1rem;
+    }
+    
+    .evaluation-type-card {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .evaluation-type-card:hover {
+        border-color: #004884;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .evaluation-type-card.selected {
+        border-color: #004884;
+        background: rgba(0, 72, 132, 0.05);
+    }
+    
+    .evaluation-type-card input[type="radio"] {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard_principal' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'importador:historial' %}">Importaciones</a></li>
+            <li class="breadcrumb-item active">Importar Evaluaciones</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="mb-2">
+            <i class="bi bi-file-earmark-bar-graph text-primary"></i>
+            Importar Evaluaciones
+        </h1>
+        <p class="text-muted">Carga masiva de resultados de evaluaciones desde Excel</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                
+                <!-- Paso 1: Tipo de Evaluación -->
+                <div class="card shadow-sm mb-4" id="step1Card">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-1-circle me-2"></i>
+                            Selecciona el Tipo de Evaluación
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="evaluation-type-card">
+                                    <input type="radio" name="tipo_evaluacion" value="conocimiento" required>
+                                    <div class="text-center">
+                                        <i class="bi bi-book text-primary fs-1 mb-3"></i>
+                                        <h5>Evaluación de Conocimiento</h5>
+                                        <p class="text-muted small mb-0">
+                                            Resultados de pruebas teóricas y exámenes
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="evaluation-type-card">
+                                    <input type="radio" name="tipo_evaluacion" value="desempeno" required>
+                                    <div class="text-center">
+                                        <i class="bi bi-graph-up text-success fs-1 mb-3"></i>
+                                        <h5>Evaluación de Desempeño</h5>
+                                        <p class="text-muted small mb-0">
+                                            Valoración de competencias prácticas
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="evaluation-type-card">
+                                    <input type="radio" name="tipo_evaluacion" value="producto" required>
+                                    <div class="text-center">
+                                        <i class="bi bi-box-seam text-warning fs-1 mb-3"></i>
+                                        <h5>Evaluación de Producto</h5>
+                                        <p class="text-muted small mb-0">
+                                            Evaluación de evidencias y proyectos
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="evaluation-type-card">
+                                    <input type="radio" name="tipo_evaluacion" value="integral" required>
+                                    <div class="text-center">
+                                        <i class="bi bi-award text-info fs-1 mb-3"></i>
+                                        <h5>Evaluación Integral</h5>
+                                        <p class="text-muted small mb-0">
+                                            Evaluación completa de competencias
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                Continuar <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Cargar Archivo -->
+                <div class="card shadow-sm mb-4" id="step2Card" style="display:none;">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-2-circle me-2"></i>
+                            Cargar Archivo Excel
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" name="archivo" id="fileInput" 
+                                   accept=".xlsx,.xls" class="d-none" required>
+                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                            <h4>Arrastra tu archivo aquí</h4>
+                            <p class="text-muted mb-3">o haz clic para seleccionar</p>
+                            <button type="button" class="btn btn-primary btn-lg" 
+                                    onclick="document.getElementById('fileInput').click()">
+                                <i class="bi bi-folder2-open"></i> Seleccionar Archivo
+                            </button>
+                        </div>
+
+                        <div class="file-preview" id="filePreview" style="display:none;">
+                            <div class="alert alert-success">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle fs-3 me-3"></i>
+                                        <div>
+                                            <h6 class="mb-0" id="fileName"></h6>
+                                            <small id="fileSize"></small>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="removeFile()">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    onclick="previousStep(1)">
+                                <i class="bi bi-arrow-left"></i> Atrás
+                            </button>
+                            <button type="button" class="btn btn-primary flex-fill" 
+                                    onclick="nextStep(3)" id="continueStep2" disabled>
+                                Continuar <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 3: Configuración -->
+                <div class="card shadow-sm mb-4" id="step3Card" style="display:none;">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-3-circle me-2"></i>
+                            Configuración de Importación
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Período Académico</label>
+                                <select name="periodo" class="form-select" required>
+                                    <option value="">Seleccionar período</option>
+                                    <option value="2024-1">2024 - Trimestre 1</option>
+                                    <option value="2024-2">2024 - Trimestre 2</option>
+                                    <option value="2024-3">2024 - Trimestre 3</option>
+                                    <option value="2024-4">2024 - Trimestre 4</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Competencia</label>
+                                <select name="competencia" class="form-select">
+                                    <option value="">Detectar automáticamente</option>
+                                    {% for competencia in competencias %}
+                                    <option value="{{ competencia.id }}">{{ competencia.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="calcular_promedio" id="calcularPromedio" checked>
+                                    <label class="form-check-label" for="calcularPromedio">
+                                        Calcular promedio automáticamente
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="generar_alertas" id="generarAlertas" checked>
+                                    <label class="form-check-label" for="generarAlertas">
+                                        Generar alertas para aprendices con bajo rendimiento
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    onclick="previousStep(2)">
+                                <i class="bi bi-arrow-left"></i> Atrás
+                            </button>
+                            <button type="submit" class="btn btn-success flex-fill">
+                                <i class="bi bi-upload"></i> Iniciar Importación
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Panel Lateral -->
+        <div class="col-lg-4">
+            <!-- Guía Rápida -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Guía Rápida
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <span class="badge bg-info rounded-circle" style="width:30px;height:30px;line-height:20px;">1</span>
+                        </div>
+                        <div>
+                            <h6>Selecciona el tipo</h6>
+                            <p class="text-muted small mb-0">
+                                Elige el tipo de evaluación que vas a importar
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <span class="badge bg-info rounded-circle" style="width:30px;height:30px;line-height:20px;">2</span>
+                        </div>
+                        <div>
+                            <h6>Carga el archivo</h6>
+                            <p class="text-muted small mb-0">
+                                Arrastra o selecciona tu archivo Excel
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <span class="badge bg-info rounded-circle" style="width:30px;height:30px;line-height:20px;">3</span>
+                        </div>
+                        <div>
+                            <h6>Configura y procesa</h6>
+                            <p class="text-muted small mb-0">
+                                Ajusta las opciones e inicia la importación
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columnas Esperadas -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-table text-primary me-2"></i>
+                        Columnas Requeridas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-secondary">Documento</span>
+                        <span class="badge bg-secondary">Nombre</span>
+                        <span class="badge bg-secondary">Competencia</span>
+                        <span class="badge bg-secondary">Calificación</span>
+                        <span class="badge bg-secondary">Fecha</span>
+                        <span class="badge bg-secondary">Observaciones</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descargar Plantilla -->
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-download text-primary fs-1 mb-3"></i>
+                    <h6>Plantilla de Evaluaciones</h6>
+                    <p class="text-muted small">
+                        Descarga la plantilla con el formato correcto
+                    </p>
+                    <a href="{% url 'importador:descargar_plantilla' 'evaluaciones' %}" 
+                       class="btn btn-outline-primary w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Descargar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Manejo de selección de tipo de evaluación
+    document.querySelectorAll('.evaluation-type-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.evaluation-type-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            this.classList.add('selected');
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+
+    // Navegación entre pasos
+    function nextStep(step) {
+        const currentStep = step - 1;
+        
+        if (currentStep === 1) {
+            const tipoSeleccionado = document.querySelector('input[name="tipo_evaluacion"]:checked');
+            if (!tipoSeleccionado) {
+                alert('Por favor selecciona un tipo de evaluación');
+                return;
+            }
+        }
+        
+        if (currentStep === 2) {
+            const archivo = document.getElementById('fileInput').files[0];
+            if (!archivo) {
+                alert('Por favor selecciona un archivo');
+                return;
+            }
+        }
+        
+        document.getElementById(`step${currentStep}Card`).style.display = 'none';
+        document.getElementById(`step${step}Card`).style.display = 'block';
+    }
+
+    function previousStep(step) {
+        document.querySelectorAll('[id^="step"][id$="Card"]').forEach(card => {
+            card.style.display = 'none';
+        });
+        document.getElementById(`step${step}Card`).style.display = 'block';
+    }
+
+    // Manejo de archivos
+    const fileInput = document.getElementById('fileInput');
+    const uploadZone = document.getElementById('uploadZone');
+
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelect();
+    });
+
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = formatFileSize(file.size);
+        document.getElementById('uploadZone').style.display = 'none';
+        document.getElementById('filePreview').style.display = 'block';
+        document.getElementById('continueStep2').disabled = false;
+    }
+
+    function removeFile() {
+        fileInput.value = '';
+        document.getElementById('uploadZone').style.display = 'block';
+        document.getElementById('filePreview').style.display = 'none';
+        document.getElementById('continueStep2').disabled = true;
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+</script>
+{% endblock %}

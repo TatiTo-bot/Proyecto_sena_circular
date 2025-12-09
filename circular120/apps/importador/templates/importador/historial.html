@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Historial de Importaciones{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<style>
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(57, 169, 0, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-clock-history text-success me-2"></i>
+                Historial de Importaciones
+            </h1>
+            <p class="text-muted mb-0">Registro completo de archivos importados</p>
+        </div>
+        <div>
+            <a href="{% url 'importador:importar_inasistencias' %}" 
+               class="btn btn-success me-2">
+                <i class="bi bi-upload"></i> Nueva Importación
+            </a>
+            <button class="btn btn-outline-secondary" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros Rápidos -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Tipo de Importación</label>
+                    <select class="form-select" id="filterTipo">
+                        <option value="">Todos</option>
+                        <option value="inasistencias">Inasistencias</option>
+                        <option value="evaluaciones">Evaluaciones</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="filterEstado">
+                        <option value="">Todos</option>
+                        <option value="exitoso">Exitoso</option>
+                        <option value="con_errores">Con Errores</option>
+                        <option value="fallido">Fallido</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Desde</label>
+                    <input type="date" class="form-control" id="filterFechaDesde">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Hasta</label>
+                    <input type="date" class="form-control" id="filterFechaHasta">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Importaciones -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="historialTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Archivo</th>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Registros</th>
+                            <th>Exitosos</th>
+                            <th>Errores</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for archivo in archivos %}
+                        <tr>
+                            <td><strong>#{{ archivo.id }}</strong></td>
+                            <td>
+                                {% if archivo.tipo == 'inasistencias' %}
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-calendar-x"></i> Inasistencias
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-file-bar-graph"></i> Evaluaciones
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="bi bi-file-earmark-excel text-success"></i>
+                                {{ archivo.nombre_archivo|truncatechars:30 }}
+                            </td>
+                            <td>
+                                {{ archivo.fecha_importacion|date:"d/m/Y" }}<br>
+                                <small class="text-muted">{{ archivo.fecha_importacion|date:"H:i" }}</small>
+                            </td>
+                            <td>{{ archivo.usuario.username }}</td>
+                            <td><strong>{{ archivo.total_registros }}</strong></td>
+                            <td>
+                                <span class="text-success">
+                                    <i class="bi bi-check-circle"></i> {{ archivo.registros_exitosos }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if archivo.registros_con_error > 0 %}
+                                    <span class="text-danger">
+                                        <i class="bi bi-x-circle"></i> {{ archivo.registros_con_error }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">0</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if archivo.estado == 'exitoso' %}
+                                    <span class="status-badge bg-success bg-opacity-10 text-success">
+                                        <i class="bi bi-check-circle-fill"></i> Exitoso
+                                    </span>
+                                {% elif archivo.estado == 'con_errores' %}
+                                    <span class="status-badge bg-warning bg-opacity-10 text-warning">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Con Errores
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge bg-danger bg-opacity-10 text-danger">
+                                        <i class="bi bi-x-circle-fill"></i> Fallido
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'importador:detalle' archivo.id %}" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   title="Ver detalle">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if archivo.log_errores %}
+                                    <a href="{% url 'importador:descargar_log' archivo.id %}" 
+                                       class="btn btn-sm btn-outline-warning" 
+                                       title="Descargar errores">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center py-5">
+                                <i class="bi bi-inbox fs-1 text-muted"></i>
+                                <p class="text-muted mt-3">No hay importaciones registradas</p>
+                                <a href="{% url 'importador:importar_inasistencias' %}" 
+                                   class="btn btn-success">
+                                    <i class="bi bi-upload"></i> Realizar Primera Importación
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const table = $('#historialTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            order: [[0, 'desc']],
+            pageLength: 25,
+            responsive: true
+        });
+
+        // Filtros
+        $('#filterTipo, #filterEstado').on('change', function() {
+            table.draw();
+        });
+
+        $('#filterFechaDesde, #filterFechaHasta').on('change', function() {
+            table.draw();
+        });
+
+        // Filtro personalizado
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            const tipo = $('#filterTipo').val();
+            const estado = $('#filterEstado').val();
+            const fechaDesde = $('#filterFechaDesde').val();
+            const fechaHasta = $('#filterFechaHasta').val();
+
+            if (tipo && !data[1].includes(tipo)) return false;
+            if (estado && !data[8].includes(estado)) return false;
+            
+            return true;
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Perfil de Usuario</h2>
+    <p>Usuario: {{ request.user.username }}</p>
+
+    <a href="{% url 'usuarios:cambiar_password' %}" class="btn btn-warning">
+        Cambiar contraseña
+    </a>
+</div>
+{% endblock %}

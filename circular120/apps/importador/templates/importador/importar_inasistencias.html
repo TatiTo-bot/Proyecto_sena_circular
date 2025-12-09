@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importar Inasistencias - Sistema Circular 120{% endblock %}
+
+{% block extra_css %}
+<style>
+.upload-zone {
+    border: 3px dashed #39A900;
+    border-radius: 15px;
+    padding: 60px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(57, 169, 0, 0.05) 0%, rgba(57, 169, 0, 0.1) 100%);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.upload-zone:hover { transform: scale(1.02); }
+.upload-zone.dragover {
+    border-color: #FF5800;
+    background: rgba(255, 88, 0, 0.1);
+}
+.upload-icon { font-size: 5rem; color: #39A900; }
+.file-preview {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
+}
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+.step { flex: 1; text-align: center; }
+.step-number {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.step.active .step-number,
+.step.completed .step-number {
+    background: #39A900;
+    color: white;
+}
+.progress-wrapper { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+<h2 class="text-center mb-4">Importar Inasistencias</h2>
+
+<div class="step-indicator mb-4">
+    <div class="step active" id="step1"><div class="step-number">1</div><small>Cargar</small></div>
+    <div class="step" id="step2"><div class="step-number">2</div><small>Validar</small></div>
+    <div class="step" id="step3"><div class="step-number">3</div><small>Procesar</small></div>
+    <div class="step" id="step4"><div class="step-number">4</div><small>Completado</small></div>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="uploadForm">
+    {% csrf_token %}
+
+    <div class="upload-zone mb-3" id="uploadZone">
+        <input type="file" name="archivo" id="fileInput" accept=".xlsx,.xls" class="d-none" required>
+        <i class="bi bi-cloud-arrow-up upload-icon"></i>
+        <h5>Arrastra el archivo o haz clic</h5>
+        <p class="text-muted">Formato .xlsx o .xls</p>
+
+        ✅ BOTÓN FUNCIONAL
+        <button type="button" class="btn btn-success btn-lg" id="selectFileBtn">
+            Seleccionar archivo
+        </button>
+    </div>
+
+    <div class="file-preview" id="filePreview">
+        <p><strong id="fileName"></strong></p>
+
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="progress mt-3">
+                <div class="progress-bar" id="uploadProgress" style="width:0%">0%</div>
+            </div>
+            <p id="progressText" class="text-muted mt-2"></p>
+        </div>
+    </div>
+
+    <div class="mt-4" id="actionButtons" style="display:none;">
+        <button type="submit" class="btn btn-success w-100">
+            Iniciar Importación
+        </button>
+    </div>
+</form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    const filePreview = document.getElementById('filePreview');
+    const actionButtons = document.getElementById('actionButtons');
+
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const step4 = document.getElementById('step4');
+
+    // ✅ BOTÓN SELECCIONAR ARCHIVO
+    selectFileBtn.addEventListener('click', function () {
+        fileInput.click();
+    });
+
+    // ✅ CUANDO SELECCIONAS ARCHIVO
+    fileInput.addEventListener('change', function () {
+
+        if (!fileInput.files || !fileInput.files.length) return;
+
+        document.getElementById('fileName').textContent = fileInput.files[0].name;
+
+        uploadZone.style.display = 'none';
+        filePreview.style.display = 'block';
+        actionButtons.style.display = 'block';
+
+        // ✅ PASO 1 → COMPLETADO | PASO 2 → ACTIVO
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step2.classList.add('active');
+    });
+
+    // ✅ ENVÍO DEL FORMULARIO CON PROGRESO
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const progressWrapper = document.getElementById('progressWrapper');
+        const progressBar = document.getElementById('uploadProgress');
+        const progressText = document.getElementById('progressText');
+
+        progressWrapper.style.display = 'block';
+        actionButtons.style.display = 'none';
+
+        step2.classList.remove('active');
+        step2.classList.add('completed');
+        step3.classList.add('active');
+
+        let progreso = 0;
+
+        const interval = setInterval(() => {
+            progreso += 10;
+            progressBar.style.width = progreso + '%';
+            progressBar.textContent = progreso + '%';
+
+            if (progreso < 40) progressText.textContent = 'Validando archivo...';
+            else if (progreso < 80) progressText.textContent = 'Procesando registros...';
+            else progressText.textContent = 'Finalizando...';
+
+            if (progreso >= 100) {
+                clearInterval(interval);
+
+                step3.classList.remove('active');
+                step3.classList.add('completed');
+                step4.classList.add('active');
+
+                setTimeout(() => {
+                    e.target.submit();
+                }, 600);
+            }
+
+        }, 180);
+    });
+
+});
+</script>
+{% endblock %}

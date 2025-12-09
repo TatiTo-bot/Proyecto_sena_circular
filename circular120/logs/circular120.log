@@ -1,0 +1,1029 @@
+INFO 2025-12-03 11:47:24,784 autoreload Watching for file changes with StatReloader
+WARNING 2025-12-03 11:49:02,260 log Not Found: /
+WARNING 2025-12-03 11:49:02,287 basehttp "GET / HTTP/1.1" 404 3250
+WARNING 2025-12-03 11:49:03,306 log Not Found: /favicon.ico
+WARNING 2025-12-03 11:49:03,321 basehttp "GET /favicon.ico HTTP/1.1" 404 3301
+INFO 2025-12-03 12:57:55,099 autoreload Watching for file changes with StatReloader
+WARNING 2025-12-03 12:58:01,343 log Not Found: /
+WARNING 2025-12-03 12:58:01,347 basehttp "GET / HTTP/1.1" 404 3250
+WARNING 2025-12-03 12:58:02,543 log Not Found: /favicon.ico
+WARNING 2025-12-03 12:58:02,551 basehttp "GET /favicon.ico HTTP/1.1" 404 3301
+INFO 2025-12-03 12:58:21,781 basehttp "GET /dashboard HTTP/1.1" 301 0
+INFO 2025-12-03 12:58:22,179 basehttp "GET /dashboard/ HTTP/1.1" 302 0
+WARNING 2025-12-03 12:58:22,209 log Not Found: /accounts/login/
+WARNING 2025-12-03 12:58:22,215 basehttp "GET /accounts/login/?next=/dashboard/ HTTP/1.1" 404 3330
+WARNING 2025-12-03 12:58:36,887 log Not Found: /accounts/login/
+WARNING 2025-12-03 12:58:36,893 basehttp "GET /accounts/login/ HTTP/1.1" 404 3313
+WARNING 2025-12-03 12:58:44,941 log Not Found: /accounts/login/
+WARNING 2025-12-03 12:58:44,945 basehttp "GET /accounts/login/ HTTP/1.1" 404 3313
+WARNING 2025-12-03 12:58:48,730 log Not Found: /
+WARNING 2025-12-03 12:58:48,731 basehttp "GET / HTTP/1.1" 404 3250
+WARNING 2025-12-03 14:24:52,605 log Not Found: /
+WARNING 2025-12-03 14:24:52,630 basehttp "GET / HTTP/1.1" 404 3250
+WARNING 2025-12-03 14:24:53,628 log Not Found: /favicon.ico
+WARNING 2025-12-03 14:24:53,662 basehttp "GET /favicon.ico HTTP/1.1" 404 3301
+INFO 2025-12-04 08:54:31,194 autoreload D:\Users\User\Documents\circular\circular120\circular120\urls.py changed, reloading.
+INFO 2025-12-04 08:56:05,369 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 09:58:15,554 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 09:58:26,826 basehttp "GET / HTTP/1.1" 302 0
+WARNING 2025-12-04 09:58:27,188 log Not Found: /accounts/login/
+WARNING 2025-12-04 09:58:27,242 basehttp "GET /accounts/login/?next=/ HTTP/1.1" 404 4518
+WARNING 2025-12-04 09:58:28,500 log Not Found: /favicon.ico
+WARNING 2025-12-04 09:58:28,509 basehttp "GET /favicon.ico HTTP/1.1" 404 4499
+INFO 2025-12-04 11:09:24,818 autoreload D:\Users\User\Documents\circular\circular120\circular120\settings.py changed, reloading.
+INFO 2025-12-04 11:09:29,187 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:15:02,351 autoreload D:\Users\User\Documents\circular\circular120\circular120\settings.py changed, reloading.
+INFO 2025-12-04 11:15:04,979 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:16:44,365 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:18:27,154 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\apps.py changed, reloading.
+INFO 2025-12-04 11:18:31,282 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:18:43,138 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:18:49,692 basehttp "GET / HTTP/1.1" 302 0
+ERROR 2025-12-04 11:18:50,516 log Internal Server Error: /usuarios/login/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset' not found. 'password_reset' is not a valid view function or pattern name.
+ERROR 2025-12-04 11:18:50,598 basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 500 123093
+WARNING 2025-12-04 11:18:51,973 log Not Found: /favicon.ico
+WARNING 2025-12-04 11:18:51,991 basehttp "GET /favicon.ico HTTP/1.1" 404 4499
+INFO 2025-12-04 11:22:17,655 autoreload D:\Users\User\Documents\circular\circular120\circular120\urls.py changed, reloading.
+INFO 2025-12-04 11:22:21,953 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:24:24,045 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:24:37,187 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-12-04 11:24:37,264 basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:25:36,684 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:25:59,391 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:26:05,528 basehttp "GET /password-reset/ HTTP/1.1" 200 4190
+INFO 2025-12-04 11:26:05,655 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-12-04 11:26:05,657 basehttp "GET /static/admin/css/forms.css HTTP/1.1" 200 8525
+INFO 2025-12-04 11:26:05,661 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO 2025-12-04 11:26:05,661 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-12-04 11:26:05,663 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO 2025-12-04 11:26:05,704 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11973
+INFO 2025-12-04 11:26:23,578 basehttp "POST /password-reset/ HTTP/1.1" 302 0
+INFO 2025-12-04 11:26:23,597 basehttp "GET /password-reset/done/ HTTP/1.1" 200 3782
+INFO 2025-12-04 11:27:47,563 basehttp "GET /password-reset/ HTTP/1.1" 200 4190
+INFO 2025-12-04 11:27:50,683 basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:28:33,607 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:31:27,274 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:31:31,949 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-12-04 11:31:31,990 basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 9191
+INFO 2025-12-04 11:31:47,383 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 302 0
+ERROR 2025-12-04 11:31:47,934 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: dashboard/inicio.html
+ERROR 2025-12-04 11:31:47,958 basehttp "GET / HTTP/1.1" 500 105231
+INFO 2025-12-04 11:35:00,050 autoreload D:\Users\User\Documents\circular\circular120\circular120\urls.py changed, reloading.
+INFO 2025-12-04 11:35:07,347 autoreload Watching for file changes with StatReloader
+ERROR 2025-12-04 11:35:23,250 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: dashboard/inicio.html
+ERROR 2025-12-04 11:35:23,259 basehttp "GET / HTTP/1.1" 500 105231
+INFO 2025-12-04 11:35:56,620 autoreload Watching for file changes with StatReloader
+ERROR 2025-12-04 11:36:14,784 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: dashboard/inicio.html
+ERROR 2025-12-04 11:36:14,798 basehttp "GET / HTTP/1.1" 500 104921
+WARNING 2025-12-04 11:36:16,038 log Not Found: /favicon.ico
+WARNING 2025-12-04 11:36:16,039 basehttp "GET /favicon.ico HTTP/1.1" 404 5266
+INFO 2025-12-04 11:37:12,540 autoreload Watching for file changes with StatReloader
+ERROR 2025-12-04 11:37:18,744 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 134, in render
+    compiled_parent = self.get_parent(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 131, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 109, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 163, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 109, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base.html
+ERROR 2025-12-04 11:37:18,805 basehttp "GET / HTTP/1.1" 500 160856
+WARNING 2025-12-04 11:37:20,931 log Not Found: /favicon.ico
+WARNING 2025-12-04 11:37:20,936 basehttp "GET /favicon.ico HTTP/1.1" 404 5266
+INFO 2025-12-04 11:41:47,737 autoreload Watching for file changes with StatReloader
+ERROR 2025-12-04 11:42:28,670 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'detalle_caso' not found. 'detalle_caso' is not a valid view function or pattern name.
+ERROR 2025-12-04 11:42:28,685 basehttp "GET / HTTP/1.1" 500 195223
+INFO 2025-12-04 11:45:11,855 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\urls.py changed, reloading.
+INFO 2025-12-04 11:45:18,476 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:45:46,117 autoreload Watching for file changes with StatReloader
+ERROR 2025-12-04 11:45:59,214 log Internal Server Error: /
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'importador'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py", line 216, in dashboard_principal
+    return render(request, 'dashboard/inicio.html', context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'importador' is not a registered namespace
+ERROR 2025-12-04 11:45:59,240 basehttp "GET / HTTP/1.1" 500 197022
+INFO 2025-12-04 11:49:35,458 autoreload D:\Users\User\Documents\circular\circular120\circular120\urls.py changed, reloading.
+INFO 2025-12-04 11:49:39,626 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:50:52,592 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 11:50:53,620 log Not Found: /favicon.ico
+WARNING 2025-12-04 11:50:53,625 basehttp "GET /favicon.ico HTTP/1.1" 404 5696
+ERROR 2025-12-04 11:51:04,585 log Internal Server Error: /caso/desercion/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+TypeError: dashboard_principal() got an unexpected keyword argument 'tipo'
+ERROR 2025-12-04 11:51:04,598 basehttp "GET /caso/desercion/ HTTP/1.1" 500 76148
+ERROR 2025-12-04 11:51:08,142 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 163, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html', {'form': form})
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'principal' not found. 'principal' is not a valid view function or pattern name.
+ERROR 2025-12-04 11:51:08,160 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 167220
+ERROR 2025-12-04 11:51:12,584 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 163, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html', {'form': form})
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'principal' not found. 'principal' is not a valid view function or pattern name.
+ERROR 2025-12-04 11:51:12,598 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 167220
+INFO 2025-12-04 11:51:20,696 basehttp "GET / HTTP/1.1" 200 13259
+ERROR 2025-12-04 11:51:24,275 log Internal Server Error: /caso/desercion/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+TypeError: dashboard_principal() got an unexpected keyword argument 'tipo'
+ERROR 2025-12-04 11:51:24,278 basehttp "GET /caso/desercion/ HTTP/1.1" 500 76148
+INFO 2025-12-04 11:52:57,908 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py changed, reloading.
+INFO 2025-12-04 11:53:04,134 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:56:57,554 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 11:57:02,916 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 11:57:03,699 log Not Found: /favicon.ico
+WARNING 2025-12-04 11:57:03,701 basehttp "GET /favicon.ico HTTP/1.1" 404 5696
+INFO 2025-12-04 11:57:12,785 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+ERROR 2025-12-04 11:57:16,657 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 163, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html', {'form': form})
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'principal' not found. 'principal' is not a valid view function or pattern name.
+ERROR 2025-12-04 11:57:16,679 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 167235
+INFO 2025-12-04 12:35:05,038 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\urls.py changed, reloading.
+INFO 2025-12-04 12:35:18,797 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:41:52,985 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\urls.py changed, reloading.
+INFO 2025-12-04 12:41:59,779 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:42:06,344 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:42:13,381 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 12:42:14,246 log Not Found: /favicon.ico
+WARNING 2025-12-04 12:42:14,249 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-04 12:42:21,002 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-04 12:42:25,372 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+ERROR 2025-12-04 12:42:29,498 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 163, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html', {'form': form})
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'descargar_plantilla' not found. 'descargar_plantilla' is not a valid view function or pattern name.
+ERROR 2025-12-04 12:42:29,535 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 168011
+INFO 2025-12-04 12:45:07,620 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\urls.py changed, reloading.
+INFO 2025-12-04 12:45:15,194 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:45:51,085 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 12:45:57,182 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:46:38,012 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:46:43,842 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-04 12:46:47,176 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 15775
+INFO 2025-12-04 12:48:32,469 basehttp "GET /importador/historial/ HTTP/1.1" 200 4491
+INFO 2025-12-04 12:48:37,727 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 15775
+ERROR 2025-12-04 12:50:04,033 log Internal Server Error: /importador/descargar-plantilla/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 344, in descargar_plantilla
+    return HttpResponse(f"Descarga de plantilla para {tipo}")
+           ^^^^^^^^^^^^
+NameError: name 'HttpResponse' is not defined. Did you mean: 'JsonResponse'?
+ERROR 2025-12-04 12:50:04,118 basehttp "GET /importador/descargar-plantilla/inasistencias/ HTTP/1.1" 500 74263
+INFO 2025-12-04 12:52:28,361 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\urls.py changed, reloading.
+INFO 2025-12-04 12:52:37,876 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:52:58,889 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 12:53:05,329 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 12:53:30,119 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 12:53:37,965 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 13:57:57,453 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-04 13:57:59,835 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-04 13:58:02,435 basehttp "GET /caso/certificacion/ HTTP/1.1" 200 13259
+INFO 2025-12-04 13:58:08,867 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+INFO 2025-12-04 13:58:11,887 basehttp "GET /caso/certificacion/ HTTP/1.1" 200 13259
+INFO 2025-12-04 13:58:17,469 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+INFO 2025-12-04 13:58:20,243 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:02:31,005 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:02:37,870 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 14:02:39,264 log Not Found: /favicon.ico
+WARNING 2025-12-04 14:02:39,297 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-04 14:02:42,595 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:03:08,713 basehttp "GET /importador/historial/ HTTP/1.1" 200 4491
+INFO 2025-12-04 14:03:14,488 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:08:07,761 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 2629
+INFO 2025-12-04 14:08:24,190 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 2629
+INFO 2025-12-04 14:11:17,838 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:13:26,792 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 14:13:33,718 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:14:05,388 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 14:14:06,314 log Not Found: /favicon.ico
+WARNING 2025-12-04 14:14:06,358 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-04 14:14:12,197 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:15:22,696 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:15:29,905 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:15:37,681 basehttp "GET / HTTP/1.1" 200 13259
+INFO 2025-12-04 14:15:44,600 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16041
+INFO 2025-12-04 14:23:11,510 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:23:17,215 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 14:23:18,023 log Not Found: /favicon.ico
+WARNING 2025-12-04 14:23:18,029 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-04 14:23:22,038 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16083
+INFO 2025-12-04 14:29:28,521 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:29:33,573 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:29:52,084 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:29:54,781 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:30:07,016 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:30:09,646 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:32:32,156 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\forms.py changed, reloading.
+INFO 2025-12-04 14:32:38,005 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:33:40,888 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 14:33:46,435 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:34:08,653 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:35:58,476 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\urls.py changed, reloading.
+INFO 2025-12-04 14:36:03,532 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:36:21,568 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 14:36:22,319 log Not Found: /favicon.ico
+WARNING 2025-12-04 14:36:22,328 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-04 14:36:26,909 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 16083
+INFO 2025-12-04 14:42:18,224 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:42:24,781 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:43:55,441 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-04 14:43:59,363 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:47:58,673 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:48:04,320 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:53:16,107 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:54:33,886 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:54:38,899 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:55:56,315 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:56:02,489 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:57:05,314 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:57:10,757 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:57:14,102 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 14:57:18,891 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:57:45,941 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 14:57:54,478 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-04 14:57:55,457 log Not Found: /favicon.ico
+WARNING 2025-12-04 14:57:55,459 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+ERROR 2025-12-04 14:57:57,939 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 111, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html')
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 523, in parse
+    self.unclosed_block_tag(parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 590, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 125: 'block'. Looking for one of: endblock.
+ERROR 2025-12-04 14:57:57,961 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 188856
+ERROR 2025-12-04 15:01:41,381 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 111, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html')
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 523, in parse
+    self.unclosed_block_tag(parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 590, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 125: 'block'. Looking for one of: endblock.
+ERROR 2025-12-04 15:01:41,423 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 188993
+INFO 2025-12-04 15:06:02,077 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 15:06:10,445 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 15:06:14,574 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 15:06:18,260 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 15:06:29,055 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-04 15:06:31,248 autoreload Watching for file changes with StatReloader
+INFO 2025-12-04 15:07:04,805 basehttp "GET / HTTP/1.1" 200 13259
+ERROR 2025-12-04 15:07:08,601 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 111, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html')
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 523, in parse
+    self.unclosed_block_tag(parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 590, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 125: 'block'. Looking for one of: endblock.
+ERROR 2025-12-04 15:07:08,619 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 188856
+INFO 2025-12-09 07:17:06,631 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 07:17:36,288 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-09 07:17:41,391 log Not Found: /favicon.ico
+WARNING 2025-12-09 07:17:41,515 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 07:17:51,910 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+INFO 2025-12-09 07:18:00,364 basehttp "GET /caso/desercion/ HTTP/1.1" 200 13259
+INFO 2025-12-09 07:18:07,253 basehttp "GET /aprendices/crear/ HTTP/1.1" 200 25
+INFO 2025-12-09 07:18:11,175 basehttp "GET /fichas/ HTTP/1.1" 200 17
+INFO 2025-12-09 07:18:14,630 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 16870
+INFO 2025-12-09 07:18:33,435 basehttp "GET /importador/historial/ HTTP/1.1" 200 4491
+ERROR 2025-12-09 07:18:43,490 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 111, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html')
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 523, in parse
+    self.unclosed_block_tag(parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 590, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 125: 'block'. Looking for one of: endblock.
+ERROR 2025-12-09 07:18:43,560 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 188877
+ERROR 2025-12-09 07:18:49,376 log Internal Server Error: /importador/inasistencias/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 111, in importar_inasistencias
+    return render(request, 'importador/importar_inasistencias.html')
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 299, in do_extends
+    nodelist = parser.parse()
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 518, in parse
+    raise self.error(token, e)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 516, in parse
+    compiled_result = compile_func(self, token)
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\loader_tags.py", line 234, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 523, in parse
+    self.unclosed_block_tag(parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\env\Lib\site-packages\django\template\base.py", line 590, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 125: 'block'. Looking for one of: endblock.
+ERROR 2025-12-09 07:18:49,390 basehttp "GET /importador/inasistencias/ HTTP/1.1" 500 188871
+INFO 2025-12-09 07:23:32,092 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3265
+INFO 2025-12-09 07:28:35,671 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3265
+INFO 2025-12-09 07:29:24,081 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 07:29:41,036 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-09 07:29:41,606 log Not Found: /favicon.ico
+WARNING 2025-12-09 07:29:41,611 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 07:29:50,825 basehttp "GET / HTTP/1.1" 200 13259
+WARNING 2025-12-09 07:29:50,960 log Not Found: /favicon.ico
+WARNING 2025-12-09 07:29:50,962 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 07:29:55,011 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 3265
+INFO 2025-12-09 07:36:46,494 autoreload Watching for file changes with StatReloader
