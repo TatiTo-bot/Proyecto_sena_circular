@@ -2,28 +2,292 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema Circular 120{% endblock %}</title>
 
     {% load static %}
 
-    <!-- ✅ BLOQUE DE CSS -->
-    {% block extra_css %}{% endblock %}
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Estilos personalizados -->
+    <style>
+        :root {
+            --sena-verde: #39A900;
+            --sena-naranja: #FF5800;
+            --sena-azul: #004884;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: #333;
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+            border-left-color: var(--sena-verde);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: #e8f5e9;
+            border-left-color: var(--sena-verde);
+            color: var(--sena-verde);
+            font-weight: 600;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--sena-verde) 0%, #2d8500 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .content-wrapper {
+            padding: 20px;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-success {
+            background-color: var(--sena-verde);
+            border-color: var(--sena-verde);
+        }
+        
+        .btn-success:hover {
+            background-color: #2d8500;
+            border-color: #2d8500;
+        }
+        
+        .text-success {
+            color: var(--sena-verde) !important;
+        }
+        
+        .user-dropdown {
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 5px 15px;
+        }
+        
+        .user-dropdown:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .badge {
+            font-weight: 500;
+        }
+        
+        footer {
+            background: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
 
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <header>
-        <h2>Sistema Circular 120</h2>
-        <hr>
-    </header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard:dashboard_principal' %}">
+                <i class="bi bi-mortarboard-fill fs-3 me-2"></i>
+                <span class="fw-bold">Sistema Circular 120</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:dashboard_principal' %}">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i>
+                                {{ user.get_full_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                                        <i class="bi bi-person"></i> Mi Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'usuarios:cambiar_password' %}">
+                                        <i class="bi bi-key"></i> Cambiar Contraseña
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'usuarios:logout' %}">
+                                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    <div class="container-fluid">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <!-- Sidebar -->
+            <nav class="col-md-2 col-lg-2 d-md-block sidebar p-0">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard_principal' %}active{% endif %}" 
+                               href="{% url 'dashboard:dashboard_principal' %}">
+                                <i class="bi bi-house-door me-2"></i> Inicio
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item mt-3">
+                            <h6 class="px-3 text-muted text-uppercase small fw-bold">Gestión</h6>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'aprendices:listar' %}">
+                                <i class="bi bi-people me-2"></i> Aprendices
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'fichas:listar' %}">
+                                <i class="bi bi-folder me-2"></i> Fichas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'competencias:listar' %}">
+                                <i class="bi bi-award me-2"></i> Competencias
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item mt-3">
+                            <h6 class="px-3 text-muted text-uppercase small fw-bold">Importación</h6>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'importador:importar_inasistencias' %}">
+                                <i class="bi bi-calendar-x me-2"></i> Inasistencias
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'importador:importar_evaluaciones' %}">
+                                <i class="bi bi-file-bar-graph me-2"></i> Evaluaciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'importador:historial' %}">
+                                <i class="bi bi-clock-history me-2"></i> Historial
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item mt-3">
+                            <h6 class="px-3 text-muted text-uppercase small fw-bold">Circular 120</h6>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:aprendices_riesgo_desercion' %}">
+                                <i class="bi bi-exclamation-triangle me-2"></i> Riesgo Deserción
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:aprendices_certificar_vencidos' %}">
+                                <i class="bi bi-file-text me-2"></i> Por Certificar
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            {% endif %}
 
-    <!-- ✅✅✅ ESTE ERA EL BLOQUE QUE FALTABA ✅✅✅ -->
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+                <div class="content-wrapper">
+                    <!-- Mensajes -->
+                    {% if messages %}
+                        <div class="messages-container mb-4">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-{% if message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-building me-2"></i>
+                Sistema Circular 120 SENA - Servicio Nacional de Aprendizaje
+            </p>
+            <small>© {% now "Y" %} | Todos los derechos reservados</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery (para DataTables si se usa) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     {% block extra_js %}{% endblock %}
-
+    
+    <script>
+        // Auto-ocultar alertas después de 5 segundos
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
 </body>
 </html>

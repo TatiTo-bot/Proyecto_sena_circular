@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -31,6 +32,10 @@ def importar_inasistencias(request):
     if request.method == 'POST':
         archivo_excel = request.FILES['archivo']
 
+        if not archivo_excel:
+            messages.error(request, '❌ No se seleccionó ningún archivo')
+            return redirect('importador:importar_inasistencias')
+        
         timestamp = int(time.time())
         filename = f"inasistencias_{timestamp}_{archivo_excel.name}"
         filepath = os.path.join(settings.EXCEL_UPLOAD_DIR, filename)
@@ -47,69 +52,135 @@ def importar_inasistencias(request):
         )
 
         try:
+            inicio = time.time()
             parser = ExcelParser(filepath)
 
             if not parser.load_file():
-                raise Exception("No se pudo leer el archivo")
+                raise Exception("No se pudo leer el archivo Excel")
 
             registros, errores = parser.parse_inasistencias()
+            
+            if not registros:
+                raise Exception("No se encontraron registros válidos en el archivo")
 
             importados = 0
             omitidos = 0
             errores_detallados = []
+            aprendices_creados = 0
+            fichas_creadas = 0
 
             with transaction.atomic():
                 for registro in registros:
+                    try:
+                        # Buscar o crear ficha
+                        if registro.get('numero_ficha'):
+                            ficha, created = Ficha.objects.get_or_create(
+                                numero=registro['numero_ficha'],
+                                defaults={
+                                    'estado': 'ACTIVA',
+                                    'fecha_inicio': timezone.now().date(),
+                                    'fecha_fin_lectiva': timezone.now().date() + timedelta(days=540),
+                                }
+                            )
+                        if created :
+                            fichas_creadas += 1
+                            logger.info(f"Ficha {ficha.numero} creada automáticamente.")
+                        else:
+                            #Ficha por defecto
+                            ficha = Ficha.objects.first()
+                            if not ficha:
+                                errores_detallados.append(
+                                    f"Fila {registro['fila_excel']}: No hay fichad disponibles"
+                                )
+                                omitidos += 1
+                                continue
+                        # Actualizar ficha del archivo
+                        if not archivo_importado.ficha:
+                            archivo_importado.ficha = ficha
+                            archivo_importado.save()
 
-                    ficha, _ = Ficha.objects.get_or_create(
-                        numero=registro['ficha']
-                    )
+                        # Buscar o crear aprendiz
+                        aprendiz, created = Aprendiz.objects.get_or_create(
+                            documento=registro['documento'],
+                            defaults={
+                                'tipo_documento': 'CC',
+                                'nombre': registro.get('nombre', 'Aprendiz'),
+                                'apellido': '',
+                                'email': f"{registro['documento']}@misena.edu.co",
+                                'ficha': ficha,
+                                'estado_formacion': 'EN_FORMACION',
+                                'activo': True,
+                                }
+                            )
 
-                    aprendiz = Aprendiz.objects.filter(
-                        documento=registro['documento']
-                    ).first()
-
-                    if not aprendiz:
-                        omitidos += 1
-                        errores_detallados.append(
-                            f"Fila {registro['fila_excel']}: Aprendiz no existe"
+                        if created:
+                                aprendices_creados += 1
+                                logger.info(f"Aprendiz {aprendiz.documento} creado automáticamente.")
+                            
+                            # Si ya existe pero no tiene ficha, asignarla
+                        if not created and not aprendiz.ficha:
+                                aprendiz.ficha = ficha
+                                aprendiz.save()
+                            
+                        # Crear o actualizar inasistencia
+                        Inasistencia.objects.update_or_create(
+                            aprendiz=aprendiz,
+                            fecha=registro['fecha'],
+                            defaults={
+                                'justificada': registro.get('justificada', False),
+                                'motivo': registro.get('observacion', ''),
+                                'importado_desde_excel': True,
+                                'archivo_origen': archivo_importado,
+                            }
                         )
-                        continue
 
-                    aprendiz.ficha = ficha
-                    aprendiz.save()
 
-                    Inasistencia.objects.update_or_create(
-                        aprendiz=aprendiz,
-                        fecha=registro['fecha'],
-                        defaults={
-                            'justificada': registro['justificada'],
-                            'importado_desde_excel': True,
-                            'archivo_origen': archivo_importado,
-                        }
-                    )
+                        importados += 1
 
-                    importados += 1
-
+                    except Exception as e:
+                        errores_detallados.append(
+                            f"Fila {registro.get('fila_excel', '?')}: {str(e)}"
+                        )
+                        omitidos += 1
+                        logger.error(f"Error procesando registro: {e}")
+                    
+            fin = time.time()
+            
+            # Actualizar estado del archivo
             archivo_importado.estado = 'COMPLETADO'
             archivo_importado.registros_importados = importados
             archivo_importado.registros_omitidos = omitidos
             archivo_importado.registros_error = len(errores_detallados)
-            archivo_importado.log_errores = '\n'.join(errores_detallados)
+            archivo_importado.tiempo_proceso = fin - inicio
+            archivo_importado.log_errores = '\n'.join(errores_detallados + errores)
             archivo_importado.save()
 
-            messages.success(request, f"✅ Importación finalizada: {importados} registros")
+            # Mensajes de éxito
+            messages.success(
+                request, 
+                f"✅ Importación completada: {importados} registros importados"
+            )
+            
+            if aprendices_creados > 0:
+                messages.info(request, f"📝 Se crearon {aprendices_creados} nuevos aprendices")
+            
+            if fichas_creadas > 0:
+                messages.info(request, f"📁 Se crearon {fichas_creadas} nuevas fichas")
+            
+            if omitidos > 0:
+                messages.warning(request, f"⚠️ {omitidos} registros omitidos (ver detalles)")
 
-            return redirect('importador:historial')
+            return redirect('importador:detalle', pk=archivo_importado.id)
 
         except Exception as e:
             archivo_importado.estado = 'ERROR'
             archivo_importado.log_errores = str(e)
             archivo_importado.save()
-            messages.error(request, f"❌ Error: {str(e)}")
+            messages.error(request, f"❌ Error en la importación: {str(e)}")
+            logger.error(f"Error en importación: {e}", exc_info=True)
+            return redirect('importador:importar_inasistencias')
 
     return render(request, 'importador/importar_inasistencias.html')
-
 
 # ✅ =========================
 # ✅ IMPORTAR EVALUACIONES

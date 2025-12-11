@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #39A900 0%, #2d8500 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-left: 4px solid #39A900;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .button {
+            display: inline-block;
+            background: #39A900;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .button:hover {
+            background: #2d8500;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Sistema Circular 120 SENA</h1>
+        <p style="margin: 5px 0 0 0;">Recordatorio Semanal</p>
+    </div>
+    
+    <div class="content">
+        <h2>Hola, {{ instructor.get_full_name|default:instructor.username }}</h2>
+        
+        <p>Te recordamos que es importante mantener actualizado el registro de <strong>inasistencias</strong> de tus aprendices.</p>
+        
+        <div class="info-box">
+            <h3 style="margin-top: 0;">📋 Información de la Ficha</h3>
+            <p><strong>Número de Ficha:</strong> {{ ficha.numero }}</p>
+            <p><strong>Programa:</strong> {{ ficha.programa.nombre }}</p>
+            <p><strong>Aprendices Activos:</strong> {{ aprendices_activos }}</p>
+            <p><strong>Período:</strong> {{ semana }}</p>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Importante:</strong>
+            <p style="margin: 10px 0 0 0;">
+                El registro semanal de inasistencias es fundamental para el seguimiento académico de los aprendices 
+                y el cumplimiento de la Circular 120.
+            </p>
+        </div>
+        
+        <center>
+            <a href="{{ url_importar }}" class="button">
+                📤 Subir Archivo de Inasistencias
+            </a>
+        </center>
+        
+        <h3>📝 Instrucciones Rápidas:</h3>
+        <ol>
+            <li>Prepara tu archivo Excel con las columnas requeridas</li>
+            <li>Haz clic en el botón de arriba o ingresa al sistema</li>
+            <li>Selecciona tu archivo y súbelo</li>
+            <li>El sistema validará y procesará automáticamente</li>
+        </ol>
+        
+        <p style="margin-top: 30px;">
+            <strong>¿Necesitas ayuda?</strong><br>
+            Contacta con soporte técnico o consulta el manual del usuario en el sistema.
+        </p>
+    </div>
+    
+    <div class="footer">
+        <p>Este es un correo automático del Sistema Circular 120 SENA</p>
+        <p>Si no deseas recibir estos recordatorios, puedes desactivarlos en tu perfil de usuario</p>
+        <p>© {{ "now"|date:"Y" }} SENA - Servicio Nacional de Aprendizaje</p>
+    </div>
+</body>
+</html>

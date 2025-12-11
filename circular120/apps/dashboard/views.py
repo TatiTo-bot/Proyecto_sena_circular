@@ -111,11 +111,38 @@ def dashboard_principal(request, tipo=None):
     total_aprendices = Aprendiz.objects.filter(activo=True).count()
     total_fichas_activas = Ficha.objects.filter(estado='ACTIVA').count()
     
-    estadisticas_estados = Aprendiz.objects.filter(activo=True).values(
+    # Conteo por estado
+    estadisticas_estados = {}
+    estados_count = Aprendiz.objects.filter(activo=True).values(
         'estado_formacion'
-    ).annotate(
-        total=Count('id')
-    ).order_by('-total')
+    ).annotate(total=Count('id')).order_by('-total')
+    
+    for item in estados_count:
+        estado = item['estado_formacion']
+        estado_display = dict(Aprendiz.ESTADOS_FORMACION).get(estado, estado)
+        estadisticas_estados[estado_display] = item['total']
+    
+    # ============= INASISTENCIAS CRÍTICAS =============
+    porcentaje_min = settings.CIRCULAR_120['PORCENTAJE_MINIMO_ASISTENCIA']
+    
+    aprendices_baja_asistencia_qs = Aprendiz.objects.filter(
+        activo=True,
+        estado_formacion__in=['EN_FORMACION', 'CONDICIONADO']
+    ).select_related('ficha')
+    
+    inasistencias_criticas = 0
+    for aprendiz in aprendices_baja_asistencia_qs:
+        # Calcular porcentaje aproximado
+        total_inasistencias = aprendiz.inasistencias.count()
+        if total_inasistencias > 20:  # Más de 20 inasistencias es crítico
+            inasistencias_criticas += 1
+    
+    # ============= BAJO RENDIMIENTO =============
+    bajo_rendimiento = Aprendiz.objects.filter(
+        activo=True,
+        estado_formacion__in=['EN_FORMACION', 'CONDICIONADO'],
+        juicios_evaluativos__juicio='NO_APROBADO'
+    ).distinct().count()
     
     # ============= ACCIONES RECOMENDADAS SEGÚN CIRCULAR 120 =============
     acciones_recomendadas = []
@@ -125,9 +152,8 @@ def dashboard_principal(request, tipo=None):
             'prioridad': 'CRÍTICA',
             'cantidad': aprendices_riesgo_desercion.count(),
             'titulo': 'Aprendices en riesgo de deserción',
-            'descripcion': 'Aprendices que superaron 18 meses después de etapa lectiva. '
-                            'Según Circular 120 Tabla 1 Caso 1, debe declararse deserción.',
-            'accion': 'Convocar Comité de Evaluación y Seguimiento para declarar deserción',
+            'descripcion': 'Aprendices que superaron 18 meses después de etapa lectiva.',
+            'accion': 'Convocar Comité de Evaluación y Seguimiento',
             'url': 'dashboard:aprendices_riesgo_desercion'
         })
     
@@ -135,10 +161,9 @@ def dashboard_principal(request, tipo=None):
         acciones_recomendadas.append({
             'prioridad': 'ALTA',
             'cantidad': aprendices_certificar_vencidos.count(),
-            'titulo': 'Aprendices Por Certificar - Vigencia vencida',
-            'descripcion': 'Aprendices en estado Por Certificar con más de 1 año desde evaluación. '
-                            'Según Circular 120 Tabla 2 Caso 3.',
-            'accion': 'Contactar aprendices para traslado de ficha o cancelación',
+            'titulo': 'Aprendices Por Certificar vencidos',
+            'descripcion': 'Más de 1 año desde evaluación.',
+            'accion': 'Contactar para traslado o cancelación',
             'url': 'dashboard:aprendices_certificar_vencidos'
         })
     

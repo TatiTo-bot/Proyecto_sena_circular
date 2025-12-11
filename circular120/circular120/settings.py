@@ -68,6 +68,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.usuarios.middleware.ActualizarUltimoAccesoMiddleware',  # Nuevo
+    'apps.usuarios.middleware.RedirectAuthenticatedMiddleware', 
 ]
 
 ROOT_URLCONF = 'circular120.urls'

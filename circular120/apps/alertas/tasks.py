@@ -82,7 +82,7 @@ def enviar_alerta_fichas_proximas_vencer():
 def enviar_solicitud_subida_inasistencias():
     """
     Envía recordatorio a instructores para subir inasistencias del mes
-    Se ejecuta el día 25 de cada mes
+    Se ejecuta semanalmente los viernes
     """
     fichas_activas = Ficha.objects.filter(
         estado='ACTIVA',
@@ -90,29 +90,45 @@ def enviar_solicitud_subida_inasistencias():
     ).select_related('instructor_lider', 'programa')
     
     emails_enviados = 0
-    mes_actual = timezone.now().strftime('%B %Y')
+    semana_actual = timezone.now().strftime('Semana %W de %Y')
     
     for ficha in fichas_activas:
         try:
-            # Verificar si ya subió inasistencias este mes
-            inicio_mes = timezone.now().replace(day=1)
+            # Verificar si ya subió inasistencias esta semana
+            inicio_semana = timezone.now() - timedelta(days=7)
             
-            tiene_inasistencias_mes = Inasistencia.objects.filter(
+            tiene_inasistencias_semana = Inasistencia.objects.filter(
                 aprendiz__ficha=ficha,
-                fecha__gte=inicio_mes,
+                fecha_registro__gte=inicio_semana,
                 importado_desde_excel=True
             ).exists()
             
-            if tiene_inasistencias_mes:
-                continue  # Ya subió este mes
+            if tiene_inasistencias_semana:
+                continue  # Ya subió esta semana
+            
+            # Verificar preferencias del instructor
+            perfil = getattr(ficha.instructor_lider, 'perfil', None)
+            if perfil and not perfil.recibir_recordatorios:
+                continue
+            
+            # Contar aprendices activos
+            aprendices_activos = ficha.aprendices.filter(
+                activo=True,
+                estado_formacion__in=['EN_FORMACION', 'CONDICIONADO']
+            ).count()
+            
+            if aprendices_activos == 0:
+                continue
             
             # Preparar email
-            subject = f'📋 Recordatorio: Subir inasistencias de {mes_actual} - Ficha {ficha.numero}'
+            subject = f'📋 Recordatorio Semanal: Registrar Inasistencias - Ficha {ficha.numero}'
             
             context = {
                 'ficha': ficha,
-                'mes': mes_actual,
+                'semana': semana_actual,
                 'instructor': ficha.instructor_lider,
+                'aprendices_activos': aprendices_activos,
+                'url_importar': f"{settings.SITE_URL}/importador/inasistencias/",
             }
             
             html_content = render_to_string('alertas/email_solicitud_inasistencias.html', context)
@@ -134,7 +150,6 @@ def enviar_solicitud_subida_inasistencias():
             logger.error(f"Error enviando solicitud inasistencias para ficha {ficha.numero}: {e}")
     
     return f"Solicitudes enviadas: {emails_enviados}"
-
 
 @shared_task
 def enviar_solicitud_resultados_evaluativos():
@@ -284,24 +299,39 @@ def actualizar_estados_aprendices_circular120():
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
+    # Alertas de fichas próximas a vencer - Lunes 8am
     'alerta-fichas-proximas-vencer': {
         'task': 'apps.alertas.tasks.enviar_alerta_fichas_proximas_vencer',
-        'schedule': crontab(hour=8, minute=0, day_of_week='monday'),  # Lunes 8am
+        'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
     },
-    'solicitud-inasistencias-mensual': {
+    
+    # Recordatorio semanal de inasistencias - Viernes 9am
+    'recordatorio-inasistencias-semanal': {
         'task': 'apps.alertas.tasks.enviar_solicitud_subida_inasistencias',
-        'schedule': crontab(hour=9, minute=0, day_of_month='25'),  # Día 25 de cada mes
+        'schedule': crontab(hour=9, minute=0, day_of_week='friday'),
     },
-    'solicitud-evaluaciones': {
+    
+    # Recordatorio semanal de evaluaciones - Jueves 9am
+    'recordatorio-evaluaciones-semanal': {
         'task': 'apps.alertas.tasks.enviar_solicitud_resultados_evaluativos',
-        'schedule': crontab(hour=9, minute=0, day_of_week='friday'),  # Viernes 9am
+        'schedule': crontab(hour=9, minute=0, day_of_week='thursday'),
     },
+    
+    # Informe bimensual de depuración - Día 1 de cada mes a las 7am
     'informe-depuracion-bimensual': {
         'task': 'apps.alertas.tasks.generar_informe_depuracion_bimensual',
-        'schedule': crontab(hour=7, minute=0, day_of_month='1'),  # Día 1 de cada mes
+        'schedule': crontab(hour=7, minute=0, day_of_month='1'),
     },
+    
+    # Actualización automática de estados según Circular 120 - Diario 2am
     'actualizar-estados-circular120': {
         'task': 'apps.alertas.tasks.actualizar_estados_aprendices_circular120',
-        'schedule': crontab(hour=2, minute=0),  # Diariamente a las 2am
+        'schedule': crontab(hour=2, minute=0),
+    },
+    
+    # Recordatorio urgente si no ha subido archivos en 2 semanas - Lunes 10am
+    'alerta-archivos-pendientes': {
+        'task': 'apps.alertas.tasks.enviar_alerta_archivos_pendientes',
+        'schedule': crontab(hour=10, minute=0, day_of_week='monday'),
     },
 }

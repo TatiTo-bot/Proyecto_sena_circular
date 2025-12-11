@@ -1,0 +1,31 @@
+Sistema Circular 120 SENA
+Recordatorio Semanal de Inasistencias
+
+Hola, {{ instructor.get_full_name|default:instructor.username }}
+
+Te recordamos que es importante mantener actualizado el registro de INASISTENCIAS de tus aprendices.
+
+INFORMACIÓN DE LA FICHA
+=======================
+Número de Ficha: {{ ficha.numero }}
+Programa: {{ ficha.programa.nombre }}
+Aprendices Activos: {{ aprendices_activos }}
+Período: {{ semana }}
+
+⚠️ IMPORTANTE
+El registro semanal de inasistencias es fundamental para el seguimiento académico de los aprendices y el cumplimiento de la Circular 120.
+
+INSTRUCCIONES RÁPIDAS
+=====================
+1. Prepara tu archivo Excel con las columnas requeridas
+2. Ingresa al sistema: {{ url_importar }}
+3. Selecciona tu archivo y súbelo
+4. El sistema validará y procesará automáticamente
+
+¿Necesitas ayuda?
+Contacta con soporte técnico o consulta el manual del usuario en el sistema.
+
+---
+Este es un correo automático del Sistema Circular 120 SENA
+Si no deseas recibir estos recordatorios, puedes desactivarlos en tu perfil de usuario
+© {{ "now"|date:"Y" }} SENA - Servicio Nacional de Aprendizaje

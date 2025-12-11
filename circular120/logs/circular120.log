@@ -1058,3 +1058,117 @@ INFO 2025-12-09 09:22:14,378 basehttp "GET /importador/inasistencias/ HTTP/1.1" 
 WARNING 2025-12-09 09:22:14,485 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
 WARNING 2025-12-09 09:22:14,488 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
 INFO 2025-12-09 09:26:02,544 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:26:12,809 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 09:26:14,418 log Not Found: /favicon.ico
+WARNING 2025-12-09 09:26:14,427 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 09:26:19,159 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+ERROR 2025-12-09 09:26:30,255 excel_parser Missing optional dependency 'xlrd'. Install xlrd >= 2.0.1 for xls Excel support Use pip or conda to install xlrd.
+INFO 2025-12-09 09:26:30,290 basehttp "POST /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 09:26:35,643 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 09:26:37,285 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 09:26:40,684 basehttp "GET /caso/desercion/ HTTP/1.1" 200 15692
+INFO 2025-12-09 09:26:54,156 basehttp "GET /caso/desercion/ HTTP/1.1" 200 15692
+INFO 2025-12-09 09:26:55,835 basehttp "GET /caso/desercion/ HTTP/1.1" 200 15692
+INFO 2025-12-09 09:26:58,302 basehttp "GET /caso/desercion/ HTTP/1.1" 200 15692
+INFO 2025-12-09 09:27:06,082 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 09:42:15,034 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:42:33,000 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:43:40,669 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:44:51,823 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 09:44:54,747 log Not Found: /favicon.ico
+WARNING 2025-12-09 09:44:54,751 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-09 09:56:38,403 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\models.py changed, reloading.
+INFO 2025-12-09 09:56:53,783 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:57:31,853 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\models.py changed, reloading.
+INFO 2025-12-09 09:57:37,387 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 09:58:16,427 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\models.py changed, reloading.
+INFO 2025-12-09 09:58:22,345 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 10:14:32,950 basehttp "GET /fichas/ HTTP/1.1" 200 17
+INFO 2025-12-09 10:24:20,852 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 10:28:14,855 autoreload D:\Users\User\Documents\circular\circular120\apps\aprendices\models.py changed, reloading.
+INFO 2025-12-09 10:28:20,292 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 11:15:46,457 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 11:18:20,821 autoreload Watching for file changes with StatReloader
+INFO 2025-12-09 11:18:40,776 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:18:47,974 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:18:58,692 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+ERROR 2025-12-09 11:19:17,510 excel_parser Missing optional dependency 'xlrd'. Install xlrd >= 2.0.1 for xls Excel support Use pip or conda to install xlrd.
+INFO 2025-12-09 11:19:17,552 basehttp "POST /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 11:19:19,102 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-09 11:19:20,481 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:19:23,106 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:22:25,719 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 20230
+INFO 2025-12-09 11:23:09,399 basehttp "POST /importador/evaluaciones/ HTTP/1.1" 200 20230
+INFO 2025-12-09 11:23:18,166 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:23:19,555 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:23:20,681 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-09 11:32:08,558 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:32:19,187 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:32:19,192 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:33:41,612 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:33:42,060 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:33:42,063 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:33:45,691 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:33:45,865 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:33:45,875 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:33:50,555 basehttp "GET /caso/desercion/ HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:33:50,723 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:33:50,723 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:00,680 basehttp "GET /fichas/ HTTP/1.1" 200 17
+WARNING 2025-12-09 11:34:00,835 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:00,901 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-09 11:34:02,267 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:02,278 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:03,924 basehttp "GET /aprendices/crear/ HTTP/1.1" 200 25
+WARNING 2025-12-09 11:34:04,037 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:04,073 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-09 11:34:05,567 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:05,579 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:06,402 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 20230
+WARNING 2025-12-09 11:34:06,626 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:06,626 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:40,628 basehttp "POST /importador/evaluaciones/ HTTP/1.1" 200 20230
+WARNING 2025-12-09 11:34:41,337 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:41,364 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:47,680 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:34:47,832 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:47,856 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-09 11:34:49,939 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-09 11:34:50,223 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-09 11:34:50,439 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-11 08:37:04,339 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 08:37:40,037 basehttp "GET / HTTP/1.1" 200 15692
+WARNING 2025-12-11 08:37:40,866 log Not Found: /favicon.ico
+WARNING 2025-12-11 08:37:40,869 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-11 08:38:16,305 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 10475
+INFO 2025-12-11 08:38:21,094 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 20230
+INFO 2025-12-11 08:42:06,768 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-11 08:42:08,906 basehttp "GET / HTTP/1.1" 200 15692
+INFO 2025-12-11 08:42:12,261 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 20230
+INFO 2025-12-11 09:20:25,322 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:20:32,487 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:21:58,551 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:22:05,686 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:22:36,034 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:23:02,645 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:25:03,951 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:25:09,809 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:30:47,961 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:30:53,715 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:31:17,240 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-11 09:31:23,810 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:43:16,039 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py changed, reloading.
+INFO 2025-12-11 09:43:24,970 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:43:28,999 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py changed, reloading.
+INFO 2025-12-11 09:43:33,922 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:45:02,148 autoreload D:\Users\User\Documents\circular\circular120\apps\dashboard\views.py changed, reloading.
+INFO 2025-12-11 09:45:07,502 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:50:49,062 autoreload D:\Users\User\Documents\circular\circular120\circular120\settings.py changed, reloading.
+INFO 2025-12-11 09:51:02,068 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:52:32,902 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\views.py changed, reloading.
+INFO 2025-12-11 09:52:50,013 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:53:04,821 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\views.py changed, reloading.
+INFO 2025-12-11 09:53:19,168 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 09:53:23,757 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\views.py changed, reloading.
+INFO 2025-12-11 09:53:28,891 autoreload Watching for file changes with StatReloader
+INFO 2025-12-11 10:28:58,201 autoreload Watching for file changes with StatReloader

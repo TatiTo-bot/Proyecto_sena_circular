@@ -10,17 +10,23 @@ logger = logging.getLogger('importador')
 
 class ExcelParser:
 
-    DOCUMENTO_PATTERNS = [r'identificaci[oó]n', r'documento', r'cc', r'cedula']
-    NOMBRE_COMPLETO_PATTERNS = [r'^aprendiz$', r'nombre']
-    FECHA_INICIO_PATTERNS = [r'fecha.*inicio', r'fecha']
-    FECHA_FIN_PATTERNS = [r'fecha.*fin']
-    JUSTIFICACION_PATTERNS = [r'justificacion']
-    FICHA_PATTERNS = [r'ficha']
+    DOCUMENTO_PATTERNS = [r'identificaci[oó]n.*aprendiz', r'identificaci[oó]n', r'documento', r'cc', r'cedula', r'c\.?c\.?']
+    NOMBRE_COMPLETO_PATTERNS = [r'^aprendiz$', r'nombre.*aprendiz', r'nombre.*completo', r'nombre']
+    FECHA_INICIO_PATTERNS = [r'fecha.*inicio', r'fecha.*inasistencia', r'^fecha$']
+    FECHA_FIN_PATTERNS = [r'fecha.*fin', r'fecha.*final']
+    JUSTIFICACION_PATTERNS = [r'justificaci[oó]n', r'observaci[oó]n', r'motivo']
+    FICHA_PATTERNS = [r'ficha', r'n[uú]mero.*ficha', r'num.*ficha']
+    
+    # Patrones para evaluaciones
+    RA_PATTERNS = [r'resultado.*aprendizaje', r'^ra$', r'r\.a\.', r'competencia']
+    JUICIO_PATTERNS = [r'juicio', r'resultado', r'calificaci[oó]n', r'estado']
 
     def __init__(self, file_path: str):
         self.file_path = file_path
         self.df = None
         self.detected_columns = {}
+        self.ficha_numero = None
+        self.programa_nombre = None
 
     def load_file(self) -> bool:
         try:
