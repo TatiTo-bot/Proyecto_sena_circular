@@ -14,6 +14,8 @@ class Inasistencia(models.Model):
         null=True, 
         blank=True
     )
+    cant_horas = models.FloatField(null=True, blank=True)   # nuevo campo
+    instructor = models.CharField(max_length=200, blank=True, null=True)  # nuevo campo
     importado_desde_excel = models.BooleanField(default=False)
     archivo_origen = models.ForeignKey(
         'importador.ArchivoImportado', 

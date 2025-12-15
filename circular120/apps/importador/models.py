@@ -36,3 +36,23 @@ class ArchivoImportado(models.Model):
     
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.fecha_importacion}"
+    
+    class Justificada(models.Model):
+    aprendiz = models.ForeignKey('aprendices.Aprendiz', on_delete=models.CASCADE, related_name='justificadas')
+    fecha = models.DateField(db_index=True)
+    instructor = models.CharField(max_length=200, blank=True, null=True)   # viene desde Excel
+    ficha_numero = models.CharField(max_length=50, blank=True, null=True)   # número de ficha (solo número)
+    horas = models.FloatField(null=True, blank=True)   # cant_horas desde excel
+    motivo = models.TextField(blank=True, null=True)
+    importado_desde_excel = models.BooleanField(default=True)
+    archivo_origen = models.ForeignKey('ArchivoImportado', on_delete=models.SET_NULL, null=True, blank=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'justificadas'
+        verbose_name = 'Justificada'
+        verbose_name_plural = 'Justificadas'
+        unique_together = ['aprendiz', 'fecha']
+
+    def __str__(self):
+        return f"{self.aprendiz} - {self.fecha}"
