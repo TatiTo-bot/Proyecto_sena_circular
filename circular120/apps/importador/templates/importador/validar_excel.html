@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Validar Excel{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">🔍 Validador de Archivos Excel</h2>
+    
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Prueba tu archivo antes de importar</strong>
+        <p class="mb-0">Esta herramienta te mostrará cómo se interpretará tu archivo Excel.</p>
+    </div>
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Selecciona tu archivo Excel</label>
+                    <input type="file" name="archivo" class="form-control" 
+                           accept=".xlsx,.xls" required>
+                </div>
+                
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Validar Archivo
+                </button>
+            </form>
+            
+            {% if resultados %}
+            <hr class="my-4">
+            
+            <h4>✅ Resultados de la Validación</h4>
+            
+            <div class="table-responsive mt-3">
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Columna Excel</th>
+                            <th>Normalizada</th>
+                            <th>Detectada Como</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for col in resultados.columnas %}
+                        <tr>
+                            <td><code>{{ col.original }}</code></td>
+                            <td><code>{{ col.normalizada }}</code></td>
+                            <td>
+                                {% if col.tipo %}
+                                    <span class="badge bg-success">{{ col.tipo }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No usada</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if col.ok %}
+                                    <i class="bi bi-check-circle text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle text-danger"></i>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if resultados.registros %}
+            <div class="mt-4">
+                <h5>📋 Primeros 5 registros detectados:</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fila</th>
+                                <th>Documento</th>
+                                <th>Nombre</th>
+                                <th>Ficha</th>
+                                <th>Fecha</th>
+                                <th>Justificada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reg in resultados.registros|slice:":5" %}
+                            <tr>
+                                <td>{{ reg.fila_excel }}</td>
+                                <td>{{ reg.tipo_documento }} - {{ reg.documento }}</td>
+                                <td>{{ reg.nombre }} {{ reg.apellido }}</td>
+                                <td>{{ reg.numero_ficha }}</td>
+                                <td>{{ reg.fecha }}</td>
+                                <td>
+                                    {% if reg.justificada %}
+                                        <span class="badge bg-success">Sí</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if resultados.errores %}
+            <div class="alert alert-warning mt-4">
+                <h5><i class="bi bi-exclamation-triangle me-2"></i>Advertencias:</h5>
+                <ul class="mb-0">
+                    {% for error in resultados.errores %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="alert alert-success mt-4">
+                <h5><i class="bi bi-check-circle me-2"></i>Resumen:</h5>
+                <ul class="mb-0">
+                    <li><strong>Total filas:</strong> {{ resultados.total_filas }}</li>
+                    <li><strong>Filas válidas:</strong> {{ resultados.registros|length }}</li>
+                    <li><strong>Fichas únicas:</strong> {{ resultados.fichas_unicas|length }}</li>
+                    <li><strong>Programas únicos:</strong> {{ resultados.programas_unicos|length }}</li>
+                </ul>
+            </div>
+            
+            <div class="text-end mt-3">
+                <a href="{% url 'importador:importar_inasistencias' %}" class="btn btn-success">
+                    <i class="bi bi-upload"></i> Proceder con la Importación
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

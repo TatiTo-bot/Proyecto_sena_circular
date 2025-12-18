@@ -1851,3 +1851,430 @@ INFO 2025-12-11 14:47:22,551 autoreload D:\Users\User\Documents\circular\circula
 INFO 2025-12-11 14:47:51,435 autoreload Watching for file changes with StatReloader
 INFO 2025-12-11 14:50:20,919 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\models.py changed, reloading.
 INFO 2025-12-11 14:50:37,410 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 09:58:08,265 autoreload Watching for file changes with StatReloader
+WARNING 2025-12-15 10:30:45,666 base Session data corrupted
+INFO 2025-12-15 10:30:45,855 basehttp "GET / HTTP/1.1" 302 0
+WARNING 2025-12-15 10:30:45,970 base Session data corrupted
+INFO 2025-12-15 10:30:46,153 basehttp "GET /usuarios/login/?next=/ HTTP/1.1" 200 9191
+WARNING 2025-12-15 10:30:47,437 base Session data corrupted
+WARNING 2025-12-15 10:30:47,555 log Not Found: /favicon.ico
+WARNING 2025-12-15 10:30:47,556 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+WARNING 2025-12-15 10:31:09,865 base Session data corrupted
+INFO 2025-12-15 10:31:10,112 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 200 9191
+WARNING 2025-12-15 10:31:23,301 base Session data corrupted
+INFO 2025-12-15 10:31:24,991 basehttp "POST /usuarios/login/?next=/ HTTP/1.1" 302 0
+INFO 2025-12-15 10:31:25,375 basehttp "GET / HTTP/1.1" 200 22543
+INFO 2025-12-15 10:31:31,699 basehttp "GET / HTTP/1.1" 200 22543
+ERROR 2025-12-15 10:31:35,894 log Internal Server Error: /aprendices/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\aprendices\views.py", line 10, in lista_aprendices
+    return render(request, 'aprendices/lista.html', {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: aprendices/lista.html
+ERROR 2025-12-15 10:31:35,913 basehttp "GET /aprendices/ HTTP/1.1" 500 99239
+INFO 2025-12-15 10:31:40,496 basehttp "GET /fichas/ HTTP/1.1" 200 17
+INFO 2025-12-15 10:31:52,051 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+ERROR 2025-12-15 10:32:07,676 views Error en importación: No se encontraron registros válidos. Errores: No se encontró la columna de DOCUMENTO; No se encontró la columna de FECHA
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 150, in importar_inasistencias
+    raise Exception(error_msg)
+Exception: No se encontraron registros válidos. Errores: No se encontró la columna de DOCUMENTO; No se encontró la columna de FECHA
+INFO 2025-12-15 10:32:07,690 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-15 10:32:07,759 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17817
+INFO 2025-12-15 14:50:59,314 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\views.py changed, reloading.
+INFO 2025-12-15 14:51:55,369 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 14:53:50,006 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-15 14:54:00,171 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 14:54:25,833 autoreload D:\Users\User\Documents\circular\circular120\apps\usuarios\urls.py changed, reloading.
+INFO 2025-12-15 14:54:35,384 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 14:57:56,876 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 14:58:24,191 basehttp "GET / HTTP/1.1" 200 22543
+INFO 2025-12-15 14:58:28,731 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-15 14:58:40,247 excel_parser Columnas del Excel: ['UNNAMED 0', 'CONSOLIDADO DE INASISTENCIAS APRENDICES POR FICHA', 'UNNAMED 2', 'UNNAMED 3', 'UNNAMED 4', 'UNNAMED 5', 'UNNAMED 6', 'UNNAMED 7', 'UNNAMED 8']
+INFO 2025-12-15 14:58:40,261 excel_parser Columna documento: None
+INFO 2025-12-15 14:58:40,262 excel_parser Columna fecha: None
+INFO 2025-12-15 14:58:40,263 excel_parser Columna aprendiz: None
+ERROR 2025-12-15 14:58:40,286 views Error en importación: No se encontraron registros válidos. Errores: No se encontró la columna de DOCUMENTO. Columnas disponibles: UNNAMED 0, CONSOLIDADO DE INASISTENCIAS APRENDICES POR FICHA, UNNAMED 2, UNNAMED 3, UNNAMED 4, UNNAMED 5, UNNAMED 6, UNNAMED 7, UNNAMED 8; No se encontró la columna de FECHA. Columnas disponibles: UNNAMED 0, CONSOLIDADO DE INASISTENCIAS APRENDICES POR FICHA, UNNAMED 2, UNNAMED 3, UNNAMED 4, UNNAMED 5, UNNAMED 6, UNNAMED 7, UNNAMED 8
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 150, in importar_inasistencias
+    raise Exception(error_msg)
+Exception: No se encontraron registros válidos. Errores: No se encontró la columna de DOCUMENTO. Columnas disponibles: UNNAMED 0, CONSOLIDADO DE INASISTENCIAS APRENDICES POR FICHA, UNNAMED 2, UNNAMED 3, UNNAMED 4, UNNAMED 5, UNNAMED 6, UNNAMED 7, UNNAMED 8; No se encontró la columna de FECHA. Columnas disponibles: UNNAMED 0, CONSOLIDADO DE INASISTENCIAS APRENDICES POR FICHA, UNNAMED 2, UNNAMED 3, UNNAMED 4, UNNAMED 5, UNNAMED 6, UNNAMED 7, UNNAMED 8
+INFO 2025-12-15 14:58:40,362 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-15 14:58:40,475 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 18139
+INFO 2025-12-15 15:06:54,575 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-15 15:07:06,481 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 15:07:30,014 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-15 15:07:35,753 autoreload Watching for file changes with StatReloader
+INFO 2025-12-15 15:07:51,022 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\views.py changed, reloading.
+INFO 2025-12-15 15:07:57,914 autoreload Watching for file changes with StatReloader
+INFO 2025-12-16 07:22:38,303 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 10:09:05,125 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 10:09:26,754 basehttp "GET / HTTP/1.1" 200 22543
+WARNING 2025-12-18 10:09:28,765 log Not Found: /favicon.ico
+WARNING 2025-12-18 10:09:28,801 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-18 10:09:35,246 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-18 10:09:54,477 excel_parser Archivo cargado. Columnas: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 10:09:54,490 excel_parser Total filas: 6932
+INFO 2025-12-18 10:09:54,492 excel_parser Iniciando parseo de inasistencias
+INFO 2025-12-18 10:09:54,494 excel_parser Columnas disponibles: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 10:09:54,494 excel_parser Columnas mapeadas: {'ficha': None, 'instructor': None, 'documento': None, 'aprendiz': None, 'fecha_inicio': None, 'fecha_fin': None, 'cant_horas': None, 'justificacion': None}
+INFO 2025-12-18 10:09:54,856 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-18 10:09:54,938 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 18047
+INFO 2025-12-18 10:11:14,743 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 27081
+INFO 2025-12-18 10:11:26,325 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-18 10:11:27,728 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 27081
+INFO 2025-12-18 10:12:11,942 excel_parser Archivo cargado. Columnas: ['REPORTE DE JUICIOS DE EVALUACION', 'UNNAMED: 1', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 9', 'UNNAMED: 10']
+INFO 2025-12-18 10:12:11,952 excel_parser Total filas: 2337
+INFO 2025-12-18 10:12:11,952 excel_parser Iniciando parseo de evaluaciones
+ERROR 2025-12-18 10:12:11,952 views Error importando evaluaciones
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 345, in importar_evaluaciones
+    raise Exception(error_msg)
+Exception: No se encontraron registros válidos. Errores: No se encontró columna de DOCUMENTO; No se encontró columna de CÓDIGO RA
+INFO 2025-12-18 10:12:11,984 basehttp "POST /importador/evaluaciones/ HTTP/1.1" 302 0
+INFO 2025-12-18 10:12:12,067 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 27571
+INFO 2025-12-18 10:21:11,361 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-18 10:21:22,911 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 11:18:10,280 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 11:18:18,656 basehttp "GET / HTTP/1.1" 200 22543
+WARNING 2025-12-18 11:18:20,328 log Not Found: /favicon.ico
+WARNING 2025-12-18 11:18:20,330 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-18 11:18:29,564 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-18 11:18:46,411 excel_parser Archivo cargado. Columnas: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 11:18:46,427 excel_parser Total filas: 6932
+INFO 2025-12-18 11:18:46,433 excel_parser Iniciando parseo de inasistencias
+INFO 2025-12-18 11:18:46,435 excel_parser Columnas disponibles: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 0' -> Normalizada: 'UNNAMED: 0'
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 2' -> Normalizada: 'UNNAMED: 2'
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 3' -> Normalizada: 'UNNAMED: 3'
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 4' -> Normalizada: 'UNNAMED: 4'
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 5' -> Normalizada: 'UNNAMED: 5'
+INFO 2025-12-18 11:18:46,435 excel_parser   Columna original: 'UNNAMED: 6' -> Normalizada: 'UNNAMED: 6'
+INFO 2025-12-18 11:18:46,441 excel_parser   Columna original: 'UNNAMED: 7' -> Normalizada: 'UNNAMED: 7'
+INFO 2025-12-18 11:18:46,442 excel_parser   Columna original: 'UNNAMED: 8' -> Normalizada: 'UNNAMED: 8'
+INFO 2025-12-18 11:18:46,445 excel_parser Columnas mapeadas:
+INFO 2025-12-18 11:18:46,446 excel_parser   ficha: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,446 excel_parser   instructor: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,447 excel_parser   documento: UNNAMED: 0
+INFO 2025-12-18 11:18:46,448 excel_parser   aprendiz: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,449 excel_parser   fecha_inicio: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,450 excel_parser   fecha_fin: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,450 excel_parser   cant_horas: NO ENCONTRADA
+INFO 2025-12-18 11:18:46,451 excel_parser   justificacion: NO ENCONTRADA
+WARNING 2025-12-18 11:18:46,452 excel_parser No se encontró columna de fecha, buscando manualmente...
+INFO 2025-12-18 11:18:46,587 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-18 11:18:46,700 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17895
+INFO 2025-12-18 11:18:59,053 basehttp "GET /usuarios/perfil/ HTTP/1.1" 200 7428
+INFO 2025-12-18 11:19:02,363 basehttp "GET /usuarios/cambiar-password/ HTTP/1.1" 200 8777
+WARNING 2025-12-18 11:19:17,115 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-18 11:19:17,117 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-18 11:20:14,202 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-18 11:20:14,225 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-18 11:20:17,880 basehttp "GET /usuarios/cambiar-password/ HTTP/1.1" 200 8777
+WARNING 2025-12-18 11:20:18,321 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-18 11:20:18,328 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+WARNING 2025-12-18 11:20:21,555 log Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2025-12-18 11:20:21,559 basehttp "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5820
+INFO 2025-12-18 11:20:29,907 basehttp "GET / HTTP/1.1" 200 22543
+INFO 2025-12-18 11:20:32,934 basehttp "GET /caso/certificacion/ HTTP/1.1" 200 22543
+INFO 2025-12-18 11:20:33,747 basehttp "GET /caso/certificacion/ HTTP/1.1" 200 22543
+INFO 2025-12-18 11:20:38,667 basehttp "GET /caso/certificacion/ HTTP/1.1" 200 22543
+INFO 2025-12-18 11:20:41,407 basehttp "GET /aprendices/crear/ HTTP/1.1" 200 25
+INFO 2025-12-18 11:20:45,869 basehttp "GET /fichas/ HTTP/1.1" 200 17
+ERROR 2025-12-18 11:20:48,790 log Internal Server Error: /aprendices/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\aprendices\views.py", line 10, in lista_aprendices
+    return render(request, 'aprendices/lista.html', {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: aprendices/lista.html
+ERROR 2025-12-18 11:20:48,811 basehttp "GET /aprendices/ HTTP/1.1" 500 99257
+ERROR 2025-12-18 11:20:54,799 log Internal Server Error: /importador/historial/
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 488, in historial_importaciones
+    return render(request, 'importador/historial.html', {'archivos': archivos})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'descargar_log' not found. 'descargar_log' is not a valid view function or pattern name.
+ERROR 2025-12-18 11:20:54,826 basehttp "GET /importador/historial/ HTTP/1.1" 500 200546
+INFO 2025-12-18 11:20:58,727 basehttp "GET /importador/evaluaciones/ HTTP/1.1" 200 27081
+INFO 2025-12-18 11:24:08,060 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-18 11:24:33,269 excel_parser Archivo cargado. Columnas: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 11:24:33,269 excel_parser Total filas: 6932
+INFO 2025-12-18 11:24:33,269 excel_parser Iniciando parseo de inasistencias
+INFO 2025-12-18 11:24:33,269 excel_parser Columnas disponibles: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 0' -> Normalizada: 'UNNAMED: 0'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 2' -> Normalizada: 'UNNAMED: 2'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 3' -> Normalizada: 'UNNAMED: 3'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 4' -> Normalizada: 'UNNAMED: 4'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 5' -> Normalizada: 'UNNAMED: 5'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 6' -> Normalizada: 'UNNAMED: 6'
+INFO 2025-12-18 11:24:33,269 excel_parser   Columna original: 'UNNAMED: 7' -> Normalizada: 'UNNAMED: 7'
+INFO 2025-12-18 11:24:33,277 excel_parser   Columna original: 'UNNAMED: 8' -> Normalizada: 'UNNAMED: 8'
+INFO 2025-12-18 11:24:33,277 excel_parser Columnas mapeadas:
+INFO 2025-12-18 11:24:33,277 excel_parser   ficha: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,277 excel_parser   instructor: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,277 excel_parser   documento: UNNAMED: 0
+INFO 2025-12-18 11:24:33,277 excel_parser   aprendiz: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,277 excel_parser   fecha_inicio: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,277 excel_parser   fecha_fin: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,277 excel_parser   cant_horas: NO ENCONTRADA
+INFO 2025-12-18 11:24:33,283 excel_parser   justificacion: NO ENCONTRADA
+WARNING 2025-12-18 11:24:33,283 excel_parser No se encontró columna de fecha, buscando manualmente...
+INFO 2025-12-18 11:24:33,319 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-18 11:24:33,379 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17895
+INFO 2025-12-18 14:42:17,053 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 14:42:31,822 basehttp "GET / HTTP/1.1" 200 22543
+INFO 2025-12-18 14:42:38,642 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+INFO 2025-12-18 14:42:50,819 excel_parser Archivo cargado. Columnas: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 14:42:50,821 excel_parser Total filas: 6932
+INFO 2025-12-18 14:42:50,822 excel_parser Iniciando parseo de inasistencias
+INFO 2025-12-18 14:42:50,823 excel_parser Columnas disponibles: ['UNNAMED: 0', 'UNNAMED: 2', 'UNNAMED: 3', 'UNNAMED: 4', 'UNNAMED: 5', 'UNNAMED: 6', 'UNNAMED: 7', 'UNNAMED: 8']
+INFO 2025-12-18 14:42:50,824 excel_parser   Columna original: 'UNNAMED: 0' -> Normalizada: 'UNNAMED: 0'
+INFO 2025-12-18 14:42:50,826 excel_parser   Columna original: 'UNNAMED: 2' -> Normalizada: 'UNNAMED: 2'
+INFO 2025-12-18 14:42:50,827 excel_parser   Columna original: 'UNNAMED: 3' -> Normalizada: 'UNNAMED: 3'
+INFO 2025-12-18 14:42:50,828 excel_parser   Columna original: 'UNNAMED: 4' -> Normalizada: 'UNNAMED: 4'
+INFO 2025-12-18 14:42:50,829 excel_parser   Columna original: 'UNNAMED: 5' -> Normalizada: 'UNNAMED: 5'
+INFO 2025-12-18 14:42:50,830 excel_parser   Columna original: 'UNNAMED: 6' -> Normalizada: 'UNNAMED: 6'
+INFO 2025-12-18 14:42:50,830 excel_parser   Columna original: 'UNNAMED: 7' -> Normalizada: 'UNNAMED: 7'
+INFO 2025-12-18 14:42:50,831 excel_parser   Columna original: 'UNNAMED: 8' -> Normalizada: 'UNNAMED: 8'
+INFO 2025-12-18 14:42:50,835 excel_parser Columnas mapeadas:
+INFO 2025-12-18 14:42:50,838 excel_parser   ficha: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,839 excel_parser   instructor: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,840 excel_parser   documento: UNNAMED: 0
+INFO 2025-12-18 14:42:50,842 excel_parser   aprendiz: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,842 excel_parser   fecha_inicio: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,843 excel_parser   fecha_fin: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,844 excel_parser   cant_horas: NO ENCONTRADA
+INFO 2025-12-18 14:42:50,845 excel_parser   justificacion: NO ENCONTRADA
+WARNING 2025-12-18 14:42:50,846 excel_parser No se encontró columna de fecha, buscando manualmente...
+INFO 2025-12-18 14:42:51,103 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-18 14:42:51,170 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17895
+INFO 2025-12-18 15:08:51,883 autoreload D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py changed, reloading.
+INFO 2025-12-18 15:08:58,563 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 15:10:42,776 autoreload Watching for file changes with StatReloader
+INFO 2025-12-18 15:10:48,908 basehttp "GET / HTTP/1.1" 200 22543
+WARNING 2025-12-18 15:10:50,479 log Not Found: /favicon.ico
+WARNING 2025-12-18 15:10:50,482 basehttp "GET /favicon.ico HTTP/1.1" 404 5709
+INFO 2025-12-18 15:10:53,791 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17326
+ERROR 2025-12-18 15:11:04,354 excel_parser Error leyendo Excel: File is not a zip file
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 119, in _read_excel
+    return pd.read_excel(bio, engine='openpyxl')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 495, in read_excel
+    io = ExcelFile(
+         ^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 1567, in __init__
+    self._reader = self._engines[engine](
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 553, in __init__
+    super().__init__(
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 573, in __init__
+    self.book = self.load_workbook(self.handles.handle, engine_kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 572, in load_workbook
+    return load_workbook(
+           ^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1354, in __init__
+    self._RealGetContents()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1421, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+ERROR 2025-12-18 15:11:04,460 excel_parser Error leyendo archivo: File is not a zip file
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 83, in _read_df
+    return self._read_excel(content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 119, in _read_excel
+    return pd.read_excel(bio, engine='openpyxl')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 495, in read_excel
+    io = ExcelFile(
+         ^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 1567, in __init__
+    self._reader = self._engines[engine](
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 553, in __init__
+    super().__init__(
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 573, in __init__
+    self.book = self.load_workbook(self.handles.handle, engine_kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 572, in load_workbook
+    return load_workbook(
+           ^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1354, in __init__
+    self._RealGetContents()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1421, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+ERROR 2025-12-18 15:11:04,477 excel_parser Error cargando archivo: File is not a zip file
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 41, in load_file
+    self.df = self._read_df()
+              ^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 83, in _read_df
+    return self._read_excel(content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\excel_parser.py", line 119, in _read_excel
+    return pd.read_excel(bio, engine='openpyxl')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 495, in read_excel
+    io = ExcelFile(
+         ^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 1567, in __init__
+    self._reader = self._engines[engine](
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 553, in __init__
+    super().__init__(
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_base.py", line 573, in __init__
+    self.book = self.load_workbook(self.handles.handle, engine_kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 572, in load_workbook
+    return load_workbook(
+           ^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\User\Documents\circular\circular120\env\Lib\site-packages\openpyxl\reader\excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1354, in __init__
+    self._RealGetContents()
+  File "C:\Users\User\AppData\Local\Programs\Python\Python312\Lib\zipfile\__init__.py", line 1421, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+ERROR 2025-12-18 15:11:04,494 views Error en importación: No se pudo leer el archivo Excel. Verifica que sea válido.
+Traceback (most recent call last):
+  File "D:\Users\User\Documents\circular\circular120\apps\importador\views.py", line 184, in importar_inasistencias
+    raise Exception("No se pudo leer el archivo Excel. Verifica que sea válido.")
+Exception: No se pudo leer el archivo Excel. Verifica que sea válido.
+INFO 2025-12-18 15:11:04,494 basehttp "POST /importador/inasistencias/ HTTP/1.1" 302 0
+INFO 2025-12-18 15:11:04,555 basehttp "GET /importador/inasistencias/ HTTP/1.1" 200 17753
