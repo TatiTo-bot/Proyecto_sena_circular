@@ -12,6 +12,17 @@ class Ficha(models.Model):
         return f"{self.numero} - {self.programa or 'Sin programa'}"
 
 class Aprendiz(models.Model):
+    ESTADOS_FORMACION = [
+        ('EN_FORMACION', 'EN FORMACIÓN'),
+        ('ETAPA_PRODUCTIVA', 'ETAPA PRODUCTIVA'),
+        ('POR_CERTIFICAR', 'POR CERTIFICAR'),
+        ('CERTIFICADO', 'CERTIFICADO'),
+        ('CANCELADO', 'CANCELADO'),
+        ('DESERTADO', 'DESERTADO'),
+        ('APLAZADO', 'APLAZADO'),
+        ('REINGRESADO', 'REINGRESADO'),
+    ]
+    
     documento = models.CharField(max_length=30, primary_key=True)
     nombre = models.CharField(max_length=150)
     apellido = models.CharField(max_length=150)
@@ -19,19 +30,16 @@ class Aprendiz(models.Model):
     telefono = models.CharField(max_length=30, blank=True, null=True)
     estado_formacion = models.CharField(
         max_length=30,
-        choices=[
-            ('INDUCCION','INDUCCIÓN'),
-            ('FORMACION','FORMACIÓN'),
-            ('POR_CERTIFICAR','POR CERTIFICAR'),
-            ('CERTIFICADO','CERTIFICADO'),
-            ('APLAZADO','APLAZADO'),
-            ('REINGRESADO','REINGRESADO'),
-            ('DESERTO','DESERTO'),
-        ],
-        default='FORMACION'
+        choices=ESTADOS_FORMACION,
+        default='EN_FORMACION'
     )
+    
+    # Fechas clave para Circular 120
     fecha_inicio = models.DateField(null=True, blank=True)
     fecha_final = models.DateField(null=True, blank=True)
+    fecha_fin_lectiva = models.DateField(null=True, blank=True, help_text="Fecha fin etapa lectiva")
+    fecha_fin_productiva = models.DateField(null=True, blank=True, help_text="Fecha fin etapa productiva")
+    
     ficha = models.ForeignKey(Ficha, on_delete=models.SET_NULL, null=True, blank=True, related_name='aprendices')
     observaciones = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -39,6 +47,33 @@ class Aprendiz(models.Model):
 
     def __str__(self):
         return f"{self.documento} - {self.nombre} {self.apellido}"
+    
+    def dias_vencido(self):
+        """Calcula cuántos días está vencido según su estado"""
+        from datetime import date
+        hoy = date.today()
+        
+        if self.estado_formacion == 'ETAPA_PRODUCTIVA' and self.fecha_fin_productiva:
+            if self.fecha_fin_productiva < hoy:
+                return (hoy - self.fecha_fin_productiva).days
+        elif self.ficha and self.ficha.fecha_fin:
+            if self.ficha.fecha_fin < hoy and self.estado_formacion != 'CERTIFICADO':
+                return (hoy - self.ficha.fecha_fin).days
+        return 0
+    
+    def esta_vencido(self):
+        """Retorna True si el aprendiz está vencido"""
+        return self.dias_vencido() > 0
+    
+    def nivel_alerta(self):
+        """Retorna el nivel de alerta: 'success', 'warning', 'danger'"""
+        dias = self.dias_vencido()
+        if dias == 0:
+            return 'success'
+        elif dias <= 30:
+            return 'warning'
+        else:
+            return 'danger'
 
 class Inasistencia(models.Model):
     aprendiz = models.ForeignKey(Aprendiz, on_delete=models.CASCADE, related_name='inasistencias')

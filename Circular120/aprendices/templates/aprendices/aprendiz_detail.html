@@ -1,26 +1,279 @@
 <!-- aprendices/templates/aprendices/aprendiz_detail.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}Detalle del Aprendiz{% endblock %}
+
 {% block content %}
-<h1>Aprendiz {{ object.documento }}</h1>
-<p><strong>Nombre:</strong> {{ object.nombre }} {{ object.apellido }}</p>
-<p><strong>Ficha:</strong> {{ object.ficha }}</p>
-<p><strong>Estado:</strong> {{ object.estado_formacion }}</p>
+<div style="max-width: 1200px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="color: var(--text-dark); margin-bottom: 5px; font-size: 24px;">
+                <i class="fas fa-user-circle"></i> {{ object.nombre }} {{ object.apellido }}
+            </h2>
+            <p style="color: var(--text-light);">Documento: {{ object.documento }}</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'aprendiz_update' object.documento %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a href="{% url 'aprendiz_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
 
-<h2>Inasistencias</h2>
-<ul>
-    {% for ins in object.inasistencias.all %}
-        <li>{{ ins.fecha }} - {{ ins.motivo }} {% if ins.justificada %}(Justificada){% endif %}</li>
-    {% empty %}
-        <li>No hay inasistencias registradas.</li>
-    {% endfor %}
-</ul>
+    <!-- Alertas según estado -->
+    {% if object.esta_vencido %}
+        <div class="alert alert-error" style="margin-bottom: 25px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>¡Atención!</strong> Este aprendiz tiene {{ object.dias_vencido }} día{{ object.dias_vencido|pluralize }} vencido{{ object.dias_vencido|pluralize }}.
+                Se requiere actualizar su estado o tomar acciones del comité.
+            </div>
+        </div>
+    {% endif %}
 
-<h2>Resultados</h2>
-<ul>
-    {% for r in object.resultados_aprendiz.all %}
-        <li>{{ r.resultado.codigo }} - {{ r.resultado.nombre }} : {{ r.estado }}</li>
-    {% empty %}
-        <li>No hay resultados registrados.</li>
-    {% endfor %}
-</ul>
+    <!-- Grid de información -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;">
+        
+        <!-- Información Personal -->
+        <div class="table-container">
+            <div style="background: var(--sena-green); color: white; padding: 15px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-user"></i> Información Personal
+                </h3>
+            </div>
+            
+            <table style="border: none;">
+                <tr>
+                    <td style="width: 40%; font-weight: 600; border: none; padding: 12px 0;">Documento:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.documento }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Nombre Completo:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.nombre }} {{ object.apellido }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Email:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.email %}
+                            <a href="mailto:{{ object.email }}" style="color: var(--sena-green);">{{ object.email }}</a>
+                        {% else %}
+                            <span style="color: #999;">No registrado</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Teléfono:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.telefono %}
+                            {{ object.telefono }}
+                        {% else %}
+                            <span style="color: #999;">No registrado</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Información Académica -->
+        <div class="table-container">
+            <div style="background: #0066a1; color: white; padding: 15px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-graduation-cap"></i> Información Académica
+                </h3>
+            </div>
+            
+            <table style="border: none;">
+                <tr>
+                    <td style="width: 40%; font-weight: 600; border: none; padding: 12px 0;">Ficha:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.ficha %}
+                            <span class="badge badge-info">{{ object.ficha.numero }}</span>
+                        {% else %}
+                            <span style="color: #999;">Sin ficha asignada</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if object.ficha %}
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Programa:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.ficha.programa|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Instructor:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.ficha.instructor|default:"—" }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Estado:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.estado_formacion == 'POR_CERTIFICAR' %}
+                            <span class="badge badge-warning">{{ object.get_estado_formacion_display }}</span>
+                        {% elif object.estado_formacion == 'CERTIFICADO' %}
+                            <span class="badge badge-success">{{ object.get_estado_formacion_display }}</span>
+                        {% elif object.estado_formacion == 'CANCELADO' or object.estado_formacion == 'DESERTADO' %}
+                            <span class="badge badge-danger">{{ object.get_estado_formacion_display }}</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ object.get_estado_formacion_display }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Fechas Importantes -->
+        <div class="table-container">
+            <div style="background: #f08c00; color: white; padding: 15px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-calendar-alt"></i> Fechas Importantes
+                </h3>
+            </div>
+            
+            <table style="border: none;">
+                <tr>
+                    <td style="width: 50%; font-weight: 600; border: none; padding: 12px 0;">Inicio Formación:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {{ object.fecha_inicio|date:"d/m/Y"|default:"—" }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fin Formación:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {{ object.fecha_final|date:"d/m/Y"|default:"—" }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fin Lectiva:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {{ object.fecha_fin_lectiva|date:"d/m/Y"|default:"—" }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fin Productiva:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {{ object.fecha_fin_productiva|date:"d/m/Y"|default:"—" }}
+                    </td>
+                </tr>
+                {% if object.ficha %}
+                <tr style="border-top: 2px solid #e0e0e0;">
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fin Ficha:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {{ object.ficha.fecha_fin|date:"d/m/Y"|default:"—" }}
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Observaciones -->
+    {% if object.observaciones %}
+    <div class="table-container" style="margin-top: 25px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 15px;">
+            <i class="fas fa-sticky-note"></i> Observaciones
+        </h3>
+        <p style="color: var(--text-light); line-height: 1.6;">{{ object.observaciones }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Inasistencias -->
+    <div class="table-container" style="margin-top: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--text-dark); margin: 0;">
+                <i class="fas fa-clipboard-list"></i> Inasistencias 
+                <span class="badge badge-{% if object.inasistencias.count > 5 %}danger{% else %}info{% endif %}" style="font-size: 14px; margin-left: 10px;">
+                    {{ object.inasistencias.count }}
+                </span>
+            </h3>
+        </div>
+        
+        {% if object.inasistencias.all %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Ficha</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ins in object.inasistencias.all %}
+                <tr>
+                    <td>{{ ins.fecha|date:"d/m/Y" }}</td>
+                    <td><span class="badge badge-info">{{ ins.ficha.numero }}</span></td>
+                    <td>{{ ins.motivo|truncatewords:15 }}</td>
+                    <td>
+                        {% if ins.justificada %}
+                            <span class="badge badge-success">Justificada</span>
+                        {% else %}
+                            <span class="badge badge-danger">No Justificada</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align: center; padding: 30px; color: var(--text-light);">
+            <i class="fas fa-check-circle" style="font-size: 32px; color: var(--sena-green); display: block; margin-bottom: 10px;"></i>
+            No hay inasistencias registradas
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Resultados de Aprendizaje -->
+    <div class="table-container" style="margin-top: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--text-dark); margin: 0;">
+                <i class="fas fa-tasks"></i> Resultados de Aprendizaje
+                <span class="badge badge-info" style="font-size: 14px; margin-left: 10px;">
+                    {{ object.resultados_aprendiz.count }}
+                </span>
+            </h3>
+        </div>
+        
+        {% if object.resultados_aprendiz.all %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Código RA</th>
+                    <th>Nombre</th>
+                    <th>Competencia</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in object.resultados_aprendiz.all %}
+                <tr>
+                    <td><strong>{{ r.resultado.codigo }}</strong></td>
+                    <td>{{ r.resultado.nombre }}</td>
+                    <td>
+                        {% if r.resultado.competencia %}
+                            {{ r.resultado.competencia.codigo }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if r.estado == 'APROBADO' %}
+                            <span class="badge badge-success">{{ r.get_estado_display }}</span>
+                        {% elif r.estado == 'NO_APROBADO' %}
+                            <span class="badge badge-danger">{{ r.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge badge-warning">{{ r.get_estado_display }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align: center; padding: 30px; color: var(--text-light);">
+            No hay resultados de aprendizaje registrados
+        </p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

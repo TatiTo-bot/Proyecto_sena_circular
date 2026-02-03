@@ -1,0 +1,116 @@
+<!-- aprendices/templates/aprendices/casos_por_certificar.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Aprendices Por Certificar{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+            <i class="fas fa-certificate"></i> Aprendices Por Certificar
+        </h2>
+        <p style="color: var(--text-light);">
+            Aprendices que completaron su formación y están listos para certificación
+        </p>
+    </div>
+    <div class="stat-card" style="min-width: 150px; margin: 0;">
+        <h3 style="margin-bottom: 5px;">Total</h3>
+        <div class="number" style="font-size: 32px; color: #f08c00;">{{ total }}</div>
+    </div>
+</div>
+
+{% if total > 0 %}
+<div class="alert alert-info" style="margin-bottom: 25px;">
+    <i class="fas fa-info-circle"></i>
+    <div>
+        Estos aprendices han completado satisfactoriamente su etapa lectiva y productiva. 
+        Revisa cada caso y procede con la certificación correspondiente.
+    </div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th><i class="fas fa-id-card"></i> Documento</th>
+                <th><i class="fas fa-user"></i> Nombre Completo</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
+                <th><i class="fas fa-bookmark"></i> Ficha</th>
+                <th><i class="fas fa-calendar-check"></i> Fecha Fin Productiva</th>
+                <th style="text-align: center;"><i class="fas fa-cog"></i> Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in aprendices %}
+            <tr>
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.email %}
+                        <a href="mailto:{{ aprendiz.email }}" style="color: var(--sena-green);">
+                            {{ aprendiz.email }}
+                        </a>
+                    {% else %}
+                        <span style="color: #999;">Sin email</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
+                    {% else %}
+                        <span style="color: #999;">Sin ficha</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% else %}
+                        <span style="color: #999;">No especificada</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
+                       class="btn btn-primary" 
+                       style="font-size: 12px; padding: 6px 15px; margin-right: 5px;"
+                       title="Ver detalles">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                    <a href="{% url 'aprobar_certificacion' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 12px; padding: 6px 15px; background: #28a745; color: white;"
+                       onclick="return confirm('¿Está seguro de marcar como CERTIFICADO a {{ aprendiz.nombre }} {{ aprendiz.apellido }}?')"
+                       title="Aprobar certificación">
+                        <i class="fas fa-check-circle"></i> Certificar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    <h4 style="color: var(--text-dark); margin-bottom: 15px;">
+        <i class="fas fa-lightbulb"></i> Acciones Disponibles
+    </h4>
+    <ul style="color: var(--text-light); line-height: 1.8;">
+        <li><strong>Ver:</strong> Consulta el detalle completo del aprendiz, incluyendo inasistencias y resultados de aprendizaje</li>
+        <li><strong>Certificar:</strong> Marca al aprendiz como CERTIFICADO en el sistema</li>
+        <li>Para generar el acta del comité con todos estos casos, ve a <a href="{% url 'reporte_circular120' %}" style="color: var(--sena-green);">Reporte Circular 120</a></li>
+    </ul>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 60px 20px;">
+    <i class="fas fa-check-circle" style="font-size: 80px; color: var(--sena-green); margin-bottom: 20px;"></i>
+    <h3 style="color: var(--text-dark); margin-bottom: 10px;">¡Excelente!</h3>
+    <p style="color: var(--text-light); font-size: 16px;">
+        No hay aprendices pendientes por certificar en este momento
+    </p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary" style="margin-top: 20px;">
+        <i class="fas fa-home"></i> Volver al Dashboard
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

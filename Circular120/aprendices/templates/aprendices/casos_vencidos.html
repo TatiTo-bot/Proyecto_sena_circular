@@ -1,0 +1,276 @@
+<!-- aprendices/templates/aprendices/casos_vencidos.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Casos Vencidos{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h2 style="color: #c92a2a; margin-bottom: 10px; font-size: 24px;">
+            <i class="fas fa-exclamation-triangle"></i> Casos Vencidos - Acción Requerida
+        </h2>
+        <p style="color: var(--text-light);">
+            Aprendices con fichas o etapas productivas vencidas que requieren atención
+        </p>
+    </div>
+    <div class="stat-card" style="min-width: 150px; margin: 0; border-top: 4px solid #c92a2a;">
+        <h3 style="margin-bottom: 5px;">Total</h3>
+        <div class="number" style="font-size: 32px; color: #c92a2a;">{{ total }}</div>
+    </div>
+</div>
+
+{% if total > 0 %}
+
+<!-- CASOS URGENTES (>60 días) -->
+{% if urgentes %}
+<div class="alert alert-error" style="margin-bottom: 30px;">
+    <i class="fas fa-exclamation-circle"></i>
+    <div>
+        <strong>¡URGENTE!</strong> Hay {{ urgentes|length }} caso{{ urgentes|length|pluralize }} vencido{{ urgentes|length|pluralize }} por más de 60 días.
+        Se requiere acción inmediata del comité de evaluación.
+    </div>
+</div>
+
+<div class="table-container" style="border: 2px solid #c92a2a;">
+    <div style="background: #c92a2a; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
+        <h3 style="margin: 0; font-size: 16px;">
+            <i class="fas fa-fire"></i> URGENTE - Más de 60 días vencidos ({{ urgentes|length }})
+        </h3>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Estado</th>
+                <th>Fecha Fin</th>
+                <th>Días Vencido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in urgentes %}
+            <tr style="background-color: #fff5f5;">
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
+                    {% else %}
+                        <span style="color: #999;">Sin ficha</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% elif aprendiz.ficha.fecha_fin %}
+                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <strong style="color: #c92a2a; font-size: 16px;">
+                        {{ aprendiz.dias_vencido }} días
+                    </strong>
+                </td>
+                <td style="text-align: center;">
+                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
+                       class="btn btn-primary" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'cancelar_aprendiz' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #dc3545; color: white;"
+                       onclick="return confirm('¿Está seguro de CANCELAR a {{ aprendiz.nombre }} {{ aprendiz.apellido }}?')">
+                        <i class="fas fa-times-circle"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- CASOS MODERADOS (30-60 días) -->
+{% if moderados %}
+<div class="table-container" style="margin-top: 30px; border: 2px solid #e8590c;">
+    <div style="background: #e8590c; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
+        <h3 style="margin: 0; font-size: 16px;">
+            <i class="fas fa-exclamation-triangle"></i> MODERADO - Entre 30 y 60 días vencidos ({{ moderados|length }})
+        </h3>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Estado</th>
+                <th>Fecha Fin</th>
+                <th>Días Vencido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in moderados %}
+            <tr style="background-color: #fff8f0;">
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
+                    {% else %}
+                        <span style="color: #999;">Sin ficha</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% elif aprendiz.ficha.fecha_fin %}
+                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <strong style="color: #e8590c; font-size: 16px;">
+                        {{ aprendiz.dias_vencido }} días
+                    </strong>
+                </td>
+                <td style="text-align: center;">
+                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
+                       class="btn btn-primary" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'cancelar_aprendiz' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #dc3545; color: white;"
+                       onclick="return confirm('¿Está seguro de CANCELAR a {{ aprendiz.nombre }} {{ aprendiz.apellido }}?')">
+                        <i class="fas fa-times-circle"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- CASOS RECIENTES (<30 días) -->
+{% if recientes %}
+<div class="table-container" style="margin-top: 30px; border: 2px solid #f08c00;">
+    <div style="background: #f08c00; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
+        <h3 style="margin: 0; font-size: 16px;">
+            <i class="fas fa-clock"></i> RECIENTE - Menos de 30 días vencidos ({{ recientes|length }})
+        </h3>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Estado</th>
+                <th>Fecha Fin</th>
+                <th>Días Vencido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in recientes %}
+            <tr>
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
+                    {% else %}
+                        <span style="color: #999;">Sin ficha</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% elif aprendiz.ficha.fecha_fin %}
+                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <strong style="color: #f08c00; font-size: 16px;">
+                        {{ aprendiz.dias_vencido }} días
+                    </strong>
+                </td>
+                <td style="text-align: center;">
+                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
+                       class="btn btn-primary" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
+                       class="btn" 
+                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    <h4 style="color: var(--text-dark); margin-bottom: 15px;">
+        <i class="fas fa-info-circle"></i> Acciones Recomendadas
+    </h4>
+    <ul style="color: var(--text-light); line-height: 1.8;">
+        <li><strong>Casos Urgentes (>60 días):</strong> Requieren decisión inmediata del comité. Revisar si procede certificación, cancelación o prórroga.</li>
+        <li><strong>Casos Moderados (30-60 días):</strong> Programar reunión con el aprendiz para definir acciones.</li>
+        <li><strong>Casos Recientes (<30 días):</strong> Realizar seguimiento y actualizar estado según corresponda.</li>
+        <li>Para generar el acta oficial del comité, accede a <a href="{% url 'reporte_circular120' %}" style="color: var(--sena-green);">Reporte Circular 120</a></li>
+    </ul>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 60px 20px;">
+    <i class="fas fa-check-circle" style="font-size: 80px; color: var(--sena-green); margin-bottom: 20px;"></i>
+    <h3 style="color: var(--text-dark); margin-bottom: 10px;">¡Todo al día!</h3>
+    <p style="color: var(--text-light); font-size: 16px;">
+        No hay casos vencidos que requieran atención en este momento
+    </p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary" style="margin-top: 20px;">
+        <i class="fas fa-home"></i> Volver al Dashboard
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,326 @@
+<!-- aprendices/templates/aprendices/reporte_circular120.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Reporte Circular 120{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        .sidebar, .top-header, footer, .no-print {
+            display: none !important;
+        }
+        .main-content {
+            margin-left: 0 !important;
+        }
+        .content-wrapper {
+            padding: 20px !important;
+        }
+        body {
+            background: white !important;
+        }
+        .table-container {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+        }
+    }
+    
+    .report-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid var(--sena-green);
+    }
+    
+    .report-logo {
+        width: 80px;
+        margin: 0 auto 20px;
+    }
+    
+    .section-header {
+        background: var(--sena-green);
+        color: white;
+        padding: 15px 20px;
+        margin: 30px 0 20px 0;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver al Dashboard
+    </a>
+    <button onclick="window.print()" class="btn btn-primary">
+        <i class="fas fa-print"></i> Imprimir / Exportar PDF
+    </button>
+</div>
+
+<div class="table-container">
+    <div class="report-header">
+        <div class="report-logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="20" r="10" fill="#39A900"/>
+                <path d="M50 32 L30 60 L30 90 L38 90 L38 65 L50 45 L62 65 L62 90 L70 90 L70 60 Z" fill="#39A900"/>
+                <text x="50" y="18" text-anchor="middle" fill="white" font-size="8" font-weight="bold">SENA</text>
+            </svg>
+        </div>
+        <h1 style="color: var(--text-dark); font-size: 28px; margin-bottom: 10px;">
+            REPORTE CIRCULAR 120
+        </h1>
+        <h2 style="color: var(--text-light); font-size: 18px; font-weight: 400;">
+            Servicio Nacional de Aprendizaje - SENA
+        </h2>
+        <p style="color: var(--text-light); margin-top: 15px; font-size: 14px;">
+            <strong>Fecha de generación:</strong> {{ fecha_generacion|date:"d/m/Y" }}
+        </p>
+    </div>
+
+    <!-- RESUMEN EJECUTIVO -->
+    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 20px; font-size: 20px;">
+            <i class="fas fa-chart-bar"></i> Resumen Ejecutivo
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #f08c00; font-weight: 700;">{{ por_certificar.count }}</div>
+                <div style="color: var(--text-light); font-size: 14px; margin-top: 5px;">Por Certificar</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #e8590c; font-weight: 700;">{{ productiva_vencida.count }}</div>
+                <div style="color: var(--text-light); font-size: 14px; margin-top: 5px;">Productiva Vencida</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 32px; color: #c92a2a; font-weight: 700;">{{ ficha_vencida.count }}</div>
+                <div style="color: var(--text-light); font-size: 14px; margin-top: 5px;">Fichas Vencidas</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 1: POR CERTIFICAR -->
+    {% if por_certificar %}
+    <div class="section-header">
+        <i class="fas fa-certificate"></i> 1. APRENDICES POR CERTIFICAR ({{ por_certificar.count }})
+    </div>
+    
+    <div style="margin-bottom: 15px; color: var(--text-light); font-size: 14px;">
+        Aprendices que han completado satisfactoriamente su etapa lectiva y productiva, 
+        listos para el proceso de certificación.
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Programa</th>
+                <th>Fecha Fin Productiva</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in por_certificar %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        {{ aprendiz.ficha.numero }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        {{ aprendiz.ficha.programa }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% else %}
+                        No especificada
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="section-header">
+        <i class="fas fa-certificate"></i> 1. APRENDICES POR CERTIFICAR
+    </div>
+    <p style="text-align: center; padding: 40px; color: var(--text-light);">
+        <i class="fas fa-check-circle" style="font-size: 48px; color: var(--sena-green); display: block; margin-bottom: 15px;"></i>
+        No hay aprendices pendientes por certificar
+    </p>
+    {% endif %}
+
+    <!-- SECCIÓN 2: PRODUCTIVA VENCIDA -->
+    {% if productiva_vencida %}
+    <div class="section-header" style="margin-top: 50px; background: #e8590c;">
+        <i class="fas fa-exclamation-triangle"></i> 2. ETAPA PRODUCTIVA VENCIDA ({{ productiva_vencida.count }})
+    </div>
+    
+    <div style="margin-bottom: 15px; color: var(--text-light); font-size: 14px;">
+        Aprendices que superaron el plazo establecido para la etapa productiva y requieren 
+        decisión del comité de evaluación.
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Fecha Fin Productiva</th>
+                <th>Días Vencido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in productiva_vencida %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        {{ aprendiz.ficha.numero }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.fecha_fin_productiva %}
+                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="text-align: center; color: #e8590c; font-weight: 600;">
+                    {{ aprendiz.dias_vencido }} días
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="section-header" style="margin-top: 50px; background: #e8590c;">
+        <i class="fas fa-exclamation-triangle"></i> 2. ETAPA PRODUCTIVA VENCIDA
+    </div>
+    <p style="text-align: center; padding: 40px; color: var(--text-light);">
+        No hay casos de etapa productiva vencida
+    </p>
+    {% endif %}
+
+    <!-- SECCIÓN 3: FICHAS VENCIDAS -->
+    {% if ficha_vencida %}
+    <div class="section-header" style="margin-top: 50px; background: #c92a2a;">
+        <i class="fas fa-clock"></i> 3. FICHAS VENCIDAS SIN CERTIFICAR ({{ ficha_vencida.count }})
+    </div>
+    
+    <div style="margin-bottom: 15px; color: var(--text-light); font-size: 14px;">
+        Aprendices cuya ficha de formación finalizó pero aún no han sido certificados. 
+        Requieren seguimiento y definición de estado.
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Fecha Fin Ficha</th>
+                <th>Estado Actual</th>
+                <th>Días Vencido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in ficha_vencida %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ aprendiz.documento }}</strong></td>
+                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        {{ aprendiz.ficha.numero }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if aprendiz.ficha.fecha_fin %}
+                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
+                </td>
+                <td style="text-align: center; color: #c92a2a; font-weight: 600;">
+                    {{ aprendiz.dias_vencido }} días
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="section-header" style="margin-top: 50px; background: #c92a2a;">
+        <i class="fas fa-clock"></i> 3. FICHAS VENCIDAS SIN CERTIFICAR
+    </div>
+    <p style="text-align: center; padding: 40px; color: var(--text-light);">
+        No hay fichas vencidas sin certificar
+    </p>
+    {% endif %}
+
+    <!-- CONCLUSIONES Y RECOMENDACIONES -->
+    <div style="margin-top: 50px; page-break-before: always;">
+        <div class="section-header">
+            <i class="fas fa-clipboard-check"></i> CONCLUSIONES Y RECOMENDACIONES
+        </div>
+        
+        <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; line-height: 1.8;">
+            <h4 style="color: var(--text-dark); margin-bottom: 15px;">Conclusiones:</h4>
+            <ul style="color: var(--text-light); margin-left: 20px;">
+                <li>Total de casos que requieren atención: <strong>{{ por_certificar.count|add:productiva_vencida.count|add:ficha_vencida.count }}</strong></li>
+                <li>Casos urgentes (>60 días vencidos) identificados para acción inmediata del comité</li>
+                <li>Se requiere actualización de estados según resoluciones del comité de evaluación</li>
+            </ul>
+            
+            <h4 style="color: var(--text-dark); margin: 20px 0 15px 0;">Recomendaciones:</h4>
+            <ul style="color: var(--text-light); margin-left: 20px;">
+                <li>Programar reunión de comité de evaluación en un plazo no mayor a 15 días</li>
+                <li>Notificar a los aprendices sobre la situación de su proceso formativo</li>
+                <li>Actualizar estados en el sistema según decisiones del comité</li>
+                <li>Realizar seguimiento trimestral para prevenir acumulación de casos</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- FIRMAS -->
+    <div style="margin-top: 80px; page-break-before: always;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 100px;">
+            <div style="text-align: center;">
+                <div style="border-top: 2px solid #333; padding-top: 10px; margin-top: 80px;">
+                    <strong>Coordinador Académico</strong>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div style="border-top: 2px solid #333; padding-top: 10px; margin-top: 80px;">
+                    <strong>Subdirector del Centro</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,21 +1,172 @@
 <!-- aprendices/templates/aprendices/upload_file.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}Importar Datos desde Excel{% endblock %}
+
 {% block content %}
-<h1>Subir archivo Excel</h1>
+<div style="max-width: 800px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+                <i class="fas fa-file-upload"></i> Importar Datos desde Excel
+            </h2>
+            <p style="color: var(--text-light);">
+                Carga masiva de aprendices, inasistencias y resultados de aprendizaje
+            </p>
+        </div>
+    </div>
 
-{% if messages %}
-<ul>
-    {% for m in messages %}
-        <li{% if m.tags %} class="{{ m.tags }}"{% endif %}>{{ m }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                <div>{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Subir y procesar</button>
-</form>
+    <!-- Información importante -->
+    <div class="alert alert-info" style="margin-bottom: 30px;">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>Formatos soportados:</strong> El sistema detecta automáticamente si el archivo contiene 
+            inasistencias, juicios evaluativos o ambos. Acepta archivos .xls y .xlsx.
+        </div>
+    </div>
 
-<p>También puedes subir varios archivos uno por uno. El sistema ejecutará el import automáticamente.</p>
+    <!-- Formulario de carga -->
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.file.id_for_label }}">
+                    <i class="fas fa-file-excel"></i> Selecciona el archivo Excel
+                </label>
+                {{ form.file }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 8px;">
+                    Formatos aceptados: .xls, .xlsx (Máximo 10 MB)
+                </small>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-upload"></i> Subir y Procesar Archivo
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Instrucciones -->
+    <div style="margin-top: 40px; padding: 25px; background: #f8f9fa; border-radius: 10px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 20px; font-size: 18px;">
+            <i class="fas fa-question-circle"></i> Formatos de Archivo Aceptados
+        </h3>
+        
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: var(--sena-green); margin-bottom: 10px; font-size: 16px;">
+                📋 Archivo de Inasistencias
+            </h4>
+            <p style="color: var(--text-light); margin-bottom: 10px; line-height: 1.6;">
+                El archivo debe contener las siguientes columnas (no importa el orden):
+            </p>
+            <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8;">
+                <li><code>documento</code> o <code>cedula</code>: Documento del aprendiz</li>
+                <li><code>ficha</code> o <code>numero_ficha</code>: Número de ficha</li>
+                <li><code>fecha</code> o <code>fecha_inasistencia</code>: Fecha de la inasistencia</li>
+                <li><code>motivo</code> u <code>observacion</code>: Motivo de la inasistencia (opcional)</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: var(--sena-green); margin-bottom: 10px; font-size: 16px;">
+                ✅ Archivo de Juicios Evaluativos
+            </h4>
+            <p style="color: var(--text-light); margin-bottom: 10px; line-height: 1.6;">
+                El archivo debe contener las siguientes columnas:
+            </p>
+            <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8;">
+                <li><code>documento</code>: Documento del aprendiz</li>
+                <li><code>nombre</code>: Nombre del aprendiz (opcional)</li>
+                <li><code>competencia</code>: Código de la competencia</li>
+                <li><code>resultado</code> o <code>ra</code>: Código del resultado de aprendizaje</li>
+                <li><code>estado</code> o <code>juicio</code>: Estado (Aprobado/No Aprobado/Pendiente)</li>
+            </ul>
+        </div>
+
+        <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid var(--sena-green);">
+            <h4 style="color: var(--text-dark); margin-bottom: 10px; font-size: 14px;">
+                <i class="fas fa-lightbulb"></i> Consejos Importantes
+            </h4>
+            <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8; font-size: 14px;">
+                <li>Los nombres de las columnas no distinguen mayúsculas/minúsculas</li>
+                <li>El sistema crea automáticamente aprendices y fichas si no existen</li>
+                <li>Puedes subir múltiples archivos, uno por vez</li>
+                <li>Las fechas pueden estar en formato dd/mm/yyyy o yyyy-mm-dd</li>
+                <li>El proceso puede tardar unos segundos según el tamaño del archivo</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Estadísticas post-carga -->
+    <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <h3 style="color: var(--text-dark); margin-bottom: 15px;">
+            <i class="fas fa-chart-bar"></i> Acciones Posteriores a la Carga
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <a href="{% url 'aprendiz_list' %}" style="text-decoration: none;">
+                <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; transition: all 0.3s;">
+                    <i class="fas fa-users" style="font-size: 32px; color: var(--sena-green); margin-bottom: 8px;"></i>
+                    <div style="color: var(--text-dark); font-weight: 600;">Ver Aprendices</div>
+                </div>
+            </a>
+            <a href="{% url 'inasistencia_list' %}" style="text-decoration: none;">
+                <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; transition: all 0.3s;">
+                    <i class="fas fa-clipboard-list" style="font-size: 32px; color: #0066a1; margin-bottom: 8px;"></i>
+                    <div style="color: var(--text-dark); font-weight: 600;">Ver Inasistencias</div>
+                </div>
+            </a>
+            <a href="{% url 'dashboard' %}" style="text-decoration: none;">
+                <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; transition: all 0.3s;">
+                    <i class="fas fa-chart-line" style="font-size: 32px; color: #f08c00; margin-bottom: 8px;"></i>
+                    <div style="color: var(--text-dark); font-weight: 600;">Ver Dashboard</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #c92a2a;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .form-control:hover {
+        border-color: var(--sena-green);
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--sena-green);
+        box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
+    }
+</style>
 {% endblock %}

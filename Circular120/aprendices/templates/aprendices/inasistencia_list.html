@@ -1,19 +1,158 @@
 <!-- aprendices/templates/aprendices/inasistencia_list.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}Gestión de Inasistencias{% endblock %}
+
 {% block content %}
-<h1>Inasistencias</h1>
-<a href="{% url 'inasistencia_create' %}">Nueva inasistencia</a>
-<table>
-<thead><tr><th>Fecha</th><th>Documento</th><th>Ficha</th><th>Motivo</th></tr></thead>
-<tbody>
-    {% for i in object_list %}
-    <tr>
-        <td>{{ i.fecha }}</td>
-        <td>{{ i.aprendiz.documento }}</td>
-        <td>{{ i.ficha.numero }}</td>
-        <td>{{ i.motivo }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
-</table>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+            <i class="fas fa-clipboard-list"></i> Gestión de Inasistencias
+        </h2>
+        <p style="color: var(--text-light);">
+            Registro y control de inasistencias de aprendices
+        </p>
+    </div>
+    <a href="{% url 'inasistencia_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Nueva Inasistencia
+    </a>
+</div>
+
+<div class="table-container">
+    <!-- Filtros rápidos -->
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <span style="color: var(--text-dark); font-weight: 600; margin-right: 10px;">
+            <i class="fas fa-filter"></i> Filtrar:
+        </span>
+        <button onclick="filterInasistencias('all')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-list"></i> Todas
+        </button>
+        <button onclick="filterInasistencias('justificada')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-check-circle"></i> Justificadas
+        </button>
+        <button onclick="filterInasistencias('no-justificada')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-times-circle"></i> No Justificadas
+        </button>
+    </div>
+
+    <table id="inasistenciasTable">
+        <thead>
+            <tr>
+                <th><i class="fas fa-calendar"></i> Fecha</th>
+                <th><i class="fas fa-id-card"></i> Documento</th>
+                <th><i class="fas fa-user"></i> Aprendiz</th>
+                <th><i class="fas fa-bookmark"></i> Ficha</th>
+                <th><i class="fas fa-comment"></i> Motivo</th>
+                <th style="text-align: center;"><i class="fas fa-flag"></i> Estado</th>
+                <th><i class="fas fa-user-tie"></i> Reportado Por</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in object_list %}
+        <tr data-justificada="{% if i.justificada %}justificada{% else %}no-justificada{% endif %}">
+            <td><strong>{{ i.fecha|date:"d/m/Y" }}</strong></td>
+            <td>{{ i.aprendiz.documento }}</td>
+            <td>{{ i.aprendiz.nombre }} {{ i.aprendiz.apellido }}</td>
+            <td><span class="badge badge-info">{{ i.ficha.numero }}</span></td>
+            <td>
+                {% if i.motivo %}
+                    {{ i.motivo|truncatewords:10 }}
+                {% else %}
+                    <span style="color: #999;">Sin motivo</span>
+                {% endif %}
+            </td>
+            <td style="text-align: center;">
+                {% if i.justificada %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> Justificada
+                    </span>
+                {% else %}
+                    <span class="badge badge-danger">
+                        <i class="fas fa-times-circle"></i> No Justificada
+                    </span>
+                {% endif %}
+            </td>
+            <td>
+                {% if i.reportado_por %}
+                    {{ i.reportado_por }}
+                {% else %}
+                    <span style="color: #999;">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
+                <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; display: block; margin-bottom: 15px;"></i>
+                No hay inasistencias registradas
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <div style="margin-top: 20px; text-align: center;">
+        <div style="display: inline-flex; gap: 10px; align-items: center;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">« Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">‹ Anterior</a>
+            {% endif %}
+            
+            <span style="color: var(--text-dark); font-weight: 600;">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Siguiente ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Última »</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Estadísticas rápidas -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+    <div class="stat-card">
+        <i class="fas fa-clipboard-list" style="font-size: 32px; color: #0066a1; margin-bottom: 10px;"></i>
+        <h3>Total Inasistencias</h3>
+        <div class="number" style="color: #0066a1;">{{ object_list.count }}</div>
+    </div>
+    
+    <div class="stat-card" style="border-top: 4px solid #28a745;">
+        <i class="fas fa-check-circle" style="font-size: 32px; color: #28a745; margin-bottom: 10px;"></i>
+        <h3>Justificadas</h3>
+        <div class="number" style="color: #28a745;">
+            {{ object_list|length }}
+            <!-- En una implementación real, filtrarías aquí -->
+        </div>
+    </div>
+    
+    <div class="stat-card" style="border-top: 4px solid #dc3545;">
+        <i class="fas fa-times-circle" style="font-size: 32px; color: #dc3545; margin-bottom: 10px;"></i>
+        <h3>No Justificadas</h3>
+        <div class="number" style="color: #dc3545;">
+            0
+            <!-- En una implementación real, filtrarías aquí -->
+        </div>
+    </div>
+</div>
+
+<script>
+function filterInasistencias(tipo) {
+    const table = document.getElementById('inasistenciasTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let row of rows) {
+        if (tipo === 'all') {
+            row.style.display = '';
+        } else {
+            const rowTipo = row.getAttribute('data-justificada');
+            row.style.display = rowTipo === tipo ? '' : 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

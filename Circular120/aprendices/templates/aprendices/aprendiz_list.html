@@ -1,26 +1,144 @@
 <!-- aprendices/templates/aprendices/aprendiz_list.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}Gestión de Aprendices{% endblock %}
+
 {% block content %}
-<h1>Aprendices</h1>
-<a href="{% url 'aprendiz_create' %}">Nuevo aprendiz</a>
-<table>
-    <thead><tr><th>Documento</th><th>Nombre</th><th>Ficha</th><th>Estado</th><th>Acciones</th></tr></thead>
-    <tbody>
-    {% for a in object_list %}
-    <tr>
-        <td>{{ a.documento }}</td>
-        <td>{{ a.nombre }} {{ a.apellido }}</td>
-        <td>
-            {% if a.ficha %}
-                {{ a.ficha.numero }}
-            {% else %}
-                Sin ficha
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+            <i class="fas fa-users"></i> Gestión de Aprendices
+        </h2>
+        <p style="color: var(--text-light);">
+            Administra y consulta la información de todos los aprendices
+        </p>
+    </div>
+    <a href="{% url 'aprendiz_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Nuevo Aprendiz
+    </a>
+</div>
+
+<div class="table-container">
+    <!-- Filtros rápidos -->
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button onclick="filterTable('all')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-list"></i> Todos
+        </button>
+        <button onclick="filterTable('EN_FORMACION')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            En Formación
+        </button>
+        <button onclick="filterTable('ETAPA_PRODUCTIVA')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            Etapa Productiva
+        </button>
+        <button onclick="filterTable('POR_CERTIFICAR')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            Por Certificar
+        </button>
+        <button onclick="filterTable('CERTIFICADO')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            Certificados
+        </button>
+    </div>
+
+    <table id="aprendicesTable">
+        <thead>
+            <tr>
+                <th><i class="fas fa-id-card"></i> Documento</th>
+                <th><i class="fas fa-user"></i> Nombre Completo</th>
+                <th><i class="fas fa-bookmark"></i> Ficha</th>
+                <th><i class="fas fa-flag"></i> Estado</th>
+                <th><i class="fas fa-calendar"></i> Fecha Inicio</th>
+                <th style="text-align: center;"><i class="fas fa-cog"></i> Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for a in object_list %}
+        <tr data-estado="{{ a.estado_formacion }}">
+            <td><strong>{{ a.documento }}</strong></td>
+            <td>{{ a.nombre }} {{ a.apellido }}</td>
+            <td>
+                {% if a.ficha %}
+                    <span class="badge badge-info">{{ a.ficha.numero }}</span>
+                {% else %}
+                    <span style="color: #999;">Sin ficha</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if a.estado_formacion == 'POR_CERTIFICAR' %}
+                    <span class="badge badge-warning">{{ a.get_estado_formacion_display }}</span>
+                {% elif a.estado_formacion == 'CERTIFICADO' %}
+                    <span class="badge badge-success">{{ a.get_estado_formacion_display }}</span>
+                {% elif a.estado_formacion == 'CANCELADO' or a.estado_formacion == 'DESERTADO' %}
+                    <span class="badge badge-danger">{{ a.get_estado_formacion_display }}</span>
+                {% else %}
+                    <span class="badge badge-info">{{ a.get_estado_formacion_display }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if a.fecha_inicio %}
+                    {{ a.fecha_inicio|date:"d/m/Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+            <td style="text-align: center;">
+                <a href="{% url 'aprendiz_detail' a.documento %}" 
+                    class="btn btn-primary" 
+                    style="font-size: 12px; padding: 6px 12px; margin: 2px;"
+                    title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </a>
+                <a href="{% url 'aprendiz_update' a.documento %}" 
+                    class="btn" 
+                    style="font-size: 12px; padding: 6px 12px; margin: 2px; background: #007bff; color: white;"
+                    title="Editar">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">
+                No hay aprendices registrados
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <div style="margin-top: 20px; text-align: center;">
+        <div style="display: inline-flex; gap: 10px; align-items: center;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">« Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">‹ Anterior</a>
             {% endif %}
-        </td>
-        <td>{{ a.estado_formacion }}</td>
-        <td><a href="{% url 'aprendiz_detail' a.documento %}">Ver</a> | <a href="{% url 'aprendiz_update' a.documento %}">Editar</a></td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            
+            <span style="color: var(--text-dark); font-weight: 600;">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Siguiente ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Última »</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterTable(estado) {
+    const table = document.getElementById('aprendicesTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let row of rows) {
+        if (estado === 'all') {
+            row.style.display = '';
+        } else {
+            const rowEstado = row.getAttribute('data-estado');
+            row.style.display = rowEstado === estado ? '' : 'none';
+        }
+    }
+}
+</script>
 {% endblock %}

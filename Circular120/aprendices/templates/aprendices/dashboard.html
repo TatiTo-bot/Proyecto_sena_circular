@@ -1,47 +1,212 @@
 <!-- aprendices/templates/aprendices/dashboard.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}Panel de Control{% endblock %}
+
 {% block content %}
-<h1>Dashboard — Depuración</h1>
+<h2 style="color: var(--text-dark); margin-bottom: 25px; font-size: 22px;">
+    <i class="fas fa-chart-line"></i> Gestión Circular 120 - SENA
+</h2>
 
-<h3>Aprendices por estado</h3>
-<ul>
-    {% for p in por_estado %}
-    <li>{{ p.estado_formacion }}: {{ p.total }}</li>
-    {% empty %}
-    <li>No hay datos</li>
-    {% endfor %}
-</ul>
+<!-- ESTADÍSTICAS PRINCIPALES -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <i class="fas fa-users" style="font-size: 32px; color: var(--sena-green); margin-bottom: 10px;"></i>
+        <h3>Total Aprendices</h3>
+        <div class="number">{{ total_aprendices }}</div>
+    </div>
 
-<p>Aprendices con ficha vencida: <strong>{{ vencidos_count }}</strong></p>
-<p>Formación complementaria (>3 meses): {{ vencidos_complementaria_count }}</p>
-<p>Formación titulada (regla ejemplo): {{ vencidos_titulada_count }}</p>
+    <div class="stat-card" style="border-top: 4px solid #f08c00;">
+        <i class="fas fa-certificate" style="font-size: 32px; color: #f08c00; margin-bottom: 10px;"></i>
+        <h3>Por Certificar</h3>
+        <div class="number" style="color: #f08c00;">{{ por_certificar }}</div>
+    </div>
 
-<h3>Listado (primeros 200)</h3>
-<table>
-<thead><tr><th>Documento</th><th>Nombre</th><th>Ficha</th><th>Fecha fin ficha</th></tr></thead>
-<tbody>
-    {% for a in vencidos_list %}
-<tr>
-    <td>{{ a.documento }}</td>
-    <td>{{ a.nombre }} {{ a.apellido }}</td>
-    <td>
-    {% if a.ficha %}
-        {{ a.ficha.numero }}
-    {% else %}
-        Sin ficha
+    <div class="stat-card" style="border-top: 4px solid #e8590c;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 32px; color: #e8590c; margin-bottom: 10px;"></i>
+        <h3>Productiva Vencida</h3>
+        <div class="number" style="color: #e8590c;">{{ productiva_vencida }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #c92a2a;">
+        <i class="fas fa-clock" style="font-size: 32px; color: #c92a2a; margin-bottom: 10px;"></i>
+        <h3>Fichas Vencidas</h3>
+        <div class="number" style="color: #c92a2a;">{{ ficha_vencida }}</div>
+    </div>
+</div>
+
+<!-- ALERTA DE CASOS URGENTES -->
+{% if casos_urgentes > 0 %}
+<div class="alert alert-error" style="margin: 25px 0;">
+    <i class="fas fa-exclamation-circle"></i>
+    <div>
+        <strong>¡Atención!</strong> Hay {{ casos_urgentes }} caso{{ casos_urgentes|pluralize }} urgente{{ casos_urgentes|pluralize }} 
+        (vencidos por más de 30 días) que requieren acción inmediata.
+        <a href="{% url 'casos_vencidos' %}" style="color: #721c24; text-decoration: underline; margin-left: 10px;">Ver casos urgentes →</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- TARJETAS DE ACCIÓN -->
+<h3 style="color: var(--text-dark); margin: 35px 0 20px 0; font-size: 18px;">
+    <i class="fas fa-tasks"></i> Acciones Rápidas - Circular 120
+</h3>
+
+<div class="action-cards">
+    <div class="action-card">
+        <i class="fas fa-user-check"></i>
+        <h3>Gestión de Aprendices</h3>
+        <p>Administra aprendices, permisos y roles del sistema</p>
+        <a href="{% url 'aprendiz_list' %}" class="btn btn-primary">Acceder</a>
+    </div>
+
+    <div class="action-card">
+        <i class="fas fa-certificate"></i>
+        <h3>Por Certificar</h3>
+        <p>Aprendices listos para certificación</p>
+        <a href="{% url 'casos_por_certificar' %}" class="btn btn-primary">
+            Ver casos <span class="badge" style="background: #f08c00; color: white; margin-left: 8px;">{{ por_certificar }}</span>
+        </a>
+    </div>
+
+    <div class="action-card">
+        <i class="fas fa-exclamation-circle"></i>
+        <h3>Casos Vencidos</h3>
+        <p>Aprendices con fichas o productiva vencida</p>
+        <a href="{% url 'casos_vencidos' %}" class="btn btn-primary">
+            Revisar <span class="badge" style="background: #c92a2a; color: white; margin-left: 8px;">{{ ficha_vencida }}</span>
+        </a>
+    </div>
+
+    <div class="action-card">
+        <i class="fas fa-file-alt"></i>
+        <h3>Reporte Circular 120</h3>
+        <p>Genera reportes completos para comité</p>
+        <a href="{% url 'reporte_circular120' %}" class="btn btn-primary">Generar Reporte</a>
+    </div>
+
+    <div class="action-card">
+        <i class="fas fa-clipboard-check"></i>
+        <h3>Inasistencias</h3>
+        <p>Gestiona y controla inasistencias</p>
+        <a href="{% url 'inasistencia_list' %}" class="btn btn-primary">Ver Inasistencias</a>
+    </div>
+
+    <div class="action-card">
+        <i class="fas fa-file-upload"></i>
+        <h3>Importar Datos</h3>
+        <p>Carga masiva desde archivos Excel</p>
+        <a href="{% url 'upload_file' %}" class="btn btn-primary">Subir Archivo</a>
+    </div>
+</div>
+
+<!-- DISTRIBUCIÓN POR ESTADO -->
+<h3 style="color: var(--text-dark); margin: 40px 0 20px 0; font-size: 18px;">
+    <i class="fas fa-chart-pie"></i> Distribución por Estado
+</h3>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th><i class="fas fa-flag"></i> Estado de Formación</th>
+                <th style="text-align: center;"><i class="fas fa-users"></i> Cantidad</th>
+                <th style="text-align: center;"><i class="fas fa-percentage"></i> Porcentaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in por_estado %}
+            <tr>
+                <td>
+                    {% if item.estado_formacion == 'POR_CERTIFICAR' %}
+                        <span class="badge badge-warning">{{ item.estado_formacion }}</span>
+                    {% elif item.estado_formacion == 'CERTIFICADO' %}
+                        <span class="badge badge-success">{{ item.estado_formacion }}</span>
+                    {% elif item.estado_formacion == 'CANCELADO' or item.estado_formacion == 'DESERTADO' %}
+                        <span class="badge badge-danger">{{ item.estado_formacion }}</span>
+                    {% else %}
+                        <span class="badge badge-info">{{ item.estado_formacion }}</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center; font-weight: 600;">{{ item.total }}</td>
+                <td style="text-align: center;">
+                    {% widthratio item.total total_aprendices 100 %}%
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-light);">No hay datos disponibles</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- CASOS URGENTES (Top 10) -->
+{% if lista_urgentes %}
+<h3 style="color: #c92a2a; margin: 40px 0 20px 0; font-size: 18px;">
+    <i class="fas fa-bell"></i> Casos Más Urgentes (requieren atención inmediata)
+</h3>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre Completo</th>
+                <th>Ficha</th>
+                <th>Estado</th>
+                <th>Días Vencido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz in lista_urgentes %}
+            <tr style="{% if aprendiz.dias_vencido > 60 %}background-color: #fff5f5;{% endif %}">
+                <td>{{ aprendiz.documento }}</td>
+                <td><strong>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</strong></td>
+                <td>
+                    {% if aprendiz.ficha %}
+                        {{ aprendiz.ficha.numero }}
+                    {% else %}
+                        <span style="color: #999;">Sin ficha</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge badge-{% if aprendiz.estado_formacion == 'ETAPA_PRODUCTIVA' %}warning{% else %}info{% endif %}">
+                        {{ aprendiz.estado_formacion }}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <strong style="color: #c92a2a;">{{ aprendiz.dias_vencido }} días</strong>
+                </td>
+                <td>
+                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" class="btn btn-primary" style="font-size: 12px; padding: 6px 12px;">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if casos_urgentes > 10 %}
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'casos_vencidos' %}" class="btn btn-secondary">
+            Ver todos los {{ casos_urgentes }} casos urgentes →
+        </a>
+    </div>
     {% endif %}
-</td>
+</div>
+{% endif %}
 
-    <td>
-    {% if a.ficha %}
-        {{ a.ficha.fecha_fin }}
-    {% else %}
-        —
-    {% endif %}
-</td>
-
-</tr>
-    {% endfor %}
-</tbody>
-</table>
+<style>
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+    }
+</style>
 {% endblock %}

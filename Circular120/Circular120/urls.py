@@ -19,10 +19,11 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/aprendices/', permanent=False)), 
+    path('', RedirectView.as_view(url='/aprendices/', permanent=False)),
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django.contrib.auth.urls')), 
     path('aprendices/', include('aprendices.urls')),
 ]
+
 
 

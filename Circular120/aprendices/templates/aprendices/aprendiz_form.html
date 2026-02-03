@@ -1,9 +1,176 @@
 <!-- aprendices/templates/aprendices/aprendiz_form.html -->
 {% extends "aprendices/base.html" %}
+
+{% block page_title %}{% if object %}Editar Aprendiz{% else %}Nuevo Aprendiz{% endif %}{% endblock %}
+
 {% block content %}
-<h1>{% if object %}Editar aprendiz{% else %}Nuevo aprendiz{% endif %}</h1>
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-</form>
+<div style="max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 style="color: var(--text-dark); font-size: 24px;">
+            <i class="fas fa-{% if object %}edit{% else %}user-plus{% endif %}"></i> 
+            {% if object %}Editar Aprendiz{% else %}Nuevo Aprendiz{% endif %}
+        </h2>
+        <a href="{% url 'aprendiz_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Listado
+        </a>
+    </div>
+
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Información Personal -->
+            <div style="background: var(--sena-green); color: white; padding: 12px 15px; margin: -30px -30px 25px -30px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-user"></i> Información Personal
+                </h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.documento.id_for_label }}">{{ form.documento.label }} *</label>
+                    {{ form.documento }}
+                    {% if form.documento.errors %}
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.documento.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
+                    {{ form.telefono }}
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }} *</label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.nombre.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.apellido.id_for_label }}">{{ form.apellido.label }} *</label>
+                    {{ form.apellido }}
+                    {% if form.apellido.errors %}
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.apellido.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Información Académica -->
+            <div style="background: var(--sena-green); color: white; padding: 12px 15px; margin: 30px -30px 25px -30px;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-graduation-cap"></i> Información Académica
+                </h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.ficha.id_for_label }}">{{ form.ficha.label }}</label>
+                    {{ form.ficha }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.estado_formacion.id_for_label }}">{{ form.estado_formacion.label }} *</label>
+                    {{ form.estado_formacion }}
+                </div>
+            </div>
+            
+            <!-- Fechas Importantes (Circular 120) -->
+            <div style="background: #f08c00; color: white; padding: 12px 15px; margin: 30px -30px 25px -30px;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-calendar-alt"></i> Fechas Importantes - Circular 120
+                </h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.fecha_inicio.id_for_label }}">{{ form.fecha_inicio.label }}</label>
+                    {{ form.fecha_inicio }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.fecha_final.id_for_label }}">{{ form.fecha_final.label }}</label>
+                    {{ form.fecha_final }}
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.fecha_fin_lectiva.id_for_label }}">
+                        {{ form.fecha_fin_lectiva.label }}
+                        <i class="fas fa-info-circle" title="Fecha en que finaliza la etapa lectiva" style="color: #999; cursor: help;"></i>
+                    </label>
+                    {{ form.fecha_fin_lectiva }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.fecha_fin_productiva.id_for_label }}">
+                        {{ form.fecha_fin_productiva.label }}
+                        <i class="fas fa-info-circle" title="Fecha en que finaliza la etapa productiva (máx. 18 meses)" style="color: #999; cursor: help;"></i>
+                    </label>
+                    {{ form.fecha_fin_productiva }}
+                </div>
+            </div>
+            
+            <!-- Observaciones -->
+            <div style="background: var(--sena-green); color: white; padding: 12px 15px; margin: 30px -30px 25px -30px;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-sticky-note"></i> Observaciones
+                </h3>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.observaciones.id_for_label }}">{{ form.observaciones.label }}</label>
+                {{ form.observaciones }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
+                    Información adicional relevante sobre el aprendiz
+                </small>
+            </div>
+            
+            <!-- Botones -->
+            <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                <a href="{% url 'aprendiz_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Aprendiz
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--sena-green);
+        box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
+    }
+    
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
