@@ -1,0 +1,128 @@
+<!-- aprendices/templates/aprendices/ficha_form.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}{% if object %}Editar Ficha{% else %}Nueva Ficha{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 style="color: var(--text-dark); font-size: 24px;">
+            <i class="fas fa-{% if object %}edit{% else %}plus-circle{% endif %}"></i> 
+            {% if object %}Editar Ficha {{ object.numero }}{% else %}Nueva Ficha{% endif %}
+        </h2>
+        <a href="{% url 'ficha_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Listado
+        </a>
+    </div>
+
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Información Básica -->
+            <div style="background: var(--sena-green); color: white; padding: 12px 15px; margin: -30px -30px 25px -30px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-info-circle"></i> Información de la Ficha
+                </h3>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.numero.id_for_label }}">{{ form.numero.label }} *</label>
+                {{ form.numero }}
+                {% if form.numero.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.numero.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.programa.id_for_label }}">{{ form.programa.label }}</label>
+                {{ form.programa }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
+                    Ejemplo: Tecnología en Análisis y Desarrollo de Software
+                </small>
+                {% if form.programa.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.programa.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.instructor.id_for_label }}">{{ form.instructor.label }}</label>
+                {{ form.instructor }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
+                    Nombre del instructor principal de la ficha
+                </small>
+                {% if form.instructor.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.instructor.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Fechas -->
+            <div style="background: #0066a1; color: white; padding: 12px 15px; margin: 30px -30px 25px -30px;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-calendar-alt"></i> Fechas de Formación
+                </h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.fecha_inicio.id_for_label }}">{{ form.fecha_inicio.label }}</label>
+                    {{ form.fecha_inicio }}
+                    {% if form.fecha_inicio.errors %}
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.fecha_inicio.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.fecha_fin.id_for_label }}">{{ form.fecha_fin.label }}</label>
+                    {{ form.fecha_fin }}
+                    {% if form.fecha_fin.errors %}
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.fecha_fin.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Botones -->
+            <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                <a href="{% url 'ficha_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Ficha
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    {% if not object %}
+    <div style="margin-top: 30px; padding: 20px; background: #d1ecf1; border-left: 4px solid #0c5460; border-radius: 8px;">
+        <h4 style="color: #0c5460; margin-bottom: 15px; font-size: 16px;">
+            <i class="fas fa-info-circle"></i> Después de crear la ficha
+        </h4>
+        <ul style="color: #0c5460; margin-left: 20px; line-height: 1.8; font-size: 14px;">
+            <li>Podrás agregar aprendices a la ficha</li>
+            <li>Podrás importar datos masivos (inasistencias, juicios, aprendices)</li>
+            <li>Podrás generar reportes específicos de la ficha</li>
+            <li>Tendrás acceso a estadísticas detalladas</li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--sena-green);
+        box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
+    }
+</style>
+{% endblock %}

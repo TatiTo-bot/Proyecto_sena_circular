@@ -1,0 +1,254 @@
+<!-- aprendices/templates/aprendices/ficha_detail.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Detalle Ficha {{ object.numero }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1400px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+                <i class="fas fa-bookmark"></i> Ficha {{ object.numero }}
+            </h2>
+            <p style="color: var(--text-light);">
+                {{ object.programa|default:"Sin programa asignado" }}
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'ficha_upload_data' object.numero %}" class="btn" style="background: #28a745; color: white;">
+                <i class="fas fa-file-upload"></i> Subir Datos
+            </a>
+            <a href="{% url 'ficha_update' object.numero %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a href="{% url 'ficha_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Alertas según estado -->
+    {% if object.fecha_fin and object.fecha_fin < hoy %}
+        <div class="alert alert-error" style="margin-bottom: 25px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>¡Atención!</strong> Esta ficha finalizó el {{ object.fecha_fin|date:"d/m/Y" }}.
+                Verifica el estado de los aprendices pendientes por certificar.
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Estadísticas de la ficha -->
+    <div class="stats-grid" style="margin-bottom: 30px;">
+        <div class="stat-card">
+            <i class="fas fa-users" style="font-size: 32px; color: var(--sena-green); margin-bottom: 10px;"></i>
+            <h3>Total Aprendices</h3>
+            <div class="number">{{ total_aprendices }}</div>
+        </div>
+
+        <div class="stat-card" style="border-top: 4px solid #0066a1;">
+            <i class="fas fa-user-check" style="font-size: 32px; color: #0066a1; margin-bottom: 10px;"></i>
+            <h3>Activos</h3>
+            <div class="number" style="color: #0066a1;">{{ aprendices_activos }}</div>
+        </div>
+
+        <div class="stat-card" style="border-top: 4px solid #28a745;">
+            <i class="fas fa-certificate" style="font-size: 32px; color: #28a745; margin-bottom: 10px;"></i>
+            <h3>Certificados</h3>
+            <div class="number" style="color: #28a745;">{{ aprendices_certificados }}</div>
+        </div>
+
+        <div class="stat-card" style="border-top: 4px solid #e8590c;">
+            <i class="fas fa-clipboard-list" style="font-size: 32px; color: #e8590c; margin-bottom: 10px;"></i>
+            <h3>Inasistencias</h3>
+            <div class="number" style="color: #e8590c;">{{ total_inasistencias }}</div>
+        </div>
+    </div>
+
+    <!-- Grid de información -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; margin-bottom: 30px;">
+        
+        <!-- Información General -->
+        <div class="table-container">
+            <div style="background: var(--sena-green); color: white; padding: 15px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-info-circle"></i> Información General
+                </h3>
+            </div>
+            
+            <table style="border: none;">
+                <tr>
+                    <td style="width: 40%; font-weight: 600; border: none; padding: 12px 0;">Número:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.numero }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Programa:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.programa|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Instructor:</td>
+                    <td style="border: none; padding: 12px 0;">{{ object.instructor|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fecha Inicio:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.fecha_inicio %}
+                            {{ object.fecha_inicio|date:"d/m/Y" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; border: none; padding: 12px 0;">Fecha Fin:</td>
+                    <td style="border: none; padding: 12px 0;">
+                        {% if object.fecha_fin %}
+                            {{ object.fecha_fin|date:"d/m/Y" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Distribución por Estado -->
+        <div class="table-container">
+            <div style="background: #0066a1; color: white; padding: 15px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-chart-pie"></i> Distribución por Estado
+                </h3>
+            </div>
+            
+            <table style="border: none;">
+                {% for item in aprendices_por_estado %}
+                <tr>
+                    <td style="border: none; padding: 10px 0;">
+                        <span class="badge badge-info">{{ item.estado_formacion }}</span>
+                    </td>
+                    <td style="border: none; padding: 10px 0; text-align: right; font-weight: 600;">
+                        {{ item.total }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" style="border: none; padding: 20px; text-align: center; color: var(--text-light);">
+                        No hay datos
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Lista de Aprendices -->
+    <div class="table-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--text-dark); margin: 0;">
+                <i class="fas fa-users"></i> Aprendices de la Ficha
+            </h3>
+            <a href="{% url 'aprendiz_create' %}?ficha={{ object.numero }}" class="btn btn-primary" style="font-size: 13px; padding: 8px 16px;">
+                <i class="fas fa-plus"></i> Agregar Aprendiz
+            </a>
+        </div>
+        
+        {% if object.aprendices.all %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombre Completo</th>
+                    <th>Email</th>
+                    <th>Estado</th>
+                    <th>Inasistencias</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aprendiz in object.aprendices.all %}
+                <tr>
+                    <td><strong>{{ aprendiz.documento }}</strong></td>
+                    <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
+                    <td>
+                        {% if aprendiz.email %}
+                            <a href="mailto:{{ aprendiz.email }}" style="color: var(--sena-green);">{{ aprendiz.email }}</a>
+                        {% else %}
+                            <span style="color: #999;">Sin email</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if aprendiz.estado_formacion == 'POR_CERTIFICAR' %}
+                            <span class="badge badge-warning">{{ aprendiz.get_estado_formacion_display }}</span>
+                        {% elif aprendiz.estado_formacion == 'CERTIFICADO' %}
+                            <span class="badge badge-success">{{ aprendiz.get_estado_formacion_display }}</span>
+                        {% elif aprendiz.estado_formacion == 'CANCELADO' or aprendiz.estado_formacion == 'DESERTADO' %}
+                            <span class="badge badge-danger">{{ aprendiz.get_estado_formacion_display }}</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ aprendiz.get_estado_formacion_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% if aprendiz.inasistencias.count > 0 %}
+                            <span class="badge badge-{% if aprendiz.inasistencias.count > 5 %}danger{% else %}warning{% endif %}">
+                                {{ aprendiz.inasistencias.count }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-success">0</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
+                           class="btn btn-primary" 
+                           style="font-size: 11px; padding: 5px 10px; margin: 2px;">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align: center; padding: 40px; color: var(--text-light);">
+            <i class="fas fa-users-slash" style="font-size: 48px; color: #ccc; display: block; margin-bottom: 15px;"></i>
+            No hay aprendices asignados a esta ficha
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <i class="fas fa-file-upload" style="font-size: 40px; color: #28a745; margin-bottom: 15px;"></i>
+            <h4 style="color: var(--text-dark); margin-bottom: 10px;">Importar Datos</h4>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 15px;">
+                Sube archivos Excel con inasistencias, juicios o aprendices
+            </p>
+            <a href="{% url 'ficha_upload_data' object.numero %}" class="btn" style="background: #28a745; color: white;">
+                Subir Archivo
+            </a>
+        </div>
+
+        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <i class="fas fa-file-alt" style="font-size: 40px; color: #0066a1; margin-bottom: 15px;"></i>
+            <h4 style="color: var(--text-dark); margin-bottom: 10px;">Generar Reporte</h4>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 15px;">
+                Descarga un reporte completo de esta ficha
+            </p>
+            <a href="#" class="btn" style="background: #0066a1; color: white;">
+                Descargar Reporte
+            </a>
+        </div>
+
+        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
+            <i class="fas fa-envelope" style="font-size: 40px; color: #f08c00; margin-bottom: 15px;"></i>
+            <h4 style="color: var(--text-dark); margin-bottom: 10px;">Notificar Instructor</h4>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 15px;">
+                Envía un recordatorio al instructor de la ficha
+            </p>
+            <a href="#" class="btn" style="background: #f08c00; color: white;">
+                Enviar Recordatorio
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

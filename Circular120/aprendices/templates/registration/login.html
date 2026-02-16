@@ -1,18 +1,538 @@
-{% extends 'base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema Circular 120 SENA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="login-container">
-    <div class="login-card">
-        <img src="{% static 'img/sena.png' %}">
-        <h2>Iniciar Sesión</h2>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            background: linear-gradient(135deg, #0066a1 0%, #00954a 100%);
+            position: relative;
+            overflow: hidden;
+        }
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.username }}
-            {{ form.password }}
-            <button type="submit">Ingresar</button>
-        </form>
+        /* Efectos de fondo animados */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        body::before {
+            width: 700px;
+            height: 700px;
+            top: -250px;
+            right: -250px;
+        }
+
+        body::after {
+            width: 500px;
+            height: 500px;
+            bottom: -200px;
+            left: -200px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(50px, -50px) rotate(120deg); }
+            66% { transform: translate(-30px, 30px) rotate(240deg); }
+        }
+
+        /* Contenedor principal */
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+        }
+
+        /* Panel izquierdo - Información */
+        .info-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #00954a 0%, #39A900 100%);
+            padding: 60px 50px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .info-panel .logo-container {
+            margin-bottom: 40px;
+        }
+
+        .info-panel .logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-panel .logo svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .info-panel h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .info-panel p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+
+        .features {
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-item i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #fff;
+        }
+
+        .feature-item div h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .feature-item div p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        /* Panel derecho - Login */
+        .login-panel {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        /* Formulario */
+        .login-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            z-index: 1;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00954a;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 149, 74, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #00954a;
+        }
+
+        .forgot-password {
+            color: #00954a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: #007a3d;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00954a 0%, #39A900 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 149, 74, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 149, 74, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .help-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .help-text a {
+            color: #00954a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .login-footer {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .info-panel {
+                display: none;
+            }
+
+            .login-wrapper {
+                max-width: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-panel {
+                padding: 40px 30px;
+            }
+
+            .login-header h2 {
+                font-size: 24px;
+            }
+
+            .login-wrapper {
+                margin: 20px;
+                border-radius: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Panel Izquierdo - Información -->
+        <div class="info-panel">
+            <div class="logo-container">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="20" r="10" fill="#39A900"/>
+                        <path d="M50 32 L30 60 L30 90 L38 90 L38 65 L50 45 L62 65 L62 90 L70 90 L70 60 Z" fill="#39A900"/>
+                        <text x="50" y="18" text-anchor="middle" fill="white" font-size="8" font-weight="bold">SENA</text>
+                    </svg>
+                </div>
+                <h1>Sistema Circular 120</h1>
+                <p>Gestión integral de aprendices del Servicio Nacional de Aprendizaje</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <i class="fas fa-clipboard-check"></i>
+                    <div>
+                        <h3>Control de Inasistencias</h3>
+                        <p>Registra y gestiona las inasistencias de tus aprendices</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-certificate"></i>
+                    <div>
+                        <h3>Gestión de Certificaciones</h3>
+                        <p>Proceso completo para certificación de aprendices</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <h3>Reportes en Tiempo Real</h3>
+                        <p>Dashboard con estadísticas actualizadas</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-file-upload"></i>
+                    <div>
+                        <h3>Importación Masiva</h3>
+                        <p>Carga datos desde archivos Excel de forma rápida</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho - Login -->
+        <div class="login-panel">
+            <div class="login-header">
+                <h2>Bienvenido de nuevo</h2>
+                <p>Ingresa tus credenciales para acceder al sistema</p>
+            </div>
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>
+                    <strong>Error de autenticación</strong><br>
+                    Usuario o contraseña incorrectos. Por favor, intenta de nuevo.
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_username">Usuario</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            id="id_username" 
+                            placeholder="Ingresa tu usuario" 
+                            required 
+                            autofocus
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="id_password" 
+                            placeholder="Ingresa tu contraseña" 
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember_me">
+                        Recordarme
+                    </label>
+                    <a href="{% url 'password_reset' %}" class="forgot-password">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <div class="divider">o</div>
+
+            <div class="help-text">
+                <p>¿Problemas para acceder?</p>
+                <p>Contacta al administrador del sistema o revisa la 
+                    <a href="#">guía de acceso</a>
+                </p>
+            </div>
+
+            <div class="login-footer">
+                <p>© 2025 SENA Centro Minero. Todos los derechos reservados.</p>
+                <p>Sistema desarrollado por Grupo 2 Centro Minero</p>
+            </div>
+        </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

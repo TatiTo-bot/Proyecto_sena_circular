@@ -1,0 +1,192 @@
+<!-- aprendices/templates/aprendices/ficha_list.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Gestión de Fichas{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+            <i class="fas fa-bookmark"></i> Gestión de Fichas
+        </h2>
+        <p style="color: var(--text-light);">
+            Administra las fichas de formación y sus aprendices
+        </p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'ficha_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Nueva Ficha
+        </a>
+    </div>
+</div>
+
+<!-- Estadísticas rápidas -->
+<div class="stats-grid" style="margin-bottom: 30px;">
+    <div class="stat-card">
+        <i class="fas fa-bookmark" style="font-size: 32px; color: var(--sena-green); margin-bottom: 10px;"></i>
+        <h3>Total Fichas</h3>
+        <div class="number">{{ total_fichas }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #0066a1;">
+        <i class="fas fa-users" style="font-size: 32px; color: #0066a1; margin-bottom: 10px;"></i>
+        <h3>Aprendices Activos</h3>
+        <div class="number" style="color: #0066a1;">{{ total_aprendices }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #f08c00;">
+        <i class="fas fa-graduation-cap" style="font-size: 32px; color: #f08c00; margin-bottom: 10px;"></i>
+        <h3>Fichas Activas</h3>
+        <div class="number" style="color: #f08c00;">{{ fichas_activas }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #c92a2a;">
+        <i class="fas fa-clock" style="font-size: 32px; color: #c92a2a; margin-bottom: 10px;"></i>
+        <h3>Fichas Vencidas</h3>
+        <div class="number" style="color: #c92a2a;">{{ fichas_vencidas }}</div>
+    </div>
+</div>
+
+<div class="table-container">
+    <!-- Filtros -->
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button onclick="filterFichas('all')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-list"></i> Todas
+        </button>
+        <button onclick="filterFichas('activa')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-check-circle"></i> Activas
+        </button>
+        <button onclick="filterFichas('vencida')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+            <i class="fas fa-exclamation-triangle"></i> Vencidas
+        </button>
+    </div>
+
+    <table id="fichasTable">
+        <thead>
+            <tr>
+                <th><i class="fas fa-hashtag"></i> Número</th>
+                <th><i class="fas fa-book"></i> Programa</th>
+                <th><i class="fas fa-user-tie"></i> Instructor</th>
+                <th><i class="fas fa-users"></i> Aprendices</th>
+                <th><i class="fas fa-calendar"></i> Inicio</th>
+                <th><i class="fas fa-calendar-check"></i> Fin</th>
+                <th><i class="fas fa-flag"></i> Estado</th>
+                <th style="text-align: center;"><i class="fas fa-cog"></i> Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ficha in object_list %}
+        <tr data-estado="{% if ficha.fecha_fin and ficha.fecha_fin < hoy %}vencida{% else %}activa{% endif %}">
+            <td><strong>{{ ficha.numero }}</strong></td>
+            <td>
+                {% if ficha.programa %}
+                    {{ ficha.programa|truncatewords:8 }}
+                {% else %}
+                    <span style="color: #999;">Sin programa</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if ficha.instructor %}
+                    {{ ficha.instructor }}
+                {% else %}
+                    <span style="color: #999;">Sin instructor</span>
+                {% endif %}
+            </td>
+            <td style="text-align: center;">
+                <span class="badge badge-info">{{ ficha.aprendices.count }}</span>
+            </td>
+            <td>
+                {% if ficha.fecha_inicio %}
+                    {{ ficha.fecha_inicio|date:"d/m/Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+            <td>
+                {% if ficha.fecha_fin %}
+                    {{ ficha.fecha_fin|date:"d/m/Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+            <td>
+                {% if ficha.fecha_fin and ficha.fecha_fin < hoy %}
+                    <span class="badge badge-danger">
+                        <i class="fas fa-exclamation-circle"></i> Vencida
+                    </span>
+                {% else %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> Activa
+                    </span>
+                {% endif %}
+            </td>
+            <td style="text-align: center;">
+                <a href="{% url 'ficha_detail' ficha.numero %}" 
+                    class="btn btn-primary" 
+                    style="font-size: 12px; padding: 6px 12px; margin: 2px;"
+                    title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </a>
+                <a href="{% url 'ficha_update' ficha.numero %}" 
+                    class="btn" 
+                    style="font-size: 12px; padding: 6px 12px; margin: 2px; background: #007bff; color: white;"
+                    title="Editar">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'ficha_upload_data' ficha.numero %}" 
+                    class="btn" 
+                    style="font-size: 12px; padding: 6px 12px; margin: 2px; background: #28a745; color: white;"
+                    title="Subir datos">
+                    <i class="fas fa-upload"></i>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-light);">
+                <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; display: block; margin-bottom: 15px;"></i>
+                No hay fichas registradas
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <div style="margin-top: 20px; text-align: center;">
+        <div style="display: inline-flex; gap: 10px; align-items: center;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">« Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">‹ Anterior</a>
+            {% endif %}
+            
+            <span style="color: var(--text-dark); font-weight: 600;">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Siguiente ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Última »</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterFichas(estado) {
+    const table = document.getElementById('fichasTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let row of rows) {
+        if (estado === 'all') {
+            row.style.display = '';
+        } else {
+            const rowEstado = row.getAttribute('data-estado');
+            row.style.display = rowEstado === estado ? '' : 'none';
+        }
+    }
+}
+</script>
+{% endblock %}

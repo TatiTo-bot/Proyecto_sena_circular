@@ -7,6 +7,12 @@ from .views import (
     aprobar_certificacion, cancelar_aprendiz
 )
 
+# Importar las nuevas vistas de fichas
+from .views_fichas import (
+    FichaListView, FichaCreateView, FichaUpdateView, FichaDetailView,
+    FichaUploadDataView
+)
+
 urlpatterns = [
     # Dashboard
     path('', DashboardView.as_view(), name='dashboard'),
@@ -24,8 +30,15 @@ urlpatterns = [
     # Actas
     path('actas/nueva/', ActaCreateView.as_view(), name='acta_create'),
 
-    # Upload Excel
+    # Upload Excel (general)
     path('upload/', FileUploadView.as_view(), name='upload_file'),
+    
+    # ===== GESTIÓN DE FICHAS =====
+    path('fichas/', FichaListView.as_view(), name='ficha_list'),
+    path('fichas/nueva/', FichaCreateView.as_view(), name='ficha_create'),
+    path('fichas/<str:pk>/editar/', FichaUpdateView.as_view(), name='ficha_update'),
+    path('fichas/<str:pk>/', FichaDetailView.as_view(), name='ficha_detail'),
+    path('fichas/<str:numero_ficha>/subir-datos/', FichaUploadDataView.as_view(), name='ficha_upload_data'),
     
     # ===== CIRCULAR 120 =====
     path('por-certificar/', casos_por_certificar, name='casos_por_certificar'),

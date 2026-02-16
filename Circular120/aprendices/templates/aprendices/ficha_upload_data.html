@@ -1,0 +1,260 @@
+<!-- aprendices/templates/aprendices/ficha_upload_data.html -->
+{% extends "aprendices/base.html" %}
+
+{% block page_title %}Importar Datos - Ficha {{ ficha.numero }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
+                <i class="fas fa-file-upload"></i> Importar Datos
+            </h2>
+            <p style="color: var(--text-light);">
+                Ficha: <strong>{{ ficha.numero }}</strong> - {{ ficha.programa|truncatewords:10 }}
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'ficha_detail' ficha.numero %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Ficha
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                <div>{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Información de la ficha -->
+    <div class="table-container" style="margin-bottom: 30px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i> Información de la Ficha
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div>
+                <strong style="color: var(--text-light);">Número:</strong>
+                <div style="margin-top: 5px;">{{ ficha.numero }}</div>
+            </div>
+            <div>
+                <strong style="color: var(--text-light);">Programa:</strong>
+                <div style="margin-top: 5px;">{{ ficha.programa|default:"No especificado" }}</div>
+            </div>
+            <div>
+                <strong style="color: var(--text-light);">Instructor:</strong>
+                <div style="margin-top: 5px;">{{ ficha.instructor|default:"No asignado" }}</div>
+            </div>
+            <div>
+                <strong style="color: var(--text-light);">Aprendices:</strong>
+                <div style="margin-top: 5px;">
+                    <span class="badge badge-info" style="font-size: 14px;">{{ ficha.aprendices.count }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de carga -->
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="background: var(--sena-green); color: white; padding: 12px 15px; margin: -30px -30px 25px -30px; border-radius: 10px 10px 0 0;">
+                <h3 style="margin: 0; font-size: 16px;">
+                    <i class="fas fa-cloud-upload-alt"></i> Cargar Datos de la Ficha
+                </h3>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.tipo_datos.id_for_label }}">{{ form.tipo_datos.label }} *</label>
+                {{ form.tipo_datos }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
+                    {{ form.tipo_datos.help_text }}
+                </small>
+                {% if form.tipo_datos.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.tipo_datos.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.archivo.id_for_label }}">{{ form.archivo.label }} *</label>
+                {{ form.archivo }}
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">
+                    {{ form.archivo.help_text }}
+                </small>
+                {% if form.archivo.errors %}
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">{{ form.archivo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    {{ form.sobrescribir }}
+                    <label for="{{ form.sobrescribir.id_for_label }}" style="margin: 0; cursor: pointer; color: #856404;">
+                        {{ form.sobrescribir.label }}
+                    </label>
+                </div>
+                <small style="color: #856404; font-size: 12px; display: block; margin-top: 8px;">
+                    <i class="fas fa-exclamation-triangle"></i> {{ form.sobrescribir.help_text }}
+                </small>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-upload"></i> Subir y Procesar Archivo
+                </button>
+                <a href="{% url 'ficha_detail' ficha.numero %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Instrucciones detalladas -->
+    <div style="margin-top: 40px; padding: 25px; background: #f8f9fa; border-radius: 10px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 20px; font-size: 18px;">
+            <i class="fas fa-question-circle"></i> Formatos de Archivo por Tipo de Datos
+        </h3>
+        
+        <div class="accordion" style="display: grid; gap: 15px;">
+            <!-- Inasistencias -->
+            <div style="background: white; border-radius: 8px; padding: 20px; border-left: 4px solid #e8590c;">
+                <h4 style="color: #e8590c; margin-bottom: 15px; font-size: 16px;">
+                    <i class="fas fa-clipboard-list"></i> Formato para Inasistencias
+                </h4>
+                <p style="color: var(--text-light); margin-bottom: 10px;">Columnas requeridas:</p>
+                <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8;">
+                    <li><code>documento</code> o <code>cedula</code>: Documento del aprendiz</li>
+                    <li><code>fecha</code> o <code>fecha_inasistencia</code>: Fecha de la inasistencia (dd/mm/yyyy)</li>
+                    <li><code>motivo</code> (opcional): Motivo de la inasistencia</li>
+                    <li><code>justificada</code> (opcional): Si/No, True/False, 1/0</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-radius: 6px;">
+                    <strong style="color: #856404;">Nota:</strong> No es necesario incluir el número de ficha en el archivo, se asignará automáticamente.
+                </div>
+            </div>
+
+            <!-- Juicios Evaluativos -->
+            <div style="background: white; border-radius: 8px; padding: 20px; border-left: 4px solid #0066a1;">
+                <h4 style="color: #0066a1; margin-bottom: 15px; font-size: 16px;">
+                    <i class="fas fa-tasks"></i> Formato para Juicios Evaluativos
+                </h4>
+                <p style="color: var(--text-light); margin-bottom: 10px;">Columnas requeridas:</p>
+                <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8;">
+                    <li><code>documento</code>: Documento del aprendiz</li>
+                    <li><code>nombre</code> (opcional): Nombre del aprendiz</li>
+                    <li><code>competencia</code>: Código de la competencia</li>
+                    <li><code>resultado</code> o <code>ra</code>: Código del resultado de aprendizaje</li>
+                    <li><code>estado</code> o <code>juicio</code>: Aprobado / No Aprobado / Pendiente</li>
+                </ul>
+            </div>
+
+            <!-- Lista de Aprendices -->
+            <div style="background: white; border-radius: 8px; padding: 20px; border-left: 4px solid var(--sena-green);">
+                <h4 style="color: var(--sena-green); margin-bottom: 15px; font-size: 16px;">
+                    <i class="fas fa-users"></i> Formato para Lista de Aprendices
+                </h4>
+                <p style="color: var(--text-light); margin-bottom: 10px;">Columnas requeridas:</p>
+                <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8;">
+                    <li><code>documento</code>: Documento de identidad</li>
+                    <li><code>nombre</code>: Nombre del aprendiz</li>
+                    <li><code>apellido</code>: Apellido del aprendiz</li>
+                    <li><code>email</code> (opcional): Correo electrónico</li>
+                    <li><code>telefono</code> (opcional): Número de teléfono</li>
+                    <li><code>estado</code> (opcional): Estado de formación</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 12px; background: #d4edda; border-radius: 6px;">
+                    <strong style="color: #155724;">Ventaja:</strong> Al importar aprendices por ficha, se asignan automáticamente a esta ficha.
+                </div>
+            </div>
+        </div>
+
+        <!-- Consejos generales -->
+        <div style="margin-top: 25px; background: white; padding: 15px; border-radius: 8px;">
+            <h4 style="color: var(--text-dark); margin-bottom: 10px; font-size: 14px;">
+                <i class="fas fa-lightbulb"></i> Consejos Importantes
+            </h4>
+            <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8; font-size: 14px;">
+                <li>Los nombres de las columnas no distinguen mayúsculas/minúsculas</li>
+                <li>El sistema creará automáticamente los aprendices si no existen</li>
+                <li>Todos los registros se asociarán a la ficha <strong>{{ ficha.numero }}</strong></li>
+                <li>Las fechas pueden estar en formato dd/mm/yyyy o yyyy-mm-dd</li>
+                <li>Revisa el archivo antes de subir para evitar errores</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Historial reciente (si existe) -->
+    {% if recent_uploads %}
+    <div class="table-container" style="margin-top: 30px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 20px;">
+            <i class="fas fa-history"></i> Importaciones Recientes
+        </h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Registros</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for upload in recent_uploads %}
+                <tr>
+                    <td>{{ upload.fecha|date:"d/m/Y H:i" }}</td>
+                    <td><span class="badge badge-info">{{ upload.tipo }}</span></td>
+                    <td>{{ upload.registros }}</td>
+                    <td>{{ upload.usuario }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #c92a2a;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--sena-green);
+        box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.1);
+    }
+    
+    select.form-control {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        padding-right: 40px;
+        appearance: none;
+    }
+    
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--sena-green);
+    }
+</style>
+{% endblock %}
