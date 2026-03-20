@@ -1,5 +1,6 @@
 # aprendices/urls.py
 from django.urls import path
+from . import views
 from .views import (
     DashboardView, AprendizListView, AprendizCreateView, AprendizUpdateView, AprendizDetailView,
     InasistenciaCreateView, InasistenciaListView, ActaCreateView, FileUploadView,
@@ -48,4 +49,9 @@ urlpatterns = [
     # Acciones
     path('aprobar/<str:documento>/', aprobar_certificacion, name='aprobar_certificacion'),
     path('cancelar/<str:documento>/', cancelar_aprendiz, name='cancelar_aprendiz'),
+    
+    path('reportes/inasistencias/', views.descargar_reporte_inasistencias, name='reporte_inasistencias_excel'),
+    path('reportes/juicios/', views.descargar_reporte_juicios, name='reporte_juicios_excel'),
+    path('reportes/circular120/', views.descargar_reporte_circular120, name='reporte_circular120_excel'),
+    path('reportes/generar-todos/', views.generar_todos_reportes_view, name='generar_todos_reportes'),
 ]

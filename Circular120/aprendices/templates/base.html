@@ -1,4 +1,3 @@
-<!-- aprendices/templates/aprendices/base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
@@ -26,10 +25,17 @@
             --bg-light: #f5f7fa;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-light);
             color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* SIDEBAR */
@@ -356,33 +362,98 @@
             border-left: 4px solid #17a2b8;
         }
 
-        /* FOOTER */
+        /* FOOTER MEJORADO - SIEMPRE AL FINAL Y SIN DESBORDAMIENTO */
         footer {
             background: linear-gradient(90deg, #007a3d 0%, #00954a 100%);
             color: white;
-            padding: 30px 40px;
+            padding: 25px 20px;
             margin-left: 250px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+            margin-top: auto;
             text-align: center;
         }
 
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
         footer p {
-            margin: 5px 0;
-            font-size: 14px;
+            margin: 4px 0;
+            font-size: 13px;
+            opacity: 0.95;
         }
 
         .social-links {
-            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 12px 0;
+            flex-wrap: wrap;
         }
 
         .social-links a {
             color: white;
-            margin: 0 10px;
-            font-size: 18px;
-            transition: opacity 0.3s;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
 
         .social-links a:hover {
-            opacity: 0.7;
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-separator {
+            color: white;
+            opacity: 0.6;
+            font-size: 12px;
         }
 
         /* RESPONSIVE */
@@ -402,6 +473,35 @@
 
             footer {
                 margin-left: 0;
+                width: 100%;
+                padding: 20px 15px;
+            }
+
+            .footer-title {
+                font-size: 14px;
+            }
+
+            footer p {
+                font-size: 12px;
+            }
+
+            .social-links {
+                gap: 12px;
+            }
+
+            .social-links a {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .footer-separator {
+                display: none;
             }
 
             .stats-grid,
@@ -525,22 +625,41 @@
             {% block content %}{% endblock %}
         </div>
 
-        <!-- FOOTER -->
+        <!-- FOOTER MEJORADO -->
         <footer>
-            <p><strong>Sistema de Control IO / SST</strong></p>
-            <p>© 2025 SENA Centro Minero - Todos los derechos reservados</p>
-            <p>Desarrollado por <strong>Grupo 2 Centro Minero</strong></p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
+            <div class="footer-content">
+                <div class="footer-title">Sistema de Control IO / SST</div>
+                <p>© 2025 SENA Centro Minero - Todos los derechos reservados</p>
+                <p>Desarrollado por <strong>Grupo 2 Centro Minero</strong></p>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/SENAColombia" target="_blank" rel="noopener noreferrer" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://twitter.com/SENAComunica" target="_blank" rel="noopener noreferrer" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.instagram.com/senacomunica/" target="_blank" rel="noopener noreferrer" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/user/SENATVOficial" target="_blank" rel="noopener noreferrer" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/school/servicio-nacional-de-aprendizaje-sena-/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="https://www.sena.edu.co/" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-globe"></i> Portal SENA
+                    </a>
+                    <span class="footer-separator">|</span>
+                    <a href="https://oferta.senasofiaplus.edu.co/" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-graduation-cap"></i> Sofia Plus
+                    </a>
+                </div>
             </div>
-            <p style="margin-top: 10px; font-size: 12px;">
-                <a href="#" style="color: white; text-decoration: none;"><i class="fas fa-globe"></i> Portal SENA</a> | 
-                <a href="#" style="color: white; text-decoration: none;"><i class="fas fa-laptop"></i> Sofia Plus</a>
-            </p>
         </footer>
     </main>
 

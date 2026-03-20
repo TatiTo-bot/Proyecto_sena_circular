@@ -12,13 +12,19 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
             display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #0066a1 0%, #00954a 100%);
             position: relative;
-            overflow: hidden;
         }
 
         /* Efectos de fondo animados */
@@ -55,9 +61,9 @@
         /* Contenedor principal */
         .login-wrapper {
             display: flex;
-            width: 100%;
-            max-width: 1200px;
-            margin: auto;
+            width: 90%;
+            max-width: 1100px;
+            max-height: 90vh;
             position: relative;
             z-index: 1;
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
@@ -70,7 +76,7 @@
         .info-panel {
             flex: 1;
             background: linear-gradient(135deg, #00954a 0%, #39A900 100%);
-            padding: 60px 50px;
+            padding: 40px 35px;
             color: white;
             display: flex;
             flex-direction: column;
@@ -91,66 +97,67 @@
         }
 
         .info-panel .logo-container {
-            margin-bottom: 40px;
+            margin-bottom: 25px;
         }
 
         .info-panel .logo {
-            width: 100px;
-            height: 100px;
+            width: 85px;
+            height: 85px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .info-panel .logo svg {
-            width: 60px;
-            height: 60px;
+            width: 52px;
+            height: 52px;
         }
 
         .info-panel h1 {
-            font-size: 32px;
-            margin-bottom: 15px;
+            font-size: 26px;
+            margin-bottom: 10px;
             font-weight: 700;
         }
 
         .info-panel p {
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.6;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             opacity: 0.95;
         }
 
         .features {
-            margin-top: 40px;
+            margin-top: 25px;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 12px;
+            padding: 11px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
             backdrop-filter: blur(10px);
         }
 
         .feature-item i {
-            font-size: 24px;
-            margin-right: 15px;
+            font-size: 20px;
+            margin-right: 11px;
             color: #fff;
+            min-width: 20px;
         }
 
         .feature-item div h3 {
-            font-size: 16px;
-            margin-bottom: 5px;
+            font-size: 14px;
+            margin-bottom: 3px;
         }
 
         .feature-item div p {
-            font-size: 13px;
+            font-size: 11px;
             opacity: 0.8;
             margin: 0;
         }
@@ -158,37 +165,38 @@
         /* Panel derecho - Login */
         .login-panel {
             flex: 1;
-            padding: 60px 50px;
+            padding: 40px 35px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow-y: auto;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .login-header h2 {
             color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
         .login-header p {
             color: #666;
-            font-size: 15px;
+            font-size: 13px;
         }
 
         /* Alertas */
         .alert {
-            padding: 15px 20px;
+            padding: 13px 16px;
             border-radius: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             animation: slideIn 0.4s ease-out;
         }
 
@@ -210,24 +218,24 @@
         }
 
         .alert i {
-            font-size: 18px;
+            font-size: 15px;
         }
 
         /* Formulario */
         .login-form {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             color: #333;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .input-wrapper {
@@ -236,20 +244,20 @@
 
         .input-wrapper i {
             position: absolute;
-            left: 18px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
-            font-size: 16px;
+            font-size: 14px;
             z-index: 1;
         }
 
         .form-group input {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            padding: 13px 16px 13px 44px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 13px;
             transition: all 0.3s ease;
             background: #fafafa;
         }
@@ -265,20 +273,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            font-size: 12px;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: #666;
         }
 
         .remember-me input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: #00954a;
         }
@@ -296,12 +304,12 @@
 
         .btn-login {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, #00954a 0%, #39A900 100%);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -309,7 +317,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-login:hover {
@@ -323,9 +331,9 @@
 
         .divider {
             text-align: center;
-            margin: 30px 0;
+            margin: 20px 0;
             color: #999;
-            font-size: 14px;
+            font-size: 12px;
             position: relative;
         }
 
@@ -350,8 +358,8 @@
         .help-text {
             text-align: center;
             color: #666;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         .help-text a {
@@ -366,12 +374,16 @@
 
         /* Footer */
         .login-footer {
-            margin-top: 40px;
-            padding-top: 25px;
+            margin-top: 25px;
+            padding-top: 18px;
             border-top: 1px solid #e0e0e0;
             text-align: center;
             color: #999;
-            font-size: 13px;
+            font-size: 11px;
+        }
+
+        .login-footer p {
+            margin: 3px 0;
         }
 
         /* Responsive */
@@ -381,22 +393,34 @@
             }
 
             .login-wrapper {
-                max-width: 500px;
+                max-width: 480px;
+            }
+
+            .login-panel {
+                padding: 35px 30px;
             }
         }
 
         @media (max-width: 480px) {
+            .login-wrapper {
+                width: 95%;
+                max-height: 95vh;
+            }
+
             .login-panel {
-                padding: 40px 30px;
+                padding: 30px 22px;
             }
 
             .login-header h2 {
-                font-size: 24px;
+                font-size: 20px;
             }
 
-            .login-wrapper {
-                margin: 20px;
-                border-radius: 15px;
+            .form-group input {
+                padding: 12px 14px 12px 42px;
+            }
+
+            .btn-login {
+                padding: 13px;
             }
         }
     </style>
@@ -529,8 +553,8 @@
             </div>
 
             <div class="login-footer">
-                <p>© 2025 SENA Centro Minero. Todos los derechos reservados.</p>
-                <p>Sistema desarrollado por Grupo 2 Centro Minero</p>
+                <p>© 2026 SENA Centro Minero. Todos los derechos reservados.</p>
+                <p>Sistema desarrollado por SENA Centro Minero</p>
             </div>
         </div>
     </div>

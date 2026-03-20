@@ -121,3 +121,62 @@ class UploadFichaDataForm(forms.Form):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         help_text='Si está marcado, los datos existentes serán reemplazados'
     )
+
+
+# ==========================================
+# NUEVO: Formulario con campos manuales
+# ==========================================
+
+class UploadFileWithDatesForm(forms.Form):
+    """Formulario para subir archivos Excel con opción de ingresar fechas manualmente"""
+    
+    file = forms.FileField(
+        label='Archivo Excel',
+        widget=forms.FileInput(attrs={
+            'accept': '.xls,.xlsx',
+            'id': 'file-input'
+        })
+    )
+    
+    # Campos opcionales para ingresar manualmente
+    ficha_manual = forms.CharField(
+        max_length=10,
+        required=False,
+        label='Número de Ficha (opcional)',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: 2993666'
+        }),
+        help_text='Solo si el sistema no lo detecta automáticamente'
+    )
+    
+    programa_manual = forms.CharField(
+        max_length=200,
+        required=False,
+        label='Programa de Formación (opcional)',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: ANALISIS Y DESARROLLO DE SOFTWARE'
+        }),
+        help_text='Solo si el sistema no lo detecta automáticamente'
+    )
+    
+    fecha_inicio_manual = forms.DateField(
+        required=False,
+        label='Fecha de Inicio (opcional)',
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date'
+        }),
+        help_text='Ingresa la fecha de inicio de la ficha'
+    )
+    
+    fecha_fin_manual = forms.DateField(
+        required=False,
+        label='Fecha de Fin (opcional)',
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date'
+        }),
+        help_text='Ingresa la fecha de finalización de la ficha'
+    )
