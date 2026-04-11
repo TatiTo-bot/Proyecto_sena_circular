@@ -64,13 +64,14 @@ class InasistenciaForm(forms.ModelForm):
 class FichaForm(forms.ModelForm):
     class Meta:
         model = Ficha
-        fields = ['numero', 'programa', 'instructor', 'fecha_inicio', 'fecha_fin']
+        fields = ['numero', 'programa', 'instructor', 'fecha_inicio', 'fecha_fin', 'centro']
         widgets = {
             'numero': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 2756890'}),
             'programa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Tecnología en Análisis y Desarrollo de Software'}),
             'instructor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del instructor principal'}),
             'fecha_inicio': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'fecha_fin': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'centro': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'numero': 'Número de Ficha',
@@ -78,13 +79,14 @@ class FichaForm(forms.ModelForm):
             'instructor': 'Instructor Principal',
             'fecha_inicio': 'Fecha de Inicio',
             'fecha_fin': 'Fecha de Finalización',
+            'centro': 'Centro de Formación',
         }
 
 class UploadFileForm(forms.Form):
     file = forms.FileField(
         label='Archivo Excel (.xls / .xlsx)',
         required=True,
-        widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.xls,.xlsx'})
+        widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.xls,.xlsx', 'id': 'file-input'})
     )
 
 class UploadFichaDataForm(forms.Form):
@@ -123,17 +125,13 @@ class UploadFichaDataForm(forms.Form):
     )
 
 
-# ==========================================
-# NUEVO: Formulario con campos manuales
-# ==========================================
-
 class UploadFileWithDatesForm(forms.Form):
     """Formulario para subir archivos Excel con opción de ingresar fechas manualmente"""
     
     file = forms.FileField(
         label='Archivo Excel',
         widget=forms.FileInput(attrs={
-            'accept': '.xls,.xlsx',
+            'accept': '.xls,.xlsx,.csv',
             'id': 'file-input'
         })
     )

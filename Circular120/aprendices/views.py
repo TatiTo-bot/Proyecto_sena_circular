@@ -21,26 +21,21 @@ import mimetypes
 def dashboard(request):
     hoy = timezone.now().date()
 
-    # Estadísticas generales
     total_aprendices = Aprendiz.objects.count()
     total_fichas = Ficha.objects.count()
     total_inasistencias = Inasistencia.objects.count()
 
-    # ✅ Aprendices por certificar (estado específico)
     por_certificar = Aprendiz.objects.filter(estado_formacion='POR_CERTIFICAR')
 
-    # ✅ Aprendices con etapa productiva vencida (más de 18 meses o fecha pasada)
     productiva_vencida = Aprendiz.objects.filter(
         estado_formacion='ETAPA_PRODUCTIVA',
         fecha_fin_productiva__lt=hoy
     )
 
-    # ✅ Aprendices con ficha finalizada pero NO certificados
     ficha_vencida = Aprendiz.objects.filter(
         ficha__fecha_fin__lt=hoy
     ).exclude(estado_formacion='CERTIFICADO')
 
-    # ✅ Casos urgentes (vencidos por más de 30 días)
     casos_urgentes = Aprendiz.objects.filter(
         Q(ficha__fecha_fin__lt=hoy - timedelta(days=30)) |
         Q(fecha_fin_productiva__lt=hoy - timedelta(days=30))
@@ -79,18 +74,18 @@ def casos_por_certificar(request):
 @login_required
 def casos_vencidos(request):
     hoy = timezone.now().date()
-    
-    # Aprendices con ficha vencida o productiva vencida
+
     aprendices_vencidos = Aprendiz.objects.filter(
+        estado_formacion='EN_FORMACION'          
+    ).filter(
         Q(ficha__fecha_fin__lt=hoy) |
         Q(fecha_fin_productiva__lt=hoy)
-    ).exclude(estado_formacion='CERTIFICADO').exclude(estado_formacion='CANCELADO').select_related('ficha')
-    
-    # Clasificar por nivel de urgencia
-    urgentes = []
+    ).select_related('ficha')
+
+    urgentes  = []
     moderados = []
     recientes = []
-    
+
     for aprendiz in aprendices_vencidos:
         dias = aprendiz.dias_vencido()
         if dias > 60:
@@ -99,9 +94,9 @@ def casos_vencidos(request):
             moderados.append(aprendiz)
         else:
             recientes.append(aprendiz)
-    
+
     return render(request, 'aprendices/casos_vencidos.html', {
-        'urgentes': urgentes,
+        'urgentes':  urgentes,
         'moderados': moderados,
         'recientes': recientes,
         'total': len(urgentes) + len(moderados) + len(recientes)
@@ -110,22 +105,26 @@ def casos_vencidos(request):
 @login_required
 def reporte_circular120(request):
     hoy = timezone.now().date()
-    
-    # Todos los casos relevantes para el comité
-    por_certificar = Aprendiz.objects.filter(estado_formacion='POR_CERTIFICAR')
+
+    por_certificar = Aprendiz.objects.filter(
+        estado_formacion='POR_CERTIFICAR'
+    ).select_related('ficha')
+
     productiva_vencida = Aprendiz.objects.filter(
         estado_formacion='ETAPA_PRODUCTIVA',
         fecha_fin_productiva__lt=hoy
-    )
+    ).select_related('ficha')
+
     ficha_vencida = Aprendiz.objects.filter(
-        ficha__fecha_fin__lt=hoy
-    ).exclude(estado_formacion='CERTIFICADO')
-    
+        ficha__fecha_fin__lt=hoy,
+        estado_formacion='EN_FORMACION'          
+    ).select_related('ficha')
+
     return render(request, 'aprendices/reporte_circular120.html', {
-        'por_certificar': por_certificar,
+        'por_certificar':     por_certificar,
         'productiva_vencida': productiva_vencida,
-        'ficha_vencida': ficha_vencida,
-        'fecha_generacion': hoy,
+        'ficha_vencida':      ficha_vencida,
+        'fecha_generacion':   hoy,
     })
 
 @login_required
@@ -151,7 +150,33 @@ class AprendizListView(LoginRequiredMixin, ListView):
     template_name = 'aprendices/aprendiz_list.html'
     paginate_by = 50
     ordering = ['-created_at']
+    
+    def get_queryset(self):
+        qs = Aprendiz.objects.select_related('ficha').annotate(
+            juicios_pendientes=Count(
+                'juicios',
+                filter=Q(juicios__estado='PENDIENTE')
+            )
+        )
 
+        self.filtro_ficha = self.request.GET.get('ficha', '').strip()
+        if self.filtro_ficha:
+            qs = qs.filter(ficha__numero=self.filtro_ficha)
+
+        self.filtro_estado = self.request.GET.get('estado', '').strip()
+        if self.filtro_estado:
+            qs = qs.filter(estado_formacion=self.filtro_estado)
+
+        return qs.order_by('apellido', 'nombre')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['fichas'] = Ficha.objects.order_by('numero')
+        ctx['estados'] = Aprendiz.ESTADO_FORMACION_CHOICES
+        ctx['filtro_ficha'] = getattr(self, 'filtro_ficha', '')
+        ctx['filtro_estado'] = getattr(self, 'filtro_estado', '')
+        return ctx
+    
 class AprendizCreateView(LoginRequiredMixin, CreateView):
     model = Aprendiz
     form_class = AprendizForm
@@ -196,7 +221,6 @@ def descargar_reporte_inasistencias(request):
     """Genera y descarga reporte de inasistencias en Excel"""
     generador = GeneradorReportes()
     
-    # Filtros opcionales
     ficha_id = request.GET.get('ficha')
     fecha_desde = request.GET.get('fecha_desde')
     fecha_hasta = request.GET.get('fecha_hasta')
@@ -205,14 +229,12 @@ def descargar_reporte_inasistencias(request):
     if ficha_id:
         ficha = Ficha.objects.filter(numero=ficha_id).first()
     
-    # Generar Excel
     excel_file = generador.generar_reporte_inasistencias(
         ficha=ficha,
         fecha_desde=fecha_desde,
         fecha_hasta=fecha_hasta
     )
     
-    # Preparar respuesta
     response = HttpResponse(
         excel_file.read(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -222,7 +244,6 @@ def descargar_reporte_inasistencias(request):
     
     messages.success(request, f'Reporte de inasistencias generado: {filename}')
     return response
-
 
 @login_required
 def descargar_reporte_juicios(request):
@@ -270,7 +291,6 @@ def generar_todos_reportes_view(request):
     try:
         reportes = generar_todos_reportes()
         
-        # Contar reportes exitosos
         exitosos = sum(1 for k, v in reportes.items() if not k.endswith('_error'))
         errores = sum(1 for k in reportes.keys() if k.endswith('_error'))
         
@@ -291,139 +311,102 @@ def generar_todos_reportes_view(request):
     
     return redirect('dashboard')
 
-
-# ==========================================
-# VISTA DE UPLOAD CON FECHAS MANUALES
-# ==========================================
-
 class FileUploadView(LoginRequiredMixin, View):
     template_name = 'aprendices/upload_file.html'
     form_class = UploadFileWithDatesForm
-
+ 
     def get(self, request):
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
-
+ 
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
-        
-        if form.is_valid():
-            f = form.cleaned_data['file']
-            
-            # Obtener datos manuales del formulario
-            ficha_manual = form.cleaned_data.get('ficha_manual')
-            programa_manual = form.cleaned_data.get('programa_manual')
-            fecha_inicio = form.cleaned_data.get('fecha_inicio_manual')
-            fecha_fin = form.cleaned_data.get('fecha_fin_manual')
-            
-            # Guardar archivo temporal
-            tmp_dir = getattr(settings, 'MEDIA_ROOT', None) or '/tmp'
-            tmp_subdir = os.path.join(tmp_dir, 'temp_uploads')
-            os.makedirs(tmp_subdir, exist_ok=True)
-            tmp_path = os.path.join(tmp_subdir, f.name)
-            
-            with open(tmp_path, 'wb') as dest:
-                for chunk in f.chunks():
-                    dest.write(chunk)
-            
-            try:
-                # Ejecutar comando de importación
-                call_command('import_consolidado', tmp_path)
-                
-                # Si hay fechas manuales, actualizar (con o sin ficha manual)
-                if fecha_inicio or fecha_fin or (ficha_manual and programa_manual):
-                    print("DEBUG: Entrando al bloque de actualización...")
-                    try:
-                        # Determinar qué ficha usar
-                        if ficha_manual:
-                            ficha_numero = ficha_manual
-                        else:
-                            # Usar la última ficha creada/modificada (la del archivo actual)
-                            ultima_ficha = Ficha.objects.order_by('-id').first()
-                            if ultima_ficha:
-                                ficha_numero = ultima_ficha.numero
-                            else:
-                                raise Exception("No se encontró ninguna ficha")
-                        
-                        print(f"DEBUG: Buscando ficha {ficha_numero}...")
-                        
-                        # Buscar o crear la ficha
-                        ficha_obj, created = Ficha.objects.get_or_create(
+ 
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+ 
+        f       = form.cleaned_data['file']
+        tipo    = request.POST.get('tipo_archivo', 'juicios')  # 'juicios' o 'inasistencias'
+ 
+        if tipo == 'inasistencias':
+            from .views_import import import_inasistencias
+            return import_inasistencias(request)
+ 
+        # ── JUICIOS / APRENDICES (flujo original) ─────────────────
+        ficha_manual    = form.cleaned_data.get('ficha_manual')
+        programa_manual = form.cleaned_data.get('programa_manual')
+        fecha_inicio    = form.cleaned_data.get('fecha_inicio_manual')
+        fecha_fin       = form.cleaned_data.get('fecha_fin_manual')
+ 
+        tmp_dir    = getattr(settings, 'MEDIA_ROOT', None) or '/tmp'
+        tmp_subdir = os.path.join(tmp_dir, 'temp_uploads')
+        os.makedirs(tmp_subdir, exist_ok=True)
+        tmp_path   = os.path.join(tmp_subdir, f.name)
+ 
+        with open(tmp_path, 'wb') as dest:
+            for chunk in f.chunks():
+                dest.write(chunk)
+ 
+        try:
+            call_command('import_consolidado', tmp_path)
+ 
+            if fecha_inicio or fecha_fin or (ficha_manual and programa_manual):
+                try:
+                    ficha_numero = ficha_manual
+                    if not ficha_numero:
+                        ultima = Ficha.objects.order_by('-numero').first()
+                        ficha_numero = ultima.numero if ultima else None
+ 
+                    if ficha_numero:
+                        ficha_obj, _ = Ficha.objects.get_or_create(
                             numero=ficha_numero,
                             defaults={'programa': programa_manual or 'Por definir'}
                         )
-                        
-                        print(f"DEBUG: Ficha encontrada: {ficha_obj.numero}, Programa actual: {ficha_obj.programa}")
-                        
-                        # Actualizar ficha con datos manuales
-                        cambios_ficha = False
                         if programa_manual and (not ficha_obj.programa or ficha_obj.programa == 'Por definir'):
                             ficha_obj.programa = programa_manual
-                            cambios_ficha = True
+                            ficha_obj.save()
                         if fecha_inicio and not ficha_obj.fecha_inicio:
                             ficha_obj.fecha_inicio = fecha_inicio
-                            cambios_ficha = True
+                            ficha_obj.save()
                         if fecha_fin and not ficha_obj.fecha_fin:
                             ficha_obj.fecha_fin = fecha_fin
-                            cambios_ficha = True
-                        
-                        if cambios_ficha:
                             ficha_obj.save()
-                            print(f"DEBUG: Ficha actualizada con programa: {ficha_obj.programa}")
-                        
-                        # Actualizar TODOS los aprendices de esa ficha con las fechas ingresadas
-                        aprendices = Aprendiz.objects.filter(ficha=ficha_obj)
-                        print(f"DEBUG: Encontrados {aprendices.count()} aprendices en la ficha")
+ 
+                        from dateutil.relativedelta import relativedelta
                         actualizados = 0
-                        
-                        for aprendiz in aprendices:
-                            cambios = False
-                            # SIEMPRE actualizar si se ingresó fecha manual
-                            if fecha_inicio:
+                        for aprendiz in Aprendiz.objects.filter(ficha=ficha_obj):
+                            cambios = []
+                            if fecha_inicio and not aprendiz.fecha_inicio:
                                 aprendiz.fecha_inicio = fecha_inicio
-                                cambios = True
+                                cambios.append('fecha_inicio')
                             if fecha_fin:
-                                aprendiz.fecha_final = fecha_fin
-                                cambios = True
-                                
-                                # CALCULAR AUTOMÁTICAMENTE las fechas de etapas
-                                # Etapa productiva = 6 meses antes de la fecha fin
-                                from dateutil.relativedelta import relativedelta
-                                aprendiz.fecha_fin_lectiva = fecha_fin - relativedelta(months=6)
-                                aprendiz.fecha_fin_productiva = fecha_fin
-                            
+                                if not aprendiz.fecha_final:
+                                    aprendiz.fecha_final = fecha_fin
+                                    cambios.append('fecha_final')
+                                if not aprendiz.fecha_fin_productiva:
+                                    aprendiz.fecha_fin_productiva = fecha_fin
+                                    cambios.append('fecha_fin_productiva')
+                                if not aprendiz.fecha_fin_lectiva:
+                                    aprendiz.fecha_fin_lectiva = fecha_fin - relativedelta(months=6)
+                                    cambios.append('fecha_fin_lectiva')
                             if cambios:
-                                aprendiz.save()
+                                aprendiz.save(update_fields=cambios)
                                 actualizados += 1
-                        
-                        print(f"DEBUG: {actualizados} aprendices actualizados")
-                        
-                        if actualizados > 0:
-                            msg = f'✅ {actualizados} aprendices actualizados.'
-                            if fecha_inicio:
-                                msg += f' Fecha Inicio: {fecha_inicio.strftime("%d/%m/%Y")}'
-                            if fecha_fin:
-                                msg += f' | Fecha Fin: {fecha_fin.strftime("%d/%m/%Y")}'
-                            messages.success(request, msg)
-                        else:
-                            messages.success(request, f'✅ Archivo {f.name} procesado correctamente.')
-                    
-                    except Ficha.DoesNotExist:
-                        messages.warning(request, f'⚠️ No se encontró la ficha para actualizar fechas.')
-                    except Exception as e:
-                        messages.warning(request, f'⚠️ Error: {e}')
-                else:
-                    messages.success(request, f'✅ Archivo {f.name} procesado correctamente.')
-                
-            except Exception as e:
-                messages.error(request, f'❌ Error procesando archivo: {e}')
-            
-            # Limpiar archivo temporal
-            try:
-                os.remove(tmp_path)
-            except:
-                pass
-                
-            return redirect('aprendiz_list')
-        
-        return render(request, self.template_name, {'form': form})
+ 
+                        if actualizados:
+                            messages.success(request, f'✅ {actualizados} aprendices actualizados con fechas.')
+ 
+                except Exception as e:
+                    messages.warning(request, f'⚠️ Error actualizando fechas: {e}')
+            else:
+                messages.success(request, f'✅ Archivo {f.name} procesado correctamente.')
+ 
+        except Exception as e:
+            messages.error(request, f'❌ Error procesando archivo: {e}')
+ 
+        try:
+            os.remove(tmp_path)
+        except Exception:
+            pass
+ 
+        return redirect('aprendiz_list')

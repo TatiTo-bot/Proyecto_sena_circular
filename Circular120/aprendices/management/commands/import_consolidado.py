@@ -170,47 +170,41 @@ class Command(BaseCommand):
                 docs_procesados = []
                 creados = 0
                 
-                with transaction.atomic():
-                    for idx, row in df.iterrows():
-                        try:
-                            doc = normalizar_documento(row.get(col_doc))
-                            if not doc or len(doc) < 4:
-                                continue
+                # Recopilar datos primero
+                aprendices_a_crear = []
+                aprendices_a_actualizar = []
+                juicios_a_crear = []
+                
+                for idx, row in df.iterrows():
+                    try:
+                        doc = normalizar_documento(row.get(col_doc))
+                        if not doc or len(doc) < 4:
+                            continue
 
-                            docs_procesados.append(doc)
-                            nombre = str(row.get(col_nombre) or 'Por actualizar').strip() if col_nombre else 'Por actualizar'
-                            apellido = str(row.get(col_apellido) or '').strip() if col_apellido else ''
+                        docs_procesados.append(doc)
+                        nombre = str(row.get(col_nombre) or 'Por actualizar').strip() if col_nombre else 'Por actualizar'
+                        apellido = str(row.get(col_apellido) or '').strip() if col_apellido else ''
 
-                            # CREAR APRENDIZ CON FICHA
-                            aprendiz, created = Aprendiz.objects.get_or_create(
+                        # Verificar si existe
+                        existe = Aprendiz.objects.filter(documento=doc).exists()
+                        
+                        if not existe:
+                            aprendices_a_crear.append(Aprendiz(
                                 documento=doc,
-                                defaults={
-                                    'nombre': nombre, 
-                                    'apellido': apellido, 
-                                    'estado_formacion': 'EN_FORMACION',
-                                    'ficha': ficha_obj  # ASIGNAR FICHA AQUÍ
-                                }
-                            )
-                            
-                            # Si ya existe, actualizar SIEMPRE la ficha
-                            if not created:
-                                if nombre != 'Por actualizar':
-                                    aprendiz.nombre = nombre
-                                    aprendiz.apellido = apellido
-                                # SIEMPRE actualizar la ficha al importar
-                                aprendiz.ficha = ficha_obj
-                                aprendiz.save()
-                            else:
-                                stats['aprendices'] += 1
+                                nombre=nombre,
+                                apellido=apellido,
+                                estado_formacion='EN_FORMACION',
+                                ficha=ficha_obj
+                            ))
+                        else:
+                            aprendices_a_actualizar.append(doc)
 
-                            # Juicios
-                            comp_code = str(row.get(col_comp) or '').strip() if col_comp else None
-                            ra_text = str(row.get(col_ra) or '').strip() if col_ra else None
-                            juicio_text = str(row.get(col_juicio) or '').strip() if col_juicio else ''
+                        # Juicios
+                        comp_code = str(row.get(col_comp) or '').strip() if col_comp else None
+                        ra_text = str(row.get(col_ra) or '').strip() if col_ra else None
+                        juicio_text = str(row.get(col_juicio) or '').strip() if col_juicio else ''
 
-                            if not ra_text or len(ra_text) < 5:
-                                continue
-
+                        if ra_text and len(ra_text) >= 5:
                             ra_code = ra_text.split('-')[0].split(':')[0].strip()
 
                             competencia = None
@@ -232,16 +226,49 @@ class Command(BaseCommand):
                                 elif 'evaluar' in j:
                                     estado = 'PENDIENTE'
 
-                            AprendizResultado.objects.update_or_create(
-                                aprendiz=aprendiz, resultado=ra_obj,
-                                defaults={'estado': estado, 'fecha': date.today()}
-                            )
+                            # Guardar para crear después
+                            juicios_a_crear.append({
+                                'documento': doc,
+                                'resultado': ra_obj,
+                                'estado': estado
+                            })
                             creados += 1
-                        except:
-                            pass
+                    except Exception as e:
+                        self.stdout.write(f'   ⚠ Error fila {idx}: {e}')
+                        pass
+                
+                # Crear aprendices nuevos en bulk
+                if aprendices_a_crear:
+                    Aprendiz.objects.bulk_create(aprendices_a_crear, ignore_conflicts=True)
+                    stats['aprendices'] += len(aprendices_a_crear)
+                
+                # Actualizar aprendices existentes (asignar ficha)
+                if aprendices_a_actualizar:
+                    Aprendiz.objects.filter(documento__in=aprendices_a_actualizar).update(ficha=ficha_obj)
+                
+                # Crear juicios
+                for juicio_data in juicios_a_crear:
+                    try:
+                        aprendiz = Aprendiz.objects.get(documento=juicio_data['documento'])
+                        AprendizResultado.objects.update_or_create(
+                            aprendiz=aprendiz,
+                            resultado=juicio_data['resultado'],
+                            defaults={'estado': juicio_data['estado'], 'fecha': date.today()}
+                        )
+                    except:
+                        pass
 
                 self.stdout.write(f'   ✓ {creados} juicios')
                 stats['juicios'] += creados
+                
+                # GUARDAR lista de documentos procesados en archivo temporal
+                if docs_procesados:
+                    import tempfile
+                    temp_docs_file = os.path.join(tempfile.gettempdir(), 'docs_procesados.txt')
+                    with open(temp_docs_file, 'w') as f:
+                        for doc in docs_procesados:
+                            f.write(f"{doc}\n")
+                    self.stdout.write(f'   📝 {len(docs_procesados)} documentos guardados para actualización')
 
         self.stdout.write('\n' + '='*60)
         self.stdout.write(f'📋 Juicios: {stats["juicios"]}')

@@ -1,276 +1,570 @@
 <!-- aprendices/templates/aprendices/casos_vencidos.html -->
 {% extends "aprendices/base.html" %}
-
 {% block page_title %}Casos Vencidos{% endblock %}
-
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <div>
-        <h2 style="color: #c92a2a; margin-bottom: 10px; font-size: 24px;">
-            <i class="fas fa-exclamation-triangle"></i> Casos Vencidos - Acción Requerida
-        </h2>
-        <p style="color: var(--text-light);">
-            Aprendices con fichas o etapas productivas vencidas que requieren atención
-        </p>
-    </div>
-    <div class="stat-card" style="min-width: 150px; margin: 0; border-top: 4px solid #c92a2a;">
-        <h3 style="margin-bottom: 5px;">Total</h3>
-        <div class="number" style="font-size: 32px; color: #c92a2a;">{{ total }}</div>
-    </div>
-</div>
 
-{% if total > 0 %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 
-<!-- CASOS URGENTES (>60 días) -->
-{% if urgentes %}
-<div class="alert alert-error" style="margin-bottom: 30px;">
+  :root {
+    --red-dark:   #b71c1c;
+    --red:        #e53935;
+    --orange:     #e65100;
+    --amber:      #f57f17;
+    --green:      #39A900;
+    --green-dark: #006400;
+  }
+
+  .cv-wrap {
+    font-family: 'Outfit', sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-bottom: 48px;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────────── */
+  .cv-hero {
+    position: relative;
+    background: linear-gradient(135deg, #7f0000 0%, #c62828 55%, #e53935 100%);
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(183,28,28,.25);
+  }
+  .cv-hero::before {
+    content:''; position:absolute; top:-60px; right:-60px;
+    width:260px; height:260px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+  }
+  .cv-hero::after {
+    content:''; position:absolute; bottom:-40px; left:140px;
+    width:180px; height:180px; border-radius:50%;
+    background:rgba(255,255,255,.04);
+  }
+  .cv-hero-inner {
+    position:relative; z-index:1;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px; flex-wrap:wrap;
+  }
+  .cv-hero-left { display:flex; align-items:center; gap:20px; }
+  .cv-hero-icon {
+    width:72px; height:72px;
+    background:rgba(255,255,255,.15);
+    border-radius:20px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px;
+    border:1px solid rgba(255,255,255,.22);
+    flex-shrink:0;
+  }
+  .cv-hero h1 { color:#fff; font-size:26px; font-weight:800; margin:0 0 4px; }
+  .cv-hero p  { color:rgba(255,255,255,.8); margin:0; font-size:14px; }
+  .cv-hero-badge {
+    background:rgba(255,255,255,.13);
+    border:2px solid rgba(255,255,255,.3);
+    border-radius:20px; padding:16px 28px;
+    text-align:center; flex-shrink:0;
+  }
+  .cv-hero-badge .num { font-size:42px; font-weight:800; color:#fff; line-height:1; }
+  .cv-hero-badge .lbl { font-size:12px; color:rgba(255,255,255,.72); font-weight:500;
+    letter-spacing:.5px; text-transform:uppercase; margin-top:4px; }
+
+  /* ── NIVEL CARDS ─────────────────────────────────────────── */
+  .cv-level-summary {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px; margin-bottom:28px;
+  }
+  .cv-lstat {
+    background:#fff; border-radius:14px; padding:18px 20px;
+    border-left:4px solid; box-shadow:0 2px 10px rgba(0,0,0,.07);
+    display:flex; align-items:center; gap:14px;
+  }
+  .cv-lstat .ico {
+    width:42px; height:42px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; flex-shrink:0;
+  }
+  .cv-lstat .cnt { font-size:26px; font-weight:800; line-height:1; }
+  .cv-lstat .lbl { font-size:11px; font-weight:600; text-transform:uppercase;
+    letter-spacing:.4px; color:#888; margin-top:2px; }
+
+  .lv-urgente  { border-color:#e53935; }
+  .lv-urgente  .ico { background:#ffebee; color:#e53935; }
+  .lv-urgente  .cnt { color:#e53935; }
+  .lv-moderado { border-color:#e65100; }
+  .lv-moderado .ico { background:#fff3e0; color:#e65100; }
+  .lv-moderado .cnt { color:#e65100; }
+  .lv-reciente { border-color:#f57f17; }
+  .lv-reciente .ico { background:#fff8e1; color:#f57f17; }
+  .lv-reciente .cnt { color:#f57f17; }
+
+  /* ── ALERT URGENTE ───────────────────────────────────────── */
+  .cv-alert-urgente {
+    display:flex; align-items:flex-start; gap:14px;
+    background:#ffebee; border:1px solid #ffcdd2;
+    border-left:4px solid #e53935;
+    border-radius:10px; padding:16px 20px;
+    margin-bottom:28px; color:#b71c1c; font-size:14px; line-height:1.55;
+  }
+  .cv-alert-urgente i { font-size:20px; flex-shrink:0; margin-top:1px; }
+
+  /* ── SECCIÓN ─────────────────────────────────────────────── */
+  .cv-section { margin-bottom:30px; }
+  .cv-section-header {
+    display:flex; align-items:center; gap:12px;
+    padding:16px 22px; border-radius:14px 14px 0 0;
+    color:#fff; font-size:15px; font-weight:700;
+  }
+  .cv-section-header .badge-count {
+    background:rgba(255,255,255,.22);
+    border-radius:20px; padding:3px 12px;
+    font-size:13px; margin-left:auto;
+  }
+  .sh-urgente  { background:linear-gradient(90deg,#b71c1c,#e53935); }
+  .sh-moderado { background:linear-gradient(90deg,#bf360c,#e65100); }
+  .sh-reciente { background:linear-gradient(90deg,#e65100,#f57f17); }
+
+  .cv-table-wrap {
+    background:#fff;
+    border-radius:0 0 14px 14px;
+    border:1.5px solid #e0e0e0;
+    border-top:none;
+    overflow:hidden;
+    box-shadow:0 4px 20px rgba(0,0,0,.07);
+  }
+  .cv-table { width:100%; border-collapse:collapse; }
+  .cv-table thead tr { background:#fafafa; }
+  .cv-table th {
+    padding:11px 14px; text-align:left;
+    font-size:11px; font-weight:700; color:#888;
+    text-transform:uppercase; letter-spacing:.4px;
+    border-bottom:1.5px solid #ececec;
+  }
+  .cv-table tbody tr { transition:background .12s; }
+  .cv-table tbody tr:hover { background:#fafafa; }
+  .cv-table td {
+    padding:11px 14px; font-size:13px;
+    border-bottom:1px solid #f5f5f5;
+    vertical-align:middle;
+  }
+  .cv-table tbody tr:last-child td { border-bottom:none; }
+
+  /* Estado badges */
+  .st-badge {
+    display:inline-block; padding:3px 10px; border-radius:6px;
+    font-size:11px; font-weight:700; white-space:nowrap;
+  }
+  .st-en-form   { background:#e8f5e3; color:#2e7d32; }
+  .st-lectiva   { background:#e3f2fd; color:#1565c0; }
+  .st-productiva{ background:#fff3e0; color:#e65100; }
+  .st-por-cert  { background:#fff8e1; color:#f57f17; }
+  .st-cancelado { background:#ffebee; color:#b71c1c; }
+  .st-retiro    { background:#fce4ec; color:#880e4f; }
+  .st-aplaz     { background:#ede7f6; color:#4a148c; }
+  .st-traslado  { background:#e0f2f1; color:#004d40; }
+  .st-default   { background:#f5f5f5; color:#555; }
+
+  /* Días vencido pill */
+  .dias-pill {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:4px 12px; border-radius:20px;
+    font-size:12px; font-weight:700; white-space:nowrap;
+  }
+  .dias-urgente  { background:#ffebee; color:#e53935; }
+  .dias-moderado { background:#fff3e0; color:#e65100; }
+  .dias-reciente { background:#fff8e1; color:#f57f17; }
+
+  /* Ficha tag */
+  .ficha-tag {
+    background:#e3f2fd; color:#1565c0;
+    font-family:'DM Mono',monospace;
+    font-size:11px; font-weight:600;
+    padding:3px 9px; border-radius:6px;
+  }
+
+  /* Action buttons */
+  .cv-actions { display:flex; gap:6px; justify-content:center; }
+  .cv-btn {
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; text-decoration:none; border:none;
+    cursor:pointer; transition:all .15s; flex-shrink:0;
+  }
+  .cv-btn-ver    { background:#e3f2fd; color:#1565c0; }
+  .cv-btn-edit   { background:#e8f5e3; color:#2e7d32; }
+  .cv-btn-cancel { background:#ffebee; color:#e53935; }
+  .cv-btn:hover  { filter:brightness(.88); transform:translateY(-1px); box-shadow:0 3px 10px rgba(0,0,0,.15); }
+
+  /* ── INFO BOX ────────────────────────────────────────────── */
+  .cv-info-box {
+    background:#fff; border:1.5px solid #e0e0e0;
+    border-radius:16px; padding:22px 28px;
+    display:flex; gap:24px; flex-wrap:wrap; margin-top:8px;
+  }
+  .cv-info-item { display:flex; align-items:flex-start; gap:12px; flex:1; min-width:180px; }
+  .cv-info-item .ico {
+    width:38px; height:38px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; flex-shrink:0;
+  }
+  .ico-red    { background:#ffebee; color:#e53935; }
+  .ico-orange { background:#fff3e0; color:#e65100; }
+  .ico-amber  { background:#fff8e1; color:#f57f17; }
+  .ico-green  { background:#e8f5e3; color:#2e7d32; }
+  .cv-info-item h4 { margin:0 0 3px; font-size:13px; font-weight:700; color:#333; }
+  .cv-info-item p  { margin:0; font-size:12px; color:#777; line-height:1.5; }
+  .cv-info-item a  { color:var(--green); font-weight:600; text-decoration:none; }
+  .cv-info-item a:hover { text-decoration:underline; }
+
+  /* ── EMPTY STATE ─────────────────────────────────────────── */
+  .cv-empty {
+    text-align:center; padding:80px 20px;
+    background:#fff; border-radius:20px;
+    border:2px dashed #e0e0e0;
+  }
+  .cv-empty-icon {
+    width:100px; height:100px; border-radius:50%;
+    background:linear-gradient(135deg,#e8f5e3,#c8e6c9);
+    display:flex; align-items:center; justify-content:center;
+    font-size:46px; margin:0 auto 24px;
+  }
+  .cv-empty h3 { font-size:22px; font-weight:700; color:#333; margin:0 0 10px; }
+  .cv-empty p  { color:#888; font-size:15px; margin:0 0 28px; }
+  .cv-btn-home {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 28px; border-radius:12px;
+    background:linear-gradient(135deg,var(--green),var(--green-dark));
+    color:#fff; font-family:'Outfit',sans-serif; font-size:14px;
+    font-weight:700; text-decoration:none;
+    box-shadow:0 4px 14px rgba(57,169,0,.35);
+    transition:all .15s;
+  }
+  .cv-btn-home:hover { box-shadow:0 6px 20px rgba(57,169,0,.5); transform:translateY(-1px); color:#fff; }
+
+  /* ── MODAL CANCELAR ──────────────────────────────────────── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.45); backdrop-filter:blur(4px);
+    z-index:1000; align-items:center; justify-content:center;
+  }
+  .modal-overlay.active { display:flex; }
+  .modal-box {
+    background:#fff; border-radius:20px; padding:36px 32px;
+    max-width:420px; width:90%; text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.25);
+    animation:mIn .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes mIn {
+    from { transform:scale(.85) translateY(20px); opacity:0; }
+    to   { transform:scale(1)   translateY(0);    opacity:1; }
+  }
+  .modal-icon {
+    width:72px; height:72px; border-radius:50%;
+    background:#ffebee;
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; margin:0 auto 20px;
+  }
+  .modal-box h3 { font-size:20px; font-weight:700; color:#333; margin:0 0 10px; }
+  .modal-box p  { color:#777; font-size:14px; line-height:1.6; margin:0 0 28px; }
+  .modal-box p strong { color:#333; }
+  .modal-actions { display:flex; gap:12px; }
+  .m-cancel {
+    flex:1; padding:12px; border-radius:10px;
+    border:2px solid #e0e0e0; background:#fff; color:#777;
+    font-family:'Outfit',sans-serif; font-size:14px; font-weight:600;
+    cursor:pointer; transition:all .15s;
+  }
+  .m-cancel:hover { border-color:#bbb; color:#444; }
+  .m-confirm {
+    flex:2; padding:12px; border-radius:10px; border:none;
+    background:linear-gradient(135deg,#e53935,#b71c1c);
+    color:#fff; font-family:'Outfit',sans-serif; font-size:14px;
+    font-weight:700; cursor:pointer; transition:all .15s;
+    box-shadow:0 4px 14px rgba(229,57,53,.35); text-decoration:none;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .m-confirm:hover { box-shadow:0 6px 20px rgba(229,57,53,.5); color:#fff; }
+</style>
+
+<div class="cv-wrap">
+
+  <!-- HERO -->
+  <div class="cv-hero">
+    <div class="cv-hero-inner">
+      <div class="cv-hero-left">
+        <div class="cv-hero-icon">⚠️</div>
+        <div>
+          <h1>Casos Vencidos — Acción Requerida</h1>
+          <p>Aprendices con fichas o etapas productivas vencidas que requieren atención</p>
+        </div>
+      </div>
+      {% if total > 0 %}
+      <div class="cv-hero-badge">
+        <div class="num">{{ total }}</div>
+        <div class="lbl">Total casos</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if total > 0 %}
+
+  <!-- RESUMEN POR NIVEL -->
+  <div class="cv-level-summary">
+    <div class="cv-lstat lv-urgente">
+      <div class="ico"><i class="fas fa-fire"></i></div>
+      <div>
+        <div class="cnt">{{ urgentes|length }}</div>
+        <div class="lbl">Urgente &gt;60 días</div>
+      </div>
+    </div>
+    <div class="cv-lstat lv-moderado">
+      <div class="ico"><i class="fas fa-exclamation-triangle"></i></div>
+      <div>
+        <div class="cnt">{{ moderados|length }}</div>
+        <div class="lbl">Moderado 30–60 días</div>
+      </div>
+    </div>
+    <div class="cv-lstat lv-reciente">
+      <div class="ico"><i class="fas fa-clock"></i></div>
+      <div>
+        <div class="cnt">{{ recientes|length }}</div>
+        <div class="lbl">Reciente &lt;30 días</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT URGENTE -->
+  {% if urgentes %}
+  <div class="cv-alert-urgente">
     <i class="fas fa-exclamation-circle"></i>
-    <div>
-        <strong>¡URGENTE!</strong> Hay {{ urgentes|length }} caso{{ urgentes|length|pluralize }} vencido{{ urgentes|length|pluralize }} por más de 60 días.
-        Se requiere acción inmediata del comité de evaluación.
-    </div>
-</div>
+    <span><strong>¡URGENTE!</strong> Hay {{ urgentes|length }} caso{{ urgentes|length|pluralize }} vencido{{ urgentes|length|pluralize }} por más de 60 días.
+    Se requiere acción inmediata del comité de evaluación.</span>
+  </div>
+  {% endif %}
 
-<div class="table-container" style="border: 2px solid #c92a2a;">
-    <div style="background: #c92a2a; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
-        <h3 style="margin: 0; font-size: 16px;">
-            <i class="fas fa-fire"></i> URGENTE - Más de 60 días vencidos ({{ urgentes|length }})
-        </h3>
+  <!-- MACRO para tabla (evita repetir código) -->
+  <!-- URGENTES -->
+  {% if urgentes %}
+  <div class="cv-section">
+    <div class="cv-section-header sh-urgente">
+      <i class="fas fa-fire"></i> URGENTE — Más de 60 días vencidos
+      <span class="badge-count">{{ urgentes|length }}</span>
     </div>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Documento</th>
-                <th>Nombre Completo</th>
-                <th>Ficha</th>
-                <th>Estado</th>
-                <th>Fecha Fin</th>
-                <th>Días Vencido</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
+    <div class="cv-table-wrap">
+      <table class="cv-table">
+        <thead><tr>
+          <th>Documento</th><th>Nombre Completo</th><th>Ficha</th>
+          <th>Estado</th><th>Fecha Fin</th><th>Días Vencido</th><th style="text-align:center">Acciones</th>
+        </tr></thead>
         <tbody>
-            {% for aprendiz in urgentes %}
-            <tr style="background-color: #fff5f5;">
-                <td><strong>{{ aprendiz.documento }}</strong></td>
-                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
-                <td>
-                    {% if aprendiz.ficha %}
-                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
-                    {% else %}
-                        <span style="color: #999;">Sin ficha</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
-                </td>
-                <td>
-                    {% if aprendiz.fecha_fin_productiva %}
-                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
-                    {% elif aprendiz.ficha.fecha_fin %}
-                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </td>
-                <td style="text-align: center;">
-                    <strong style="color: #c92a2a; font-size: 16px;">
-                        {{ aprendiz.dias_vencido }} días
-                    </strong>
-                </td>
-                <td style="text-align: center;">
-                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
-                       class="btn btn-primary" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
-                       class="btn" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="{% url 'cancelar_aprendiz' aprendiz.documento %}" 
-                       class="btn" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #dc3545; color: white;"
-                       onclick="return confirm('¿Está seguro de CANCELAR a {{ aprendiz.nombre }} {{ aprendiz.apellido }}?')">
-                        <i class="fas fa-times-circle"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
+        {% for ap in urgentes %}
+        <tr>
+          <td><strong style="font-family:'DM Mono',monospace;font-size:12px">{{ ap.documento }}</strong></td>
+          <td style="font-weight:600">{{ ap.nombre }} {{ ap.apellido }}</td>
+          <td>{% if ap.ficha %}<span class="ficha-tag">{{ ap.ficha.numero }}</span>{% else %}<span style="color:#ccc">—</span>{% endif %}</td>
+          <td>
+            {% if ap.estado_formacion == 'EN_FORMACION' %}<span class="st-badge st-en-form">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'ETAPA_LECTIVA' %}<span class="st-badge st-lectiva">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'ETAPA_PRODUCTIVA' %}<span class="st-badge st-productiva">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'POR_CERTIFICAR' %}<span class="st-badge st-por-cert">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'CANCELADO' %}<span class="st-badge st-cancelado">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'RETIRO_VOLUNTARIO' %}<span class="st-badge st-retiro">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'APLAZAMIENTO' %}<span class="st-badge st-aplaz">{{ ap.get_estado_formacion_display }}</span>
+            {% elif ap.estado_formacion == 'TRASLADADO' %}<span class="st-badge st-traslado">{{ ap.get_estado_formacion_display }}</span>
+            {% else %}<span class="st-badge st-default">{{ ap.get_estado_formacion_display }}</span>{% endif %}
+          </td>
+          <td style="font-size:12px;color:#666">
+            {% if ap.fecha_fin_productiva %}{{ ap.fecha_fin_productiva|date:"d/m/Y" }}
+            {% elif ap.ficha and ap.ficha.fecha_fin %}{{ ap.ficha.fecha_fin|date:"d/m/Y" }}
+            {% else %}—{% endif %}
+          </td>
+          <td><span class="dias-pill dias-urgente"><i class="fas fa-fire" style="font-size:10px"></i> {{ ap.dias_vencido }} días</span></td>
+          <td>
+            <div class="cv-actions">
+              <a href="{% url 'aprendiz_detail' ap.documento %}" class="cv-btn cv-btn-ver" title="Ver"><i class="fas fa-eye"></i></a>
+              <a href="{% url 'aprendiz_update' ap.documento %}" class="cv-btn cv-btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
+              <button class="cv-btn cv-btn-cancel" title="Cancelar"
+                onclick="abrirModal('{{ ap.documento }}','{{ ap.nombre }} {{ ap.apellido }}')">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
         </tbody>
-    </table>
-</div>
-{% endif %}
-
-<!-- CASOS MODERADOS (30-60 días) -->
-{% if moderados %}
-<div class="table-container" style="margin-top: 30px; border: 2px solid #e8590c;">
-    <div style="background: #e8590c; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
-        <h3 style="margin: 0; font-size: 16px;">
-            <i class="fas fa-exclamation-triangle"></i> MODERADO - Entre 30 y 60 días vencidos ({{ moderados|length }})
-        </h3>
+      </table>
     </div>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Documento</th>
-                <th>Nombre Completo</th>
-                <th>Ficha</th>
-                <th>Estado</th>
-                <th>Fecha Fin</th>
-                <th>Días Vencido</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for aprendiz in moderados %}
-            <tr style="background-color: #fff8f0;">
-                <td><strong>{{ aprendiz.documento }}</strong></td>
-                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
-                <td>
-                    {% if aprendiz.ficha %}
-                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
-                    {% else %}
-                        <span style="color: #999;">Sin ficha</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
-                </td>
-                <td>
-                    {% if aprendiz.fecha_fin_productiva %}
-                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
-                    {% elif aprendiz.ficha.fecha_fin %}
-                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </td>
-                <td style="text-align: center;">
-                    <strong style="color: #e8590c; font-size: 16px;">
-                        {{ aprendiz.dias_vencido }} días
-                    </strong>
-                </td>
-                <td style="text-align: center;">
-                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
-                       class="btn btn-primary" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
-                       class="btn" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="{% url 'cancelar_aprendiz' aprendiz.documento %}" 
-                       class="btn" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #dc3545; color: white;"
-                       onclick="return confirm('¿Está seguro de CANCELAR a {{ aprendiz.nombre }} {{ aprendiz.apellido }}?')">
-                        <i class="fas fa-times-circle"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
+  </div>
+  {% endif %}
 
-<!-- CASOS RECIENTES (<30 días) -->
-{% if recientes %}
-<div class="table-container" style="margin-top: 30px; border: 2px solid #f08c00;">
-    <div style="background: #f08c00; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -25px -25px 20px -25px;">
-        <h3 style="margin: 0; font-size: 16px;">
-            <i class="fas fa-clock"></i> RECIENTE - Menos de 30 días vencidos ({{ recientes|length }})
-        </h3>
+  <!-- MODERADOS -->
+  {% if moderados %}
+  <div class="cv-section">
+    <div class="cv-section-header sh-moderado">
+      <i class="fas fa-exclamation-triangle"></i> MODERADO — Entre 30 y 60 días vencidos
+      <span class="badge-count">{{ moderados|length }}</span>
     </div>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Documento</th>
-                <th>Nombre Completo</th>
-                <th>Ficha</th>
-                <th>Estado</th>
-                <th>Fecha Fin</th>
-                <th>Días Vencido</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
+    <div class="cv-table-wrap">
+      <table class="cv-table">
+        <thead><tr>
+          <th>Documento</th><th>Nombre Completo</th><th>Ficha</th>
+          <th>Estado</th><th>Fecha Fin</th><th>Días Vencido</th><th style="text-align:center">Acciones</th>
+        </tr></thead>
         <tbody>
-            {% for aprendiz in recientes %}
-            <tr>
-                <td><strong>{{ aprendiz.documento }}</strong></td>
-                <td>{{ aprendiz.nombre }} {{ aprendiz.apellido }}</td>
-                <td>
-                    {% if aprendiz.ficha %}
-                        <span class="badge badge-info">{{ aprendiz.ficha.numero }}</span>
-                    {% else %}
-                        <span style="color: #999;">Sin ficha</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <span class="badge badge-warning">{{ aprendiz.estado_formacion }}</span>
-                </td>
-                <td>
-                    {% if aprendiz.fecha_fin_productiva %}
-                        {{ aprendiz.fecha_fin_productiva|date:"d/m/Y" }}
-                    {% elif aprendiz.ficha.fecha_fin %}
-                        {{ aprendiz.ficha.fecha_fin|date:"d/m/Y" }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </td>
-                <td style="text-align: center;">
-                    <strong style="color: #f08c00; font-size: 16px;">
-                        {{ aprendiz.dias_vencido }} días
-                    </strong>
-                </td>
-                <td style="text-align: center;">
-                    <a href="{% url 'aprendiz_detail' aprendiz.documento %}" 
-                       class="btn btn-primary" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px;">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="{% url 'aprendiz_update' aprendiz.documento %}" 
-                       class="btn" 
-                       style="font-size: 11px; padding: 5px 10px; margin: 2px; background: #007bff; color: white;">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
+        {% for ap in moderados %}
+        <tr>
+          <td><strong style="font-family:'DM Mono',monospace;font-size:12px">{{ ap.documento }}</strong></td>
+          <td style="font-weight:600">{{ ap.nombre }} {{ ap.apellido }}</td>
+          <td>{% if ap.ficha %}<span class="ficha-tag">{{ ap.ficha.numero }}</span>{% else %}<span style="color:#ccc">—</span>{% endif %}</td>
+          <td>{{ ap.get_estado_formacion_display }}</td>
+          <td style="font-size:12px;color:#666">
+            {% if ap.fecha_fin_productiva %}{{ ap.fecha_fin_productiva|date:"d/m/Y" }}
+            {% elif ap.ficha and ap.ficha.fecha_fin %}{{ ap.ficha.fecha_fin|date:"d/m/Y" }}
+            {% else %}—{% endif %}
+          </td>
+          <td><span class="dias-pill dias-moderado"><i class="fas fa-exclamation-triangle" style="font-size:10px"></i> {{ ap.dias_vencido }} días</span></td>
+          <td>
+            <div class="cv-actions">
+              <a href="{% url 'aprendiz_detail' ap.documento %}" class="cv-btn cv-btn-ver" title="Ver"><i class="fas fa-eye"></i></a>
+              <a href="{% url 'aprendiz_update' ap.documento %}" class="cv-btn cv-btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
+              <button class="cv-btn cv-btn-cancel" title="Cancelar"
+                onclick="abrirModal('{{ ap.documento }}','{{ ap.nombre }} {{ ap.apellido }}')">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
         </tbody>
-    </table>
-</div>
-{% endif %}
+      </table>
+    </div>
+  </div>
+  {% endif %}
 
-<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-    <h4 style="color: var(--text-dark); margin-bottom: 15px;">
-        <i class="fas fa-info-circle"></i> Acciones Recomendadas
-    </h4>
-    <ul style="color: var(--text-light); line-height: 1.8;">
-        <li><strong>Casos Urgentes (>60 días):</strong> Requieren decisión inmediata del comité. Revisar si procede certificación, cancelación o prórroga.</li>
-        <li><strong>Casos Moderados (30-60 días):</strong> Programar reunión con el aprendiz para definir acciones.</li>
-        <li><strong>Casos Recientes (<30 días):</strong> Realizar seguimiento y actualizar estado según corresponda.</li>
-        <li>Para generar el acta oficial del comité, accede a <a href="{% url 'reporte_circular120' %}" style="color: var(--sena-green);">Reporte Circular 120</a></li>
-    </ul>
-</div>
+  <!-- RECIENTES -->
+  {% if recientes %}
+  <div class="cv-section">
+    <div class="cv-section-header sh-reciente">
+      <i class="fas fa-clock"></i> RECIENTE — Menos de 30 días vencidos
+      <span class="badge-count">{{ recientes|length }}</span>
+    </div>
+    <div class="cv-table-wrap">
+      <table class="cv-table">
+        <thead><tr>
+          <th>Documento</th><th>Nombre Completo</th><th>Ficha</th>
+          <th>Estado</th><th>Fecha Fin</th><th>Días Vencido</th><th style="text-align:center">Acciones</th>
+        </tr></thead>
+        <tbody>
+        {% for ap in recientes %}
+        <tr>
+          <td><strong style="font-family:'DM Mono',monospace;font-size:12px">{{ ap.documento }}</strong></td>
+          <td style="font-weight:600">{{ ap.nombre }} {{ ap.apellido }}</td>
+          <td>{% if ap.ficha %}<span class="ficha-tag">{{ ap.ficha.numero }}</span>{% else %}<span style="color:#ccc">—</span>{% endif %}</td>
+          <td>{{ ap.get_estado_formacion_display }}</td>
+          <td style="font-size:12px;color:#666">
+            {% if ap.fecha_fin_productiva %}{{ ap.fecha_fin_productiva|date:"d/m/Y" }}
+            {% elif ap.ficha and ap.ficha.fecha_fin %}{{ ap.ficha.fecha_fin|date:"d/m/Y" }}
+            {% else %}—{% endif %}
+          </td>
+          <td><span class="dias-pill dias-reciente"><i class="fas fa-clock" style="font-size:10px"></i> {{ ap.dias_vencido }} días</span></td>
+          <td>
+            <div class="cv-actions">
+              <a href="{% url 'aprendiz_detail' ap.documento %}" class="cv-btn cv-btn-ver" title="Ver"><i class="fas fa-eye"></i></a>
+              <a href="{% url 'aprendiz_update' ap.documento %}" class="cv-btn cv-btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
 
-{% else %}
-<div style="text-align: center; padding: 60px 20px;">
-    <i class="fas fa-check-circle" style="font-size: 80px; color: var(--sena-green); margin-bottom: 20px;"></i>
-    <h3 style="color: var(--text-dark); margin-bottom: 10px;">¡Todo al día!</h3>
-    <p style="color: var(--text-light); font-size: 16px;">
-        No hay casos vencidos que requieran atención en este momento
-    </p>
-    <a href="{% url 'dashboard' %}" class="btn btn-primary" style="margin-top: 20px;">
-        <i class="fas fa-home"></i> Volver al Dashboard
+  <!-- INFO BOX -->
+  <div class="cv-info-box">
+    <div class="cv-info-item">
+      <div class="ico ico-red"><i class="fas fa-fire"></i></div>
+      <div>
+        <h4>Urgente (&gt;60 días)</h4>
+        <p>Decisión inmediata del comité: certificación, cancelación o prórroga.</p>
+      </div>
+    </div>
+    <div class="cv-info-item">
+      <div class="ico ico-orange"><i class="fas fa-exclamation-triangle"></i></div>
+      <div>
+        <h4>Moderado (30–60 días)</h4>
+        <p>Programar reunión con el aprendiz para definir acciones.</p>
+      </div>
+    </div>
+    <div class="cv-info-item">
+      <div class="ico ico-amber"><i class="fas fa-clock"></i></div>
+      <div>
+        <h4>Reciente (&lt;30 días)</h4>
+        <p>Seguimiento y actualización de estado según corresponda.</p>
+      </div>
+    </div>
+    <div class="cv-info-item">
+      <div class="ico ico-green"><i class="fas fa-file-alt"></i></div>
+      <div>
+        <h4>Reporte Circular 120</h4>
+        <p>Genera el acta oficial del comité. <a href="{% url 'reporte_circular120' %}">Ir al reporte →</a></p>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- EMPTY STATE -->
+  <div class="cv-empty">
+    <div class="cv-empty-icon">✅</div>
+    <h3>¡Todo al día!</h3>
+    <p>No hay casos vencidos que requieran atención en este momento.</p>
+    <a href="{% url 'dashboard' %}" class="cv-btn-home">
+      <i class="fas fa-home"></i> Volver al Dashboard
     </a>
+  </div>
+
+  {% endif %}
+
 </div>
-{% endif %}
+
+<!-- MODAL CANCELAR -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <h3>Confirmar Cancelación</h3>
+    <p>¿Está seguro de marcar como <strong>CANCELADO</strong> a<br>
+      <strong id="modalNombre"></strong>?<br>
+      <span style="font-size:12px;color:#aaa;margin-top:6px;display:block">Esta acción cambiará el estado del aprendiz.</span>
+    </p>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="cerrarModal()">Cancelar</button>
+      <a id="modalConfirmBtn" href="#" class="m-confirm">
+        <i class="fas fa-times-circle"></i> Sí, cancelar
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE_CANCEL = "{% url 'cancelar_aprendiz' '00000000' %}".replace('00000000','');
+
+  function abrirModal(doc, nombre) {
+    document.getElementById('modalNombre').textContent = nombre;
+    document.getElementById('modalConfirmBtn').href = BASE_CANCEL + doc;
+    document.getElementById('cancelModal').classList.add('active');
+  }
+  function cerrarModal() {
+    document.getElementById('cancelModal').classList.remove('active');
+  }
+  document.getElementById('cancelModal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cerrarModal();
+  });
+</script>
 
 {% endblock %}

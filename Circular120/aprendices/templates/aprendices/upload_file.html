@@ -1,227 +1,402 @@
 {% extends "aprendices/base.html" %}
-
 {% block page_title %}Importar Datos desde Excel{% endblock %}
-
 {% block content %}
-<div style="max-width: 100%; padding: 0 40px;">
-    
-    <!-- Header -->
-    <div style="background: linear-gradient(135deg, #00954a 0%, #39A900 100%); padding: 40px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,149,74,0.2);">
-        <div style="text-align: center;">
-            <div style="display: inline-flex; align-items: center; gap: 15px;">
-                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-upload" style="font-size: 28px; color: white;"></i>
-                </div>
-                <div style="text-align: left;">
-                    <h2 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">Importar Datos desde Excel</h2>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 15px;">Carga masiva con datos manuales</p>
-                </div>
-            </div>
-        </div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
+
+  .up-wrap {
+    font-family: 'Outfit', sans-serif;
+    max-width: 780px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  .up-hero {
+    background: linear-gradient(135deg, #006400 0%, #39A900 100%);
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 16px 48px rgba(57,169,0,.2);
+  }
+  .up-hero-ico {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,.18);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; flex-shrink: 0;
+  }
+  .up-hero h1 { color:#fff; font-size:22px; font-weight:800; margin:0 0 4px; }
+  .up-hero p  { color:rgba(255,255,255,.8); margin:0; font-size:13px; }
+
+  .up-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    border: 1.5px solid #e0e0e0;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    margin-bottom: 20px;
+  }
+
+  /* ── Tipo de archivo ── */
+  .tipo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .tipo-option {
+    position: relative;
+  }
+  .tipo-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .tipo-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all .18s;
+    text-align: center;
+    background: #fafafa;
+  }
+  .tipo-label:hover {
+    border-color: #39A900;
+    background: #f1faf0;
+  }
+  .tipo-option input:checked + .tipo-label {
+    border-color: #39A900;
+    background: #e8f5e3;
+    box-shadow: 0 0 0 3px rgba(57,169,0,.15);
+  }
+  .tipo-label .tipo-ico {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .ico-juicios      { background: #e3f2fd; }
+  .ico-inasistencias{ background: #fff3e0; }
+  .tipo-label strong { font-size: 14px; font-weight: 700; color: #333; }
+  .tipo-label span   { font-size: 11px; color: #888; line-height: 1.4; }
+  .tipo-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 4px;
+    transition: all .15s;
+  }
+  .tipo-option input:checked + .tipo-label .tipo-check {
+    background: #39A900;
+    border-color: #39A900;
+  }
+  .tipo-option input:checked + .tipo-label .tipo-check::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* ── Drop zone ── */
+  .up-drop {
+    border: 2.5px dashed #b2dfdb;
+    border-radius: 14px;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f9fffe;
+    cursor: pointer;
+    transition: all .2s;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .up-drop:hover, .up-drop.dragover {
+    border-color: #39A900;
+    background: #f1faf0;
+  }
+  .up-drop input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .up-drop .drop-ico { font-size: 42px; margin-bottom: 12px; }
+  .up-drop h3 { font-size: 15px; font-weight: 700; color: #333; margin: 0 0 6px; }
+  .up-drop p  { font-size: 12px; color: #888; margin: 0; }
+
+  .up-file-ok {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #e8f5e3;
+    border: 1.5px solid #a5d6a7;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 16px;
+  }
+  .up-file-ok.visible { display: flex; }
+
+  /* ── Fechas (panel colapsable) ── */
+  .up-fechas {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+  }
+  .up-fechas-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fechas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .fechas-grid label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .fechas-grid input, .fechas-grid .form-control {
+    width: 100%;
+    padding: 9px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: border-color .15s;
+  }
+  .fechas-grid input:focus, .fechas-grid .form-control:focus {
+    outline: none;
+    border-color: #39A900;
+  }
+  .full-col { grid-column: 1 / -1; }
+
+  /* ── Submit ── */
+  .up-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #39A900, #006400);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(57,169,0,.35);
+    transition: all .18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .up-submit:hover { box-shadow: 0 6px 24px rgba(57,169,0,.5); transform: translateY(-1px); }
+  .up-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  /* ── Info panel ── */
+  .up-info {
+    background: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .up-info h4 { font-size: 13px; font-weight: 700; color: #333; margin: 0 0 12px; }
+  .info-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 12px; color: #666;
+  }
+  .info-item:last-child { border-bottom: none; }
+  .info-item .ico { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ocultar panel fechas en inasistencias */
+  .hide-for-inasistencias { display: block; }
+  body.tipo-inasistencias .hide-for-inasistencias { display: none; }
+</style>
+
+<div class="up-wrap">
+
+  <div class="up-hero">
+    <div class="up-hero-ico">📂</div>
+    <div>
+      <h1>Importar Datos desde Excel</h1>
+      <p>Sube el archivo del SENA — el sistema lo procesa automáticamente</p>
     </div>
+  </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" style="padding: 15px 20px; margin-bottom: 25px; border-radius: 10px; {% if message.tags == 'success' %}background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4caf50;{% elif message.tags == 'error' %}background: #ffebee; color: #c62828; border-left: 4px solid #f44336;{% else %}background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3;{% endif %}">
-                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}" style="margin-right: 10px;"></i>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+  <div class="up-card">
+    <form method="post" enctype="multipart/form-data" id="upForm">
+      {% csrf_token %}
 
-    <!-- Formulario -->
-    <div style="max-width: 900px; margin: 0 auto;">
-        <div style="background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-            
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <!-- Zona de archivo -->
-                <div style="margin-bottom: 30px;">
-                    <label style="display: block; font-weight: 600; color: #333; margin-bottom: 10px; font-size: 15px;">
-                        <i class="fas fa-file-excel" style="color: var(--sena-green); margin-right: 8px;"></i>
-                        1. Selecciona el archivo Excel
-                    </label>
-                    <div class="upload-zone">
-                        <div class="upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="upload-text">
-                            <strong>Arrastra tu archivo aquí</strong>
-                            <span>o haz clic para seleccionar</span>
-                        </div>
-                        {{ form.file }}
-                        <div class="file-info">
-                            <i class="fas fa-info-circle"></i>
-                            Formatos: .xls, .xlsx (Máx. 10 MB)
-                        </div>
-                        <div id="file-name" style="margin-top: 10px; font-weight: 600; color: var(--sena-green);"></div>
-                    </div>
-                </div>
-
-                <!-- Datos manuales -->
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="color: #333; margin: 0 0 20px 0; font-size: 16px; font-weight: 600;">
-                        <i class="fas fa-edit" style="color: #f57c00; margin-right: 8px;"></i>
-                        2. Ingresa los datos del encabezado (si el sistema no los detecta)
-                    </h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <!-- Ficha -->
-                        <div>
-                            <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px; font-size: 13px;">
-                                Número de Ficha
-                            </label>
-                            {{ form.ficha_manual }}
-                            <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">Ej: 2993666</small>
-                        </div>
-
-                        <!-- Programa -->
-                        <div style="grid-column: span 2;">
-                            <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px; font-size: 13px;">
-                                Programa de Formación
-                            </label>
-                            {{ form.programa_manual }}
-                            <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">Ej: ANALISIS Y DESARROLLO DE SOFTWARE</small>
-                        </div>
-
-                        <!-- Fecha Inicio -->
-                        <div>
-                            <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px; font-size: 13px;">
-                                Fecha de Inicio
-                            </label>
-                            {{ form.fecha_inicio_manual }}
-                            <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">Fecha inicio de la ficha</small>
-                        </div>
-
-                        <!-- Fecha Fin -->
-                        <div>
-                            <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px; font-size: 13px;">
-                                Fecha de Fin
-                            </label>
-                            {{ form.fecha_fin_manual }}
-                            <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">Fecha fin de la ficha</small>
-                        </div>
-                    </div>
-
-                    <div style="background: #fff3e0; padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 3px solid #f57c00;">
-                        <small style="color: #e65100; font-size: 13px;">
-                            <i class="fas fa-lightbulb" style="margin-right: 5px;"></i>
-                            <strong>Tip:</strong> Si el sistema detecta automáticamente la ficha y programa, no necesitas llenar estos campos. 
-                            Solo ingresa las fechas si no aparecen.
-                        </small>
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div style="display: flex; gap: 12px; justify-content: center;">
-                    <button type="submit" class="btn btn-primary" style="padding: 14px 30px; font-size: 15px; min-width: 200px;">
-                        <i class="fas fa-rocket"></i> Procesar Archivo
-                    </button>
-                    <a href="{% url 'aprendiz_list' %}" class="btn btn-secondary" style="padding: 14px 30px;">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                </div>
-            </form>
+      <!-- ── 1. Tipo de archivo ── -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:13px;font-weight:700;color:#555;margin-bottom:12px">
+          <i class="fas fa-list-ul" style="color:#39A900;margin-right:6px"></i>
+          1. ¿Qué tipo de archivo vas a subir?
         </div>
+        <div class="tipo-grid">
+
+          <div class="tipo-option">
+            <input type="radio" name="tipo_archivo" id="tipo-juicios"
+                   value="juicios" checked onchange="cambiarTipo(this)">
+            <label class="tipo-label" for="tipo-juicios">
+              <div class="tipo-ico ico-juicios">📊</div>
+              <strong>Juicios / Aprendices</strong>
+              <span>Reporte de evaluación con competencias y resultados de aprendizaje</span>
+              <div class="tipo-check"></div>
+            </label>
+          </div>
+
+          <div class="tipo-option">
+            <input type="radio" name="tipo_archivo" id="tipo-inasistencias"
+                   value="inasistencias" onchange="cambiarTipo(this)">
+            <label class="tipo-label" for="tipo-inasistencias">
+              <div class="tipo-ico ico-inasistencias">📋</div>
+              <strong>Inasistencias</strong>
+              <span>Consolidado de Inasistencias — Aprendices por Ficha del SENA</span>
+              <div class="tipo-check"></div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 2. Archivo ── -->
+      <div style="font-size:13px;font-weight:700;color:#555;margin-bottom:10px">
+        <i class="fas fa-file-excel" style="color:#39A900;margin-right:6px"></i>
+        2. Selecciona el archivo Excel
+      </div>
+
+      <div class="up-drop" id="dropZone"
+           onclick="document.getElementById('fileInput').click()">
+        <div class="drop-ico">📂</div>
+        <h3>Arrastra el archivo aquí o haz clic para seleccionar</h3>
+        <p>Formatos: <strong>.xls</strong> · <strong>.xlsx</strong></p>
+        <input type="file" name="file" id="fileInput" accept=".xls,.xlsx,.csv">
+      </div>
+
+      <div class="up-file-ok" id="fileOk">
+        <i class="fas fa-file-excel" style="font-size:18px"></i>
+        <span id="fileOkText"></span>
+      </div>
+
+      <!-- ── 3. Datos manuales (solo para Juicios) ── -->
+      <div class="up-fechas hide-for-inasistencias" id="panelFechas">
+        <div class="up-fechas-title">
+          <i class="fas fa-edit" style="color:#f57c00"></i>
+          3. Datos del encabezado (opcional — solo si el sistema no los detecta)
+        </div>
+        <div class="fechas-grid">
+          <div class="full-col">
+            <label>Número de Ficha</label>
+            {{ form.ficha_manual }}
+          </div>
+          <div class="full-col">
+            <label>Programa de Formación</label>
+            {{ form.programa_manual }}
+          </div>
+          <div>
+            <label>Fecha de Inicio</label>
+            {{ form.fecha_inicio_manual }}
+          </div>
+          <div>
+            <label>Fecha de Fin</label>
+            {{ form.fecha_fin_manual }}
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="up-submit" id="submitBtn" disabled>
+        <i class="fas fa-upload"></i>
+        <span id="submitTxt">Selecciona un archivo primero</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Info -->
+  <div class="up-info">
+    <h4><i class="fas fa-info-circle" style="color:#39A900;margin-right:6px"></i>
+        ¿Cuándo usar cada tipo?</h4>
+    <div class="info-item">
+      <span class="ico">📊</span>
+      <span><strong>Juicios / Aprendices</strong> — Reporte exportado desde Sofia Plus con columnas de Competencia, Resultado de Aprendizaje y Juicio de Evaluación.</span>
     </div>
+    <div class="info-item">
+      <span class="ico">📋</span>
+      <span><strong>Inasistencias</strong> — Archivo "Consolidado de Inasistencias - Aprendices por Ficha" descargado del SENA. Contiene columnas FICHA, IDENTIFICACIÓN APRENDIZ, FECHA INICIO, FECHA FIN, JUSTIFICACION.</span>
+    </div>
+    <div class="info-item">
+      <span class="ico">⚠️</span>
+      <span>Para importar inasistencias los aprendices deben existir previamente en el sistema. Si aún no están, primero sube el Excel de Juicios.</span>
+    </div>
+  </div>
 
 </div>
 
-<style>
-    .upload-zone {
-        border: 3px dashed #d0d0d0;
-        border-radius: 14px;
-        padding: 40px 20px;
-        text-align: center;
-        background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
-        transition: all 0.3s;
-        position: relative;
-        cursor: pointer;
-    }
-
-    .upload-zone:hover {
-        border-color: var(--sena-green);
-        background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
-    }
-
-    .upload-zone input[type="file"] {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .upload-icon { font-size: 50px; color: var(--sena-green); margin-bottom: 15px; }
-    .upload-text { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
-    .upload-text strong { color: #333; font-size: 16px; }
-    .upload-text span { color: #999; font-size: 13px; }
-    .file-info { color: #666; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-
-    .form-control {
-        width: 100%;
-        padding: 10px 14px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--sena-green);
-        box-shadow: 0 0 0 3px rgba(0, 149, 74, 0.1);
-    }
-
-    .btn {
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: center;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #00954a 0%, #39A900 100%);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 149, 74, 0.3);
-    }
-
-    .btn-secondary {
-        background: #666;
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: #555;
-    }
-</style>
-
 <script>
-window.addEventListener('load', function() {
-    const input = document.querySelector('input[type="file"]');
-    if (input) {
-        input.onchange = function() {
-            const fileName = document.getElementById('file-name');
-            if (this.files && this.files[0]) {
-                const name = this.files[0].name;
-                const sizeMB = (this.files[0].size / (1024 * 1024)).toFixed(2);
-                fileName.innerHTML = '<i class="fas fa-check-circle"></i> ' + name + ' (' + sizeMB + ' MB)';
-            }
-        };
+  const input    = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+  const fileOk   = document.getElementById('fileOk');
+  const fileOkTxt= document.getElementById('fileOkText');
+  const submitBtn= document.getElementById('submitBtn');
+  const submitTxt= document.getElementById('submitTxt');
+  const panelFechas = document.getElementById('panelFechas');
+
+  function setFile(file) {
+    if (!file) return;
+    fileOkTxt.textContent = file.name;
+    fileOk.classList.add('visible');
+    dropZone.style.borderColor = '#39A900';
+    submitBtn.disabled = false;
+    submitTxt.textContent = 'Procesar archivo';
+  }
+
+  function cambiarTipo(radio) {
+    if (radio.value === 'inasistencias') {
+      panelFechas.style.display = 'none';
+      submitTxt.textContent = submitBtn.disabled ? 'Selecciona un archivo primero' : 'Importar Inasistencias';
+    } else {
+      panelFechas.style.display = 'block';
+      submitTxt.textContent = submitBtn.disabled ? 'Selecciona un archivo primero' : 'Procesar archivo';
     }
-});
+  }
+
+  input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
+
+  dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      setFile(file);
+    }
+  });
+
+  document.getElementById('upForm').addEventListener('submit', () => {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+  });
 </script>
+
 {% endblock %}

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'aprendices',
+    'django_celery_results',
 ]
 
 # MEDIA (para uploads temporales)
@@ -138,5 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/aprendices/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 
 LOGOUT_ALLOWED_METHODS = ['POST', 'GET']

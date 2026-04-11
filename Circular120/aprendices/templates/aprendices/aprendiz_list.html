@@ -1,144 +1,492 @@
-<!-- aprendices/templates/aprendices/aprendiz_list.html -->
-{% extends "aprendices/base.html" %}
+    {% extends "aprendices/base.html" %}
+    {% block page_title %}Gestión de Aprendices{% endblock %}
+    {% block content %}
 
-{% block page_title %}Gestión de Aprendices{% endblock %}
+    <style>
+        .filter-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,20,0,.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        }
+        .filter-modal-overlay.active { display: flex; }
 
-{% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <div>
-        <h2 style="color: var(--text-dark); margin-bottom: 10px; font-size: 24px;">
-            <i class="fas fa-users"></i> Gestión de Aprendices
-        </h2>
-        <p style="color: var(--text-light);">
-            Administra y consulta la información de todos los aprendices
-        </p>
+        .filter-modal {
+        background: #fff;
+        border-radius: 20px;
+        width: 92%;
+        max-width: 520px;
+        box-shadow: 0 30px 80px rgba(0,0,0,.22);
+        overflow: hidden;
+        animation: fmIn .28s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes fmIn {
+        from { transform: scale(.88) translateY(24px); opacity: 0; }
+        to   { transform: scale(1)   translateY(0);    opacity: 1; }
+        }
+
+        .filter-modal-header {
+        background: linear-gradient(135deg, #006400 0%, #39A900 100%);
+        padding: 22px 26px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        }
+        .filter-modal-header h3 {
+        margin: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        }
+        .filter-modal-header h3 span.ico {
+        width: 36px; height: 36px;
+        background: rgba(255,255,255,.18);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px;
+        }
+        .fm-close {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.18);
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background .15s;
+        }
+        .fm-close:hover { background: rgba(255,255,255,.32); }
+
+        .filter-modal-body {
+        padding: 28px 26px 20px;
+        }
+
+        .fm-field {
+        margin-bottom: 20px;
+        }
+        .fm-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 10px;
+        }
+        .fm-label .dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #39A900;
+        flex-shrink: 0;
+        }
+
+        .estado-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        }
+        .estado-pill {
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all .15s;
+        user-select: none;
+        }
+        .estado-pill.all       { background:#f0f0f0; color:#555; border-color:#ddd; }
+        .estado-pill.en-form   { background:#e8f5e3; color:#2e7d32; border-color:#a5d6a7; }
+        .estado-pill.lectiva   { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
+        .estado-pill.productiva{ background:#fff3e0; color:#e65100; border-color:#ffcc80; }
+        .estado-pill.por-cert  { background:#fff8e1; color:#f57f17; border-color:#ffe082; }
+        .estado-pill.certif    { background:#e8f5e9; color:#1b5e20; border-color:#81c784; }
+        .estado-pill.cancelado { background:#ffebee; color:#b71c1c; border-color:#ef9a9a; }
+        .estado-pill.retiro    { background:#fce4ec; color:#880e4f; border-color:#f48fb1; }
+        .estado-pill.aplaz     { background:#ede7f6; color:#4a148c; border-color:#ce93d8; }
+        .estado-pill.traslado  { background:#e0f2f1; color:#004d40; border-color:#80cbc4; }
+
+        .estado-pill.selected,
+        .estado-pill:hover { filter: brightness(.92); border-color: currentColor !important; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+        .estado-pill.selected { box-shadow: 0 3px 12px rgba(0,0,0,.18); }
+
+        .fm-select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 13px;
+        color: #333;
+        background: #fafafa;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2339A900' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        transition: border-color .15s;
+        cursor: pointer;
+        }
+        .fm-select:focus { outline: none; border-color: #39A900; background-color: #fff; }
+
+        .filter-modal-footer {
+        padding: 16px 26px 24px;
+        display: flex;
+        gap: 10px;
+        }
+        .fm-btn-clear {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        background: #fff;
+        color: #777;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s;
+        text-decoration: none;
+        text-align: center;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .fm-btn-clear:hover { border-color: #bbb; color: #444; }
+        .fm-btn-apply {
+        flex: 2;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(135deg, #39A900, #006400);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .15s;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        box-shadow: 0 4px 14px rgba(57,169,0,.35);
+        }
+        fm-btn-apply:hover { box-shadow: 0 6px 20px rgba(57,169,0,.5); transform: translateY(-1px); }
+
+        .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        }
+        .filter-trigger {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 10px 18px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: #444;
+        transition: all .18s;
+        box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        }
+        .filter-trigger:hover {
+        border-color: #39A900;
+        color: #39A900;
+        box-shadow: 0 4px 16px rgba(57,169,0,.15);
+        transform: translateY(-1px);
+        
+        .filter-trigger .ft-ico {
+        width: 30px; height: 30px;
+        background: linear-gradient(135deg, #39A900, #006400);
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-size: 13px;
+        flex-shrink: 0;
+        }
+        .filter-trigger .ft-badge {
+        background: #39A900;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        margin-left: 2px;
+        }
+
+    /* Chips de filtros activos */
+        .active-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        }
+        .active-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #e8f5e3;
+        border: 1.5px solid #a5d6a7;
+        color: #2e7d32;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 10px 5px 12px;
+        border-radius: 20px;
+        }
+        .active-chip a {
+        color: #2e7d32;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 1;
+        opacity: .7;
+        margin-left: 2px;
+        }
+        .active-chip a:hover { opacity: 1; }
+        .chip-clear-all {
+        font-size: 12px;
+        color: #999;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 20px;
+        border: 1.5px solid #ddd;
+        transition: all .15s;
+        }
+        .chip-clear-all:hover { color: #e53935; border-color: #ef9a9a; background: #ffebee; }
+    </style>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+        <div>
+        <h2 style="color:var(--txt);margin-bottom:6px;font-size:22px"><i class="fas fa-users"></i> Gestión de Aprendices</h2>
+        <p style="color:var(--txt2);margin:0">Administra y consulta la información de todos los aprendices</p>
+        </div>
+        <a href="{% url 'aprendiz_create' %}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Nuevo Aprendiz</a>
     </div>
-    <a href="{% url 'aprendiz_create' %}" class="btn btn-primary">
-        <i class="fas fa-plus-circle"></i> Nuevo Aprendiz
-    </a>
-</div>
 
-<div class="table-container">
-    <!-- Filtros rápidos -->
-    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap;">
-        <button onclick="filterTable('all')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
-            <i class="fas fa-list"></i> Todos
+    <div class="filter-bar">
+        <button class="filter-trigger" onclick="abrirFiltros()">
+        <span class="ft-ico"><i class="fas fa-sliders-h"></i></span>
+        Filtrar aprendices
+        {% if filtro_ficha or filtro_estado %}
+            <span class="ft-badge">{% if filtro_ficha and filtro_estado %}2{% else %}1{% endif %} activo{% if filtro_ficha and filtro_estado %}s{% endif %}</span>
+        {% endif %}
+        <i class="fas fa-chevron-down" style="font-size:11px;color:#aaa;margin-left:2px"></i>
         </button>
-        <button onclick="filterTable('EN_FORMACION')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
-            En Formación
-        </button>
-        <button onclick="filterTable('ETAPA_PRODUCTIVA')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
-            Etapa Productiva
-        </button>
-        <button onclick="filterTable('POR_CERTIFICAR')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
-            Por Certificar
-        </button>
-        <button onclick="filterTable('CERTIFICADO')" class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;">
-            Certificados
-        </button>
+
+        <div class="active-chips">
+        {% if filtro_ficha %}
+        <span class="active-chip">
+            <i class="fas fa-bookmark" style="font-size:11px"></i>
+            Ficha: <strong>{{ filtro_ficha }}</strong>
+            <a href="?{% if filtro_estado %}estado={{ filtro_estado }}{% endif %}" title="Quitar">×</a>
+        </span>
+        {% endif %}
+        {% if filtro_estado %}
+        <span class="active-chip">
+            <i class="fas fa-flag" style="font-size:11px"></i>
+            Estado: <strong>{{ filtro_estado_display|default:filtro_estado }}</strong>
+            <a href="?{% if filtro_ficha %}ficha={{ filtro_ficha }}{% endif %}" title="Quitar">×</a>
+        </span>
+        {% endif %}
+        {% if filtro_ficha or filtro_estado %}
+        <a href="{% url 'aprendiz_list' %}" class="chip-clear-all">
+            <i class="fas fa-times"></i> Limpiar todo
+        </a>
+        {% endif %}
+        </div>
+
+        {% if filtro_ficha or filtro_estado %}
+        <span style="color:#999;font-size:12px;margin-left:4px">
+        {{ page_obj.paginator.count }} resultado{% if page_obj.paginator.count != 1 %}s{% endif %}
+        </span>
+        {% endif %}
     </div>
 
-    <table id="aprendicesTable">
+    <div class="table-container">
+        <table id="aprendicesTable">
         <thead>
-            <tr>
-                <th><i class="fas fa-id-card"></i> Documento</th>
-                <th><i class="fas fa-user"></i> Nombre Completo</th>
-                <th><i class="fas fa-bookmark"></i> Ficha</th>
-                <th><i class="fas fa-flag"></i> Estado</th>
-                <th><i class="fas fa-calendar"></i> Fecha Inicio</th>
-                <th style="text-align: center;"><i class="fas fa-cog"></i> Acciones</th>
-            </tr>
+        <tr>
+            <th><i class="fas fa-id-card"></i> Documento</th>
+            <th><i class="fas fa-user"></i> Nombre Completo</th>
+            <th><i class="fas fa-bookmark"></i> Ficha</th>
+            <th><i class="fas fa-flag"></i> Estado</th>
+            <th><i class="fas fa-calendar"></i> Fecha Inicio</th>
+            <th style="text-align:center"><i class="fas fa-clipboard-list"></i> Juicios Pend.</th>
+            <th style="text-align:center"><i class="fas fa-cog"></i> Acciones</th>
+        </tr>
         </thead>
         <tbody>
         {% for a in object_list %}
-        <tr data-estado="{{ a.estado_formacion }}">
+        <tr>
             <td><strong>{{ a.documento }}</strong></td>
             <td>{{ a.nombre }} {{ a.apellido }}</td>
             <td>
-                {% if a.ficha %}
-                    <span class="badge badge-info">{{ a.ficha.numero }}</span>
-                {% else %}
-                    <span style="color: #999;">Sin ficha</span>
-                {% endif %}
+            {% if a.ficha %}<span class="badge badge-info">{{ a.ficha.numero }}</span>
+            {% else %}<span style="color:#999">Sin ficha</span>{% endif %}
             </td>
             <td>
-                {% if a.estado_formacion == 'POR_CERTIFICAR' %}
-                    <span class="badge badge-warning">{{ a.get_estado_formacion_display }}</span>
-                {% elif a.estado_formacion == 'CERTIFICADO' %}
-                    <span class="badge badge-success">{{ a.get_estado_formacion_display }}</span>
-                {% elif a.estado_formacion == 'CANCELADO' or a.estado_formacion == 'DESERTADO' %}
-                    <span class="badge badge-danger">{{ a.get_estado_formacion_display }}</span>
-                {% else %}
-                    <span class="badge badge-info">{{ a.get_estado_formacion_display }}</span>
-                {% endif %}
+            {% if a.estado_formacion == 'POR_CERTIFICAR' %}
+                <span class="badge badge-warning">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'CERTIFICADO' %}
+                <span class="badge badge-success">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'CANCELADO' %}
+                <span class="badge badge-danger">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'RETIRO_VOLUNTARIO' %}
+                <span class="badge badge-danger">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'APLAZAMIENTO' %}
+                <span class="badge" style="background:#ede7f6;color:#6a1b9a;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'TRASLADADO' %}
+                <span class="badge" style="background:#e0f2f1;color:#00695c;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'ETAPA_PRODUCTIVA' %}
+                <span class="badge" style="background:#fff3e0;color:#e65100;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600">{{ a.get_estado_formacion_display }}</span>
+            {% elif a.estado_formacion == 'ETAPA_LECTIVA' %}
+                <span class="badge" style="background:#e3f2fd;color:#1565c0;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600">{{ a.get_estado_formacion_display }}</span>
+            {% else %}
+                <span class="badge badge-info">{{ a.get_estado_formacion_display }}</span>
+            {% endif %}
             </td>
-            <td>
-                {% if a.fecha_inicio %}
-                    {{ a.fecha_inicio|date:"d/m/Y" }}
-                {% else %}
-                    —
-                {% endif %}
+            <td>{% if a.fecha_inicio %}{{ a.fecha_inicio|date:"d/m/Y" }}{% else %}—{% endif %}</td>
+            <td style="text-align:center">
+            {% if a.juicios_pendientes > 0 %}
+            <span style="background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:12px;font-weight:700;font-size:12px">
+                {{ a.juicios_pendientes }} pend.
+            </span>
+            {% else %}
+            <span style="color:#4caf50;font-size:13px"><i class="fas fa-check-circle"></i></span>
+            {% endif %}
             </td>
-            <td style="text-align: center;">
-                <a href="{% url 'aprendiz_detail' a.documento %}" 
-                    class="btn btn-primary" 
-                    style="font-size: 12px; padding: 6px 12px; margin: 2px;"
-                    title="Ver detalles">
-                    <i class="fas fa-eye"></i>
-                </a>
-                <a href="{% url 'aprendiz_update' a.documento %}" 
-                    class="btn" 
-                    style="font-size: 12px; padding: 6px 12px; margin: 2px; background: #007bff; color: white;"
-                    title="Editar">
-                    <i class="fas fa-edit"></i>
-                </a>
+            <td style="text-align:center">
+            <a href="{% url 'aprendiz_detail' a.documento %}" class="btn btn-primary" style="font-size:11px;padding:5px 10px;margin:2px" title="Ver detalles"><i class="fas fa-eye"></i></a>
+            <a href="{% url 'aprendiz_update' a.documento %}" class="btn btn-info" style="font-size:11px;padding:5px 10px;margin:2px" title="Editar"><i class="fas fa-edit"></i></a>
             </td>
         </tr>
         {% empty %}
-        <tr>
-            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">
-                No hay aprendices registrados
-            </td>
-        </tr>
+        <tr><td colspan="7" style="text-align:center;padding:38px;color:var(--txt2)">
+            <i class="fas fa-inbox" style="font-size:44px;color:#ccc;display:block;margin-bottom:12px"></i>
+            No hay aprendices {% if filtro_ficha or filtro_estado %}con los filtros aplicados{% else %}registrados{% endif %}
+        </td></tr>
         {% endfor %}
         </tbody>
-    </table>
+        </table>
 
-    <!-- Paginación -->
-    {% if is_paginated %}
-    <div style="margin-top: 20px; text-align: center;">
-        <div style="display: inline-flex; gap: 10px; align-items: center;">
+        {% if is_paginated %}
+        <div style="margin-top:18px;text-align:center">
+        <div style="display:inline-flex;gap:8px;align-items:center">
             {% if page_obj.has_previous %}
-                <a href="?page=1" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">« Primera</a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">‹ Anterior</a>
+            <a href="?{% if filtro_ficha %}ficha={{ filtro_ficha }}&{% endif %}{% if filtro_estado %}estado={{ filtro_estado }}&{% endif %}page=1" class="btn btn-secondary" style="font-size:12px;padding:5px 11px">« Primera</a>
+            <a href="?{% if filtro_ficha %}ficha={{ filtro_ficha }}&{% endif %}{% if filtro_estado %}estado={{ filtro_estado }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-secondary" style="font-size:12px;padding:5px 11px">‹ Anterior</a>
             {% endif %}
-            
-            <span style="color: var(--text-dark); font-weight: 600;">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-            </span>
-            
+            <span style="font-weight:600;color:var(--txt)">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Siguiente ›</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Última »</a>
+            <a href="?{% if filtro_ficha %}ficha={{ filtro_ficha }}&{% endif %}{% if filtro_estado %}estado={{ filtro_estado }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-secondary" style="font-size:12px;padding:5px 11px">Siguiente ›</a>
+            <a href="?{% if filtro_ficha %}ficha={{ filtro_ficha }}&{% endif %}{% if filtro_estado %}estado={{ filtro_estado }}&{% endif %}page={{ page_obj.paginator.num_pages }}" class="btn btn-secondary" style="font-size:12px;padding:5px 11px">Última »</a>
             {% endif %}
         </div>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 
-<script>
-function filterTable(estado) {
-    const table = document.getElementById('aprendicesTable');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    
-    for (let row of rows) {
-        if (estado === 'all') {
-            row.style.display = '';
-        } else {
-            const rowEstado = row.getAttribute('data-estado');
-            row.style.display = rowEstado === estado ? '' : 'none';
+
+    <div class="filter-modal-overlay" id="filterModal">
+        <div class="filter-modal">
+
+        <!-- Header -->
+        <div class="filter-modal-header">
+            <h3>
+            <span class="ico"><i class="fas fa-sliders-h"></i></span>
+            Filtrar Aprendices
+            </h3>
+            <button class="fm-close" onclick="cerrarFiltros()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <form method="get" id="filterForm">
+            <div class="filter-modal-body">
+
+            <div class="fm-field">
+                <div class="fm-label"><span class="dot"></span> Estado de Formación</div>
+                <div class="estado-pills">
+                <span class="estado-pill all {% if not filtro_estado %}selected{% endif %}"
+                        onclick="selEstado('')">Todos</span>
+                <span class="estado-pill en-form {% if filtro_estado == 'EN_FORMACION' %}selected{% endif %}"
+                        onclick="selEstado('EN_FORMACION')">En Formación</span>
+                <span class="estado-pill lectiva {% if filtro_estado == 'ETAPA_LECTIVA' %}selected{% endif %}"
+                        onclick="selEstado('ETAPA_LECTIVA')">Etapa Lectiva</span>
+                <span class="estado-pill productiva {% if filtro_estado == 'ETAPA_PRODUCTIVA' %}selected{% endif %}"
+                        onclick="selEstado('ETAPA_PRODUCTIVA')">Etapa Productiva</span>
+                <span class="estado-pill por-cert {% if filtro_estado == 'POR_CERTIFICAR' %}selected{% endif %}"
+                        onclick="selEstado('POR_CERTIFICAR')">Por Certificar</span>
+                <span class="estado-pill certif {% if filtro_estado == 'CERTIFICADO' %}selected{% endif %}"
+                        onclick="selEstado('CERTIFICADO')">Certificado</span>
+                <span class="estado-pill cancelado {% if filtro_estado == 'CANCELADO' %}selected{% endif %}"
+                        onclick="selEstado('CANCELADO')">Cancelado</span>
+                <span class="estado-pill retiro {% if filtro_estado == 'RETIRO_VOLUNTARIO' %}selected{% endif %}"
+                        onclick="selEstado('RETIRO_VOLUNTARIO')">Retiro Voluntario</span>
+                <span class="estado-pill aplaz {% if filtro_estado == 'APLAZAMIENTO' %}selected{% endif %}"
+                        onclick="selEstado('APLAZAMIENTO')">Aplazamiento</span>
+                <span class="estado-pill traslado {% if filtro_estado == 'TRASLADADO' %}selected{% endif %}"
+                        onclick="selEstado('TRASLADADO')">Trasladado</span>
+                </div>
+                <input type="hidden" name="estado" id="estadoInput" value="{{ filtro_estado }}">
+            </div>
+
+            <div class="fm-field" style="margin-bottom:4px">
+                <div class="fm-label"><span class="dot" style="background:#1565c0"></span> Ficha de Caracterización</div>
+                <select name="ficha" class="fm-select">
+                <option value="">— Todas las fichas —</option>
+                {% for ficha in fichas %}
+                <option value="{{ ficha.numero }}" {% if filtro_ficha == ficha.numero %}selected{% endif %}>
+                    {{ ficha.numero }}{% if ficha.programa %} — {{ ficha.programa|truncatechars:40 }}{% endif %}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="filter-modal-footer">
+            <a href="{% url 'aprendiz_list' %}" class="fm-btn-clear">
+                <i class="fas fa-times"></i> Limpiar
+            </a>
+            <button type="submit" class="fm-btn-apply">
+                <i class="fas fa-search"></i> Aplicar filtros
+            </button>
+            </div>
+        </form>
+
+        </div>
+    </div>
+
+    <script>
+        function abrirFiltros() {
+        document.getElementById('filterModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
         }
-    }
-}
-</script>
-{% endblock %}
+        function cerrarFiltros() {
+        document.getElementById('filterModal').classList.remove('active');
+        document.body.style.overflow = '';
+        }
+
+        document.getElementById('filterModal').addEventListener('click', function(e) {
+        if (e.target === this) cerrarFiltros();
+        });
+
+        document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrarFiltros();
+        });
+
+        function selEstado(val) {
+        document.getElementById('estadoInput').value = val;
+        document.querySelectorAll('.estado-pill').forEach(p => p.classList.remove('selected'));
+        event.target.classList.add('selected');
+        }
+
+    </script>
+
+    {% endblock %}

@@ -1,5 +1,8 @@
-Django>=4.0
-pandas
-openpyxl
-xlrd
-python-dateutil
+Django==5.1
+django-import-export==4.0.0
+django-filter==24.2
+python-dateutil==2.9.0
+pandas==2.2.0
+openpyxl==3.1.2
+xlrd==2.0.1
+tablib[html,xlsx,xls,csv]==3.6.0
